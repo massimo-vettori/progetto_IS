@@ -1,3 +1,15 @@
 <resources>
-    <string name="app_name">Barattopoli</string>
+    <string name="app_name" translatable="false">Barattopoli</string>
+
+    <string name="email_address">Indirizzo email</string>
+    <string name="enter_your_email">Inserisci la tua email</string>
+    <string name="password">password</string>
+    <string name="enter_your_password">Inserisci la password per </string>
+    <string name="login">login</string>
+    <string name="register">registrazione</string>
+    <string name="success">: azione avvenuta con successo</string>
+    <string name="failure">: fallimento dell\'azione</string>
+    <string name="empty_email"> Il campo email è vuoto! </string>
+    <string name="empty_password"> Il campo password è vuoto! </string>
+    <string name="password_wrong_length"> La password deve essere lunga almeno 6 caratteri! </string>
 </resources>
