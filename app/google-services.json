@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "7519143055",
+    "firebase_url": "https://barattopoly-lacliquep-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "barattopoly-lacliquep",
+    "storage_bucket": "barattopoly-lacliquep.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:7519143055:android:fea34a20dc2405f0c01cfa",
+        "android_client_info": {
+          "package_name": "com.lacliquep.barattopoli"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "7519143055-3ad6ov7h7uo4kt27m7msrh8j5rfokpnb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDb6obPkJ6SG2m2s_HkciKrDQAFVrRE2nc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "7519143055-3ad6ov7h7uo4kt27m7msrh8j5rfokpnb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

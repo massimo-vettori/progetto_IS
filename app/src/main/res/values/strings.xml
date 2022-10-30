@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Barattopoli</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login">Accedi</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="password_confirm_hint">Conferma Password</string>
+    <string name="register">Registrati</string>
+    <string name="accept_privacy">Conferma presa visione</string>
+    <string name="forgot_password">Ho dimenticato la password</string>
 </resources>
