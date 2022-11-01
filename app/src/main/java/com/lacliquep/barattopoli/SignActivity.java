@@ -1,10 +1,19 @@
 package com.lacliquep.barattopoli;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.lacliquep.barattopoli.fragments.sign.SignInUpFragment;
+
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
+import androidx.fragment.app.Fragment;
 
 public class SignActivity extends AppCompatActivity {
 
@@ -12,19 +21,36 @@ public class SignActivity extends AppCompatActivity {
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private final FirebaseUser user  = mAuth.getCurrentUser();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_sign);
 
         if (user != null) {
             // User is signed in
             String uid = user.getUid();
             Toast.makeText(this, "User is signed in", Toast.LENGTH_SHORT).show();
+            //TODO: start new activity
 
             // Change activity
         } else {
+            loadFragment(new SignInUpFragment());
             Toast.makeText(this, "User is not signed in", Toast.LENGTH_SHORT).show();
         }
     }
+
+    /**
+     * replace the FrameLayout in activity_sign with a different new Fragment
+     * @param fragment the fragment that will replace the FrameLayout
+     */
+    void loadFragment(Fragment fragment) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            androidx.fragment.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragmentContainerView, fragment);
+            fragmentTransaction.addToBackStack(fragment.toString());
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            fragmentTransaction.commit();
+    }
 }
+
