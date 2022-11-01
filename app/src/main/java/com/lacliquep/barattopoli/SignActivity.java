@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.lacliquep.barattopoli.fragments.sign.SignInUpFragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +22,7 @@ public class SignActivity extends AppCompatActivity {
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private final FirebaseUser user  = mAuth.getCurrentUser();
 
+    private Button logout_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,10 +30,21 @@ public class SignActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign);
 
         if (user != null) {
+            //TODO: embed this button in new activity and delete it from SignActivity.xml
+            logout_button = findViewById(R.id.logout_button);
             // User is signed in
             String uid = user.getUid();
-            Toast.makeText(this, "User is signed in", Toast.LENGTH_SHORT).show();
-            //TODO: start new activity
+            //called whenever the button logout is clicked
+            //leading to the Button_startActivity where the login or registration is required
+            logout_button.setOnClickListener(view -> {
+                //logout
+                mAuth.signOut();
+                //positive feedback
+                Toast.makeText(SignActivity.this, getString(R.string.Logout)+getString(R.string.success), Toast.LENGTH_SHORT).show();
+                loadFragment(new SignInUpFragment());
+            });
+            Toast.makeText(this, "User is signed in", Toast.LENGTH_LONG).show();
+
 
             // Change activity
         } else {
