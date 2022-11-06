@@ -1,10 +1,16 @@
 package com.lacliquep.barattopoli.fragments.sign;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +24,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.lacliquep.barattopoli.R;
 import com.lacliquep.barattopoli.SignActivity;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 /**
@@ -56,10 +65,60 @@ public class LoginFragment extends Fragment {
             //the text inserted in the password
             String txt_password = sign_in_password_field.getText().toString();
             //the authentication
-            loginUser(txt_email, txt_password);
+            login(txt_email, txt_password);
 
         });
         return view;
+    }
+
+    /**
+     * check the SDK version in order to handle the login in background
+     * @param email the provided email from the user
+     * @param password the provided password from the user
+     */
+    void login(String email, String password) {
+        // TODO find out which is the eldest SDK version accepting concurrent
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+            // Do something for R and above versions
+            //using concurrent executors
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            Handler handler = new Handler(Looper.getMainLooper());
+
+            executor.execute(() -> {
+                //Background work here
+                loginUser(email, password);
+                handler.post(() -> {
+                    //UI Thread work here
+                    // TODO change the string
+                    Toast.makeText(getActivity(), "using concurrent executors", Toast.LENGTH_SHORT).show();
+                });
+            });
+
+        } else {
+            // do something for phones running an SDK before R
+            new AsyncLogin().execute(email, password);
+        }
+    }
+
+    /**
+     * class to handle login in asynchronous way before SDK R
+     */
+    @SuppressLint("StaticFieldLeak")
+    private class AsyncLogin extends AsyncTask<String, Integer, Void> {
+        @Override
+        protected Void doInBackground(String... strings) {
+            try {
+                loginUser(strings[0], strings[1]);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        // TODO: add a progression bar or sth?
+        protected void onProgressUpdate(Integer... progress) {
+            Toast.makeText(getActivity(), getString(R.string.in_progress), Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     /**
