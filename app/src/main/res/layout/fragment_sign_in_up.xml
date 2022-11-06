@@ -16,13 +16,13 @@
             android:id="@+id/choice_sign_in_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/register" />
+            android:text="@string/login" />
 
         <Button
             android:id="@+id/choice_sign_up_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/login" />
+            android:text="@string/register" />
 
     </LinearLayout>
 
