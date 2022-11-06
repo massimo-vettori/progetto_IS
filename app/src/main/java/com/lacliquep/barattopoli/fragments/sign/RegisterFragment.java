@@ -26,6 +26,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.lacliquep.barattopoli.R;
 import com.lacliquep.barattopoli.SignActivity;
 
+import java.util.Objects;
+
 
 /**
  * A {@link Fragment} subclass to handle the sign-up.
@@ -103,6 +105,8 @@ public class RegisterFragment extends Fragment {
         return view;
     }
 
+
+
     /**
      * registration of the user in the database with {@link FirebaseAuth}
      * @param email the provided email
@@ -110,8 +114,8 @@ public class RegisterFragment extends Fragment {
      */
     void registerUser(String email, String password) {
         //addOnCompleteListener is added to display a Toast for confirmation of the registration
-        //TODO: handle getActivity might be null, wrapping in async task
-        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(getActivity(), task -> {
+        //TODO: wrapping in async task
+        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), task -> {
             if (task.isSuccessful()) {
                 //positive feedback
                 Toast.makeText(getActivity(), getString(R.string.Registration) + getString(R.string.success), Toast.LENGTH_SHORT).show();
@@ -119,7 +123,7 @@ public class RegisterFragment extends Fragment {
                 loginUser(email, password);
             } else {
                 //TODO: delete exception
-                String error = (task.getException().getMessage());
+                String error = (Objects.requireNonNull(task.getException()).getMessage());
                 //negative feedback
                 Toast.makeText(getActivity(), getString(R.string.Registration) + getString(R.string.failure) + ":\n" + error, Toast.LENGTH_SHORT).show();
             }
