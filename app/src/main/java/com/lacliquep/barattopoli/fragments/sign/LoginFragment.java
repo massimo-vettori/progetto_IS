@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.lacliquep.barattopoli.MainActivity;
 import com.lacliquep.barattopoli.R;
 import com.lacliquep.barattopoli.SignActivity;
 
@@ -71,8 +72,8 @@ public class LoginFragment extends Fragment {
         //TODO: wrap in async task
         auth.signInWithEmailAndPassword(email, password).addOnSuccessListener(authResult -> {
             Toast.makeText(getActivity(), getString(R.string.Login) + getString(R.string.success), Toast.LENGTH_SHORT).show();
-            //TODO: after login start SignActivity
-            startActivity(new Intent(getActivity(), SignActivity.class));
+            //TODO: after login start MainActivity
+            startActivity(new Intent(getActivity(), MainActivity.class));
         });
     }
 
