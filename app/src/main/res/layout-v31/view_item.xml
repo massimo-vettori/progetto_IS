@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/round_outline">
-<!--    android:clipToOutline="true"> TODO: Duplicate the design file to allow the rounded corners to appear on later version of android -->
+    android:background="@drawable/round_outline"
+    android:clipToOutline="true">
 
     <ImageView
         android:id="@+id/image_container"
