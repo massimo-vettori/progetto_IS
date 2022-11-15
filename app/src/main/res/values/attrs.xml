@@ -5,4 +5,10 @@
     <attr name="bgGradientTopColor" format="reference" />
     <attr name="bgGradientBottomColor" format="reference" />
 
+    <declare-styleable name="ItemCardView">
+        <attr name="top"    format="string"/>
+        <attr name="url"    format="string"/>
+        <attr name="bottom" format="string"/>
+    </declare-styleable>
+
 </resources>

@@ -21,6 +21,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+
+import com.google.firebase.auth.FirebaseUser;
+import com.lacliquep.barattopoli.MainActivity;
+
 import com.lacliquep.barattopoli.R;
 import com.lacliquep.barattopoli.SignActivity;
 
@@ -193,8 +197,8 @@ public class RegisterFragment extends Fragment {
     private void loginUser(String email, String password) {
         auth.signInWithEmailAndPassword(email, password).addOnSuccessListener(authResult -> {
             Toast.makeText(getActivity(), getString(R.string.Login) + getString(R.string.success), Toast.LENGTH_SHORT).show();
-            //TODO: after login, start SignActivity
-            startActivity(new Intent(getActivity(), SignActivity.class));
+            //TODO: after login start MainActivity
+            startActivity(new Intent(getActivity(), MainActivity.class));
         });
     }
 }
