@@ -7,6 +7,9 @@
     <string name="password">Password</string>
     <string name="password_confirm">Conferma Password</string>
     <string name="register">Registrati</string>
+    <string name="select_error">Necessario selezionare: </string>
+    <string name="match_error">: devono coincidere</string>
+    <string name="in_progress">…in progress…</string>
     <string name="accept_privacy">Conferma presa visione</string>
     <string name="forgot_password">Ho dimenticato la password</string>
     <string name="Login">Login</string>

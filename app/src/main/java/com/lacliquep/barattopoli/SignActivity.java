@@ -38,6 +38,7 @@ public class SignActivity extends AppCompatActivity {
             //leading to the Button_startActivity where the login or registration is required
             logout_button.setOnClickListener(view -> {
                 //logout
+                // TODO wrap in asynctask??
                 mAuth.signOut();
                 //positive feedback
                 Toast.makeText(SignActivity.this, getString(R.string.Logout)+getString(R.string.success), Toast.LENGTH_SHORT).show();
