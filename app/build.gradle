@@ -37,6 +37,13 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
 
 
+    //for navigation drawer
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+    implementation 'androidx.navigation:navigation-fragment:2.5.3'
+    implementation 'androidx.navigation:navigation-ui:2.5.3'
+
+
     // Import the BoM for the Firebase platform
     implementation platform('com.google.firebase:firebase-bom:31.0.2')
 

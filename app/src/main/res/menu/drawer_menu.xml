@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+<!--    here we put all the menu files that we want to show in navigation drawer-->
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/nav_object"
+            android:icon="@drawable/ic_baseline_object_24"
+            android:title="@string/objects" />
+
+        <item android:id="@+id/nav_services"
+            android:icon="@drawable/ic_baseline_services_24"
+            android:title="@string/services" />
+
+        <item android:id="@+id/nav_charity"
+            android:icon="@drawable/ic_baseline_charity_24"
+            android:title="@string/charity" />
+
+        <!--  separate section -->
+        <item android:title="">
+            <menu>
+                <item android:id="@+id/nav_chat"
+                    android:icon="@drawable/ic_round_chat_24"
+                    android:title="@string/chat" />
+
+                <item android:id="@+id/nav_dashboard"
+                    android:icon="@drawable/ic_baseline_dashboard_24"
+                    android:title="@string/dashboard" />
+
+                <item android:id="@+id/nav_exchanges"
+                    android:icon="@drawable/ic_baseline_exchanges_24"
+                    android:title="@string/exchanges" />
+
+                <item android:id="@+id/nav_notifications"
+                    android:icon="@drawable/ic_round_notifications_none_24"
+                    android:title="@string/notifications" />
+            </menu>
+        </item>
+    </group>
+
+
+
+</menu>

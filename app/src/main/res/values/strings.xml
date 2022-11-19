@@ -20,4 +20,14 @@
     <string name="success">: azione avvenuta con successo</string>
     <string name="failure">: fallimento, qualcosa è andato storto</string>
     <string name="empty_text">: il testo non può essere vuoto!</string>
+
+    <string name="objects">Oggetti</string>
+    <string name="services">Servizi</string>
+    <string name="charity">Beneficenza</string>
+    <string name="chat">Chat</string>
+    <string name="dashboard">Bacheca</string>
+    <string name="exchanges">I tuoi baratti</string>
+    <string name="notifications">Notifiche</string>
+
+
 </resources>

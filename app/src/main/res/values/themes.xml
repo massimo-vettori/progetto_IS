@@ -19,4 +19,14 @@
         <item name="bgGradientTopColor">@color/gray_100</item>
         <item name="bgGradientBottomColor">@color/white</item>
     </style>
+
+    <!-- style for navigation bar -->
+    <style name="Theme.Barattopoli.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Barattopoli.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.Barattopoli.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
