@@ -1,22 +1,31 @@
 package com.lacliquep.barattopoli.classes;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.*;
 
+//TODO: comments
+//TODO: put an annotation and make private on methods which modify the category
 /**
- * This class represents a Category stored in the database
+ * This class represents a Category stored in the database (categories in DB)
  *
  * @author pares
  * @since 1.0
  */
-//TODO: comments
 public class Category {
-    private final Long idCategory;
+    public static final String TAG = "Category";
+    //id_category
+    private final String idCategory = UUID.randomUUID().toString();
+    //title
     private final String title;
-    //items contains the actual Items which belong to this Category
-    private final Set<Item> items = new HashSet<Item>();
-    private static Long idCategories = 0L;
+    //id_item, just their id in DB, whereas items contains the actual Items which belong to this Category
+    private final Set<Item> items = new HashSet<>();
     /**
      * a Set containing all the available categories.
      */
@@ -32,12 +41,10 @@ public class Category {
         categories.add(new Category("Artigianato"));
     }
 
-
-
     private Category(String title) {
-        this.idCategory = Category.idCategories++;
         this.title = title;
     }
+
 
     //METHODS TO OPERATE ON A CATEGORY:
 
@@ -53,19 +60,25 @@ public class Category {
      *
      * @return the id of this Category
      */
-    public Long getIdCategory() {
+    public String getIdCategory() {
         return this.idCategory;
     }
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (o == null || !(o instanceof Category)) return false;
         Category c = (Category) o;
-        return this.title.equals(c.title) && this.idCategory.equals(c.getIdCategory()) && this.items.equals(c.getIdItems());
+        return this.title.equals(c.title) && this.idCategory.equals(c.getIdCategory()) && this.items.equals(c.getItems());
     }
     @Override
     public int hashCode() {
-        return Math.toIntExact(this.idCategory);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + idCategory.hashCode();
+        result = prime * result + title.hashCode();
+        result = prime * result + items.hashCode();
+        return result;
     }
 
     //METHODS TO OPERATE ON THE SET "ITEMS":
@@ -84,8 +97,8 @@ public class Category {
      * @see Item
      * @see Item#getIdItem()
      */
-    public Set<Long> getIdItems() {
-        Set<Long> idItems = new HashSet<Long>();
+    public Set<String> getIdItems() {
+        Set<String> idItems = new HashSet<>();
         for (Item x: this.items) { idItems.add(x.getIdItem()); }
         return idItems;
     }
@@ -100,7 +113,7 @@ public class Category {
      * @see Set#add(Object)
      *
      */
-    public boolean addItemToCategory(@NonNull Item item) {
+    private boolean addItemToCategory(@NonNull Item item) {
         return this.items.add(item);
     }
 
@@ -113,7 +126,7 @@ public class Category {
      * @see Item
      * @see Set#remove(Object)
      */
-    public boolean removeItemFromCategory(@NonNull Item item) {
+    private boolean removeItemFromCategory(@NonNull Item item) {
         return this.items.remove(item);
     }
 
@@ -125,7 +138,7 @@ public class Category {
      * or null if a category with such title does not exist
      * @see Category#categories
      */
-    public static Long getIdCategory(String title) {
+    public static String getIdCategory(String title) {
         return Category.getCategories().get(title);
     }
     /**
@@ -135,7 +148,7 @@ public class Category {
      * or null if a category with such id does not exist
      * @see Category#categories
      */
-    public static String getTitle(Long idCategory) {
+    public static String getTitle(String idCategory) {
         String res = null;
         Category c = Category.getCategoryById(idCategory);
         if (c != null) res = c.getTitle();
@@ -149,7 +162,7 @@ public class Category {
      * otherwise return null.
      * @see Category#categories
      */
-    public static Category getCategoryById(Long idCategory) {
+    public static Category getCategoryById(String idCategory) {
         Category res = null;
         for(Category x: Category.categories) {
             if (x.getIdCategory().equals(idCategory)) res = x;
@@ -177,8 +190,8 @@ public class Category {
      * @return a map containing the titles of the Category.categories with their corresponding id
      * @see Category#categories
      */
-    public static Map<String, Long> getCategories() {
-        Map<String, Long> id = new HashMap<>();
+    public static Map<String, String> getCategories() {
+        Map<String, String> id = new HashMap<>();
         for(Category x: categories) {
             id.put(x.getTitle(), x.getIdCategory());
         }
@@ -192,7 +205,7 @@ public class Category {
      * @see Item
      * @see Set#add(Object)
      */
-    public static void addNewCategory(String title) {
+    private static void addNewCategory(String title) {
         Category.categories.add(new Category(title));
     }
 }
