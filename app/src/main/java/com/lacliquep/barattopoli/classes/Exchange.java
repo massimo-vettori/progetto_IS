@@ -38,23 +38,30 @@ public class Exchange {
      */
     public enum ExchangeStatus {IN_APPROVAL, ACCEPTED, ANNULLED, CLOSED, HAPPENED, REVIEWED_BY_APPLICANT, REVIEWED_BY_PROPOSER, REVIEWED_BY_BOTH, ILLEGAL, REFUSED}
 
-    private ExchangeStatus exchangeStatus;
     public static final String ID_APPLICANT_DB = "id_applicant";
-    //id_applicant, just the id in DB
+    public static final String ID_PROPOSER_DB = "id_proposer";
+    public final String ID_EXCHANGE_DB = "id_exchange";
+    public static final String ID_PROPOSED_ITEMS_DB = "id_proposed_items";
+    public static final String ID_REQUIRED_ITEMS_DB = "id_required_items";
+    public static final String CLASS_EXCHANGE_DB = "exchanges";
+    public static final int EXCHANGE_INFO_LENGTH = 5;
+
+    /* TODO: da rivedere completamente tutta la classe
+    private ExchangeStatus exchangeStatus;
     private final String idApplicant;
     private User applicant;
-    public static final String ID_PROPOSER_DB = "id_proposer";
     private final String idProposer;
     private User proposer;
-    public final String ID_EXCHANGE_DB = "id_exchange";
+
     private final String idExchange = UUID.randomUUID().toString();
-    public static final String ID_PROPOSED_ITEMS_DB = "id_proposed_items";
+
     private final Set<String> idProposedItems = new HashSet<>();
     private final Set<Item> proposedItems = new HashSet<>();
-    public static final String ID_REQUIRED_ITEMS_DB = "id_required_items";
+
     private final Set<String> idRequiredItems = new HashSet<>();
     private final Set<Item> requiredItems = new HashSet<>();
-
+    */
+    /*
     /**
      * constructor of an exchange (to be called to recreate the existing Exchanges of a User in the DB in DataBaseable.retrieveExchange)
      * @param exchangeStatus the status of the exchange
@@ -66,6 +73,7 @@ public class Exchange {
      * @param idOtherRequiredItems optional Set of id of the Items which have been chosen for the exchange, from the proposer's board, by the applicant
      * @see ExchangeStatus
      */
+    /*
     private Exchange(ExchangeStatus exchangeStatus, @NonNull String idApplicant, @NonNull String idProposer, @Nullable String idProposedItem, @NonNull String idRequiredItem, @Nullable Set<String> idOtherProposedItems, @Nullable Set<String> idOtherRequiredItems)  {
         this.idApplicant = idApplicant;
         this.idProposer = idProposer;
@@ -73,8 +81,9 @@ public class Exchange {
         if (idOtherProposedItems != null) this.idProposedItems.addAll(idOtherProposedItems);
         if (idOtherRequiredItems!= null) this.idRequiredItems.addAll(idOtherRequiredItems);
         this.exchangeStatus = exchangeStatus;
-    }
+    }*/
 
+    /* TODO da rivedere completamente
     /**
      * to be called before inserting a new Exchange in the DB
      * The proposed Item, together with the otherProposedItems,
@@ -95,6 +104,7 @@ public class Exchange {
      * @see ExchangeStatus
      * @see Item#isCharity()
      */
+    /*
     private Exchange createExchange(@NonNull String idApplicant, @NonNull String idProposer, @Nullable Item proposedItem, @NonNull Item requiredItem, @Nullable Set<Item> otherProposedItems, @Nullable Set<Item> otherRequiredItems) throws Exception {
         String feedback = "this Exchange has some problems";
         String idProposedItem = proposedItem == null? null: proposedItem.getIdItem();
@@ -116,12 +126,12 @@ public class Exchange {
                         break;
                     }
                 }
-                /*if (!(i.getOwner().equals(idProposer)) || !(requiredItem.getOwner().equals(idProposer))) {
+                if (!(i.getOwner().equals(idProposer)) || !(requiredItem.getOwner().equals(idProposer))) {
                     feedback += ", the owner of some of the required items is not the proposer";
                     go = false;
                     idOtherRequiredItems = null;
                     break;
-                }*/
+                }
                 if (!(i.isExchangeable()) || !(requiredItem.isExchangeable())) {
                     feedback += ", some of the required Items are not exchangeable";
                     go = false;
@@ -134,12 +144,12 @@ public class Exchange {
         if (otherProposedItems != null) {
             idOtherProposedItems = new HashSet<>();
             for (Item i: otherProposedItems) {
-                /*if (!(i.getOwner().equals(applicant)) || (proposedItem != null && !(proposedItem.getOwner().equals(applicant)))) {
+                if (!(i.getOwner().equals(applicant)) || (proposedItem != null && !(proposedItem.getOwner().equals(applicant)))) {
                     feedback += ", the owner of some of the proposed items is not the applicant";
                     go = false;
                     idOtherProposedItems = null;
                     break;
-                }*/
+                }
                 if (!(i.isExchangeable()) || (proposedItem != null && !(proposedItem.isExchangeable()))) {
                     feedback += ", some of the Items the applicant is proposing are not exchangeable";
                     go = false;
@@ -149,19 +159,19 @@ public class Exchange {
                 idOtherProposedItems.add(i.getIdItem());
             }
         }
-        
+
         if (go) return new Exchange(ExchangeStatus.IN_APPROVAL, applicant.getIdUser(), proposer.getIdUser(), idProposedItem, requiredItem.getIdItem(), idOtherProposedItems, idOtherRequiredItems);
         else throw new Exception(feedback);
-    }
+    }*/
 
     /**
      *
      * @return the current status of this Exchange
      * @see ExchangeStatus
      */
-    public ExchangeStatus getExchangeStatus() {
+    /*public ExchangeStatus getExchangeStatus() {
         return this.exchangeStatus;
-    }
+    }*/
 
     /**
      *
@@ -183,35 +193,37 @@ public class Exchange {
      *
      * @return the id of this Exchange
      */
-    public String getIdExchange() {
+    /*public String getIdExchange() {
         return this.idExchange;
-    }
+    }*/
 
     /**
      *
      * @return all the Items which have been proposed by the applicant for this Exchange
      * It can be empty, since the required Items could be for charity
      */
-    public Set<Item> getProposedItems() {
+    /*public Set<Item> getProposedItems() {
         return this.proposedItems;
-    }
+    }*/
 
     /**
      *
      * @return all the Items which have been choose by the applicant from the proposer's board for this Exchange
      */
-    public Set<Item> getRequiredItems() {
+    /*public Set<Item> getRequiredItems() {
         return this.requiredItems;
-    }
+    }*/
 
+    /*
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null  || !(o instanceof Exchange)) return false;
         Exchange exchange = (Exchange) o;
-        return getExchangeStatus() == exchange.getExchangeStatus() /*&& getApplicant().equals(exchange.getApplicant()) && getProposer().equals(exchange.getProposer())*/ && getIdExchange().equals(exchange.getIdExchange()) && getProposedItems().equals(exchange.getProposedItems()) && getRequiredItems().equals(exchange.getRequiredItems());
-    }
+        return getExchangeStatus() == exchange.getExchangeStatus() && getApplicant().equals(exchange.getApplicant()) && getProposer().equals(exchange.getProposer()) && getIdExchange().equals(exchange.getIdExchange()) && getProposedItems().equals(exchange.getProposedItems()) && getRequiredItems().equals(exchange.getRequiredItems());
+    }*/
 
+    /*
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -223,7 +235,7 @@ public class Exchange {
         result = prime * result + this.requiredItems.hashCode();
         result = prime * result + this.proposer.hashCode();
         return result;
-    }
+    }*/
 
     //TODO: fetch, insert and update  to database, (with all the related side-effects)
 }

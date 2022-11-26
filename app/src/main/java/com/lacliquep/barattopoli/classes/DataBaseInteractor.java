@@ -25,6 +25,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+/**
+ * this class provides methods to interact with the database
+ * @author pares
+ * @since 1.0
+ */
 public class DataBaseInteractor {
 
     public static DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -79,54 +84,47 @@ public class DataBaseInteractor {
         });
     }
 
-
-
-
-    //TODO: ALL the retrieve, all the insert new and all the update
-
-
-
-    /*//TODO: finire e fare un check a database
-    public void insertNewReviewInDataBase(@NonNull Exchange exchange, Integer stars, String text) {
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("exchanges").child(exchange.getIdExchange()).child("exchange_status").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            //TODO: controllo dello stato dello scambio nel DB? meglio farlo in fetch di exchange??
+    /**
+     * Retrieve from the database the keys and their main information at the specified location in the database,
+     * by using the provided database reference and its child id <p>
+     * the data will be saved in a map which can be manipulated by the consumer <p>
+     * Retrieve the collection (param id) of those elements which are represented in a database class with a key,
+     * correspondent to their id and a string in CSV format with the basic info to be displayed <p>
+     * Too many database queries just to fetch simple data are avoided
+     * @param context the activity/fragment where the method is called
+     * @param dbRef the database location which identifies the parent of id
+     * @param id the parent of the elements which will be stored in the map
+     * @param infoLength the length of the main data stored for the specified id
+     * @param consumer the way the data is being used
+     */
+    public static void getMapWithIdAndInfo(Context context, DatabaseReference dbRef, String id, int infoLength, Consumer<Map<String, ArrayList<String>>> consumer) {
+        dbRef.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (!task.isSuccessful()) {
-                    Log.e("firebase", "Error getting data", task.getException());
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Map<String,ArrayList<String>> idAndInfo= new HashMap<>();
+                if(snapshot.exists() && snapshot.hasChildren()) {
+                    for(DataSnapshot id: snapshot.getChildren()) {
+                        String key = id.getKey();
+                        Object info = id.getValue();
+                        ArrayList<String> tmp = new ArrayList<>();
+                        if (info != null) {
+                            String toSplit = info.toString();
+                            String[] tmpAr = toSplit.split(toSplit, infoLength);
+                            for (int i = 0; i < infoLength; ++i) tmp.add(tmpAr[i]);
+                            idAndInfo.put(key, tmp);
+                        }
+                    }
                 }
-                else {
-                    String currUser = FirebaseAuth.getInstance().getUid();
-                    String fetched_status = String.valueOf(task.getResult().getValue());
-                    if (fetched_status.equals(String.valueOf(Exchange.ExchangeStatus.HAPPENED))) {
-                        //TODO insert review
-                        if (exchange.getApplicant().getIdUser().equals(currUser)) {
-                            //TODO: mark exchange as reviewed by applicant
-                        } else {
-                            //mark exchange as reviewed by proposer
-                        }
-                    } else {
-                        if (exchange.getApplicant().getIdUser().equals(currUser)) {
-                            if(fetched_status.equals(String.valueOf(Exchange.ExchangeStatus.REVIEWED_BY_PROPOSER))) {
-                                //TODO: mark exchange as reviewed by both and consequences
-                            } else {
-                                //error
-                            }
-                        } else {
-                            if (exchange.getProposer().getIdUser().equals(currUser)) {
-                                if(fetched_status.equals(String.valueOf(Exchange.ExchangeStatus.REVIEWED_BY_APPLICANT))) {
-                                    //TODO: mark exchange as reviewed by both and consequences
-                                } else {
-                                    //error
-                                }
-                            }
-                        }
+                consumer.accept(idAndInfo);
+            }
 
-                    };
-                }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w(context.toString(), "load:onCancelled", error.toException());
             }
         });
-        //mDatabase.child("exchanges").child(exchange.getIdExchange()).child("exchange_status").addValueEventListener(ExchangeStatusListener);
-    }*/
+    }
+
+    //TODO: ALL the retrieve, all the insert new and all the update in the classes
+
 }

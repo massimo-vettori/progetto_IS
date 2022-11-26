@@ -23,6 +23,7 @@ public class Item {
     public static final String IS_SERVICE_DB = "is_service";
     public static final String ID_CATEGORIES_DB = "id_category";
     public static final String IMAGES_DB = "images";
+    public static final int ITEM_INFO_LENGTH = 8;
 
     private final String idItem;
     private String title;
@@ -33,10 +34,7 @@ public class Item {
     private boolean isCharity;
     private boolean isExchangeable;
     private boolean isService;
-    //id_category, just a collection of their id in DB
-
-    private final Set<String> idCategories = new HashSet<>();
-    private final Set<Category> categories = new HashSet<>();
+    private final Set<String> categories = new HashSet<>();
     private final Collection<String> images = new ArrayList<>();
 
     //TODO: delete comment around range
@@ -50,12 +48,12 @@ public class Item {
      * @param isCharity if this Item is offered for free
      * @param isExchangeable if this Item can be exchanged
      * @param isService if this Item is a service
-     * @param categoriesTitles a collection of titles for categories which the item belongs to
+     * @param categories a collection of categories which the item belongs to
      *                   (if the category does not exists, it will be ignored)
      * @param images a collection of Strings representing the images to display
      *
      */
-    Item(String idItem, String title, String description,@NonNull String idRange, String idOwner, String location, boolean isCharity, boolean isExchangeable, boolean isService, @NonNull Collection<String> categoriesTitles ,@NonNull Collection<String> images) {
+    Item(String idItem, String title, String description,@NonNull String idRange, String idOwner, String location, boolean isCharity, boolean isExchangeable, boolean isService, @NonNull Collection<String> categories ,@NonNull Collection<String> images) {
         this.idItem = idItem;
         this.description = description;
         this.title = title;
@@ -65,10 +63,7 @@ public class Item {
         this.isExchangeable = isExchangeable;
         this.isService = isService;
         this.location = location;
-        for(String t: categoriesTitles) {
-            Category c = Category.getCategoryByTitle(t);
-            if (c != null) this.categories.add(c);
-        }
+        this.categories.addAll(categories);
         this.images.addAll(images);
     }
     /**
@@ -81,15 +76,16 @@ public class Item {
      * @param location the location of this Item
      * @param isCharity if this Item is offered for free
      * @param isService if this Item is a service
-     * @param categoriesTitles a collection of titles for categories which the item belongs to
+     * @param categories a collection of categories which the item belongs to
      *                   (if the category does not exists, it will be ignored)
      * @param images a collection of Strings representing the images to display
      *
      */
-   public static Item createItem(String title, String description, String idRange, String currentUser, String location, boolean isCharity, boolean isService, @NonNull Collection<String> categoriesTitles ,@NonNull Collection<String> images) {
-        return new Item(UUID.randomUUID().toString(), title, description, idRange, currentUser, location, isCharity, true, isService, categoriesTitles, images);
-    }
+   public static Item createItem(String title, String description, String idRange, String currentUser, String location, boolean isCharity, boolean isService, @NonNull Collection<String> categories ,@NonNull Collection<String> images) {
+        return new Item(UUID.randomUUID().toString(), title, description, idRange, currentUser, location, isCharity, true, isService, categories, images);
+   }
      
+    //TODO: insert Item in the database with side effects on range and categories
 
     //GETTERS
 
@@ -125,9 +121,6 @@ public class Item {
         return this.idRange;
     }
 
-    /*public Range getRange() {
-        DataBaseInteractor.retrieveRangeById(this.idRange, Range.CLASS_RANGE_DB);
-    }*/
 
     /**
      *
@@ -174,7 +167,7 @@ public class Item {
      *
      * @return all the categories which this Item belongs to
      */
-    public Set<Category> getCategories() {
+    public Set<String> getCategories() {
         return this.categories;
     }
 
@@ -216,124 +209,150 @@ public class Item {
     //since the changes will be only at DB level with correct functions
 
     /**
-     * modifies the description of this Item
+     * modifies the description of this Item in the database
      * @param description the new description
      * @throws NonModifiableException if this Item is not exchangeable
+     * @param idItem the id of the item to modify
+     * @param isExchangeable the status of the item
      */
-    protected void setDescription(String description) throws NonModifiableException {
-        if (!this.isExchangeable) throw new NonModifiableException();
-        this.description = description;
+    public static void setDescription(String idItem, boolean isExchangeable, String description) throws NonModifiableException {
+        if (!isExchangeable) throw new NonModifiableException();
+        //TODO
     }
 
     /**
-     * modifies the title of this Item if it is still exchangeable
+     * modifies the title of this Item in the database if it is still exchangeable
      * @param title the new title
+     * @param idItem the id of the item to modify
+     * @param isExchangeable the status of the item
      * @throws NonModifiableException if this Item is not exchangeable
      */
-    protected void setTitle(String title) throws NonModifiableException {
-        if (!this.isExchangeable) throw new NonModifiableException();
-        this.title = title;
+    public static void setTitle(String idItem, boolean isExchangeable, String title) throws NonModifiableException {
+        if (isExchangeable) throw new NonModifiableException();
+        //TODO
     }
 
     /**
-     * modifies the range of value for this Item
-     * @param range the Range of value of this Item
+     * modifies the range of value for this Item in the database if it is still exchangeable
+     * it modifies the collection of items in the specified range in the database
+     * @param idRange the id of the Range of value of this Item
+     * @param idItem the id of the item to modify
+     * @param isExchangeable the status of the item
      * @throws NonModifiableException if this Item is not exchangeable
      */
-    protected void setRange(Range range) throws NonModifiableException {
-        if (!this.isExchangeable) throw new NonModifiableException();
-       //this.range = range;
+    public static void setRange(String idItem, boolean isExchangeable, Range idRange) throws NonModifiableException {
+        if (isExchangeable) throw new NonModifiableException();
+        //TODO
     }
 
     /**
-     * modifies the current location of this Item
+     * modifies the current location of this Item in the database if it is still exchangeable
      * @param location the current location where this Item is
+     * @param idItem the id of the item to modify
+     * @param isExchangeable the status of the item
      * @throws NonModifiableException if this Item is not exchangeable
      */
-    protected void setLocation(String location)throws NonModifiableException {
-        if (!this.isExchangeable) throw new NonModifiableException();
-        this.location = location;
+    public static void setLocation(String idItem, boolean isExchangeable, String location)throws NonModifiableException {
+        if (isExchangeable) throw new NonModifiableException();
+        //TODO
     }
 
     /**
-     * modifies the state of this Item, accordingly to the value of the parameter
+     * modifies the state of this Item in the database if it is still exchangeable, according to the value of the parameter
      * @param charity If set on true, the Item becomes a good or service which is offered for free
+     * @param idItem the id of the item to modify
+     * @param isExchangeable the status of the item
      * @throws NonModifiableException if this Item is not exchangeable
      */
-    protected void setCharity(boolean charity) throws NonModifiableException {
-        if (!this.isExchangeable) throw new NonModifiableException();
-        isCharity = charity;
+    public static void setCharity(String idItem, boolean isExchangeable, boolean charity) throws NonModifiableException {
+        if (isExchangeable) throw new NonModifiableException();
+        //TODO
     }
 
     /**
-     * modifies the state of this Item, accordingly to the value of the parameter
-     * @param exchangeable If set on true, the Item becomes a good or service which is possible to exchange,
+     * modifies the state of this Item, according to the value of the parameter <p>
+     * (called only as consequence of an exchange)
+     * @param exchangeable If set on true, the Item becomes a good or service which is possible to exchange, <p>
      * e.g. it might be set to true after the refusal of an exchange or it could be set to false if
      * the Item has been proposed for an exchange
+     * @param idItem the id of the item to modify
      */
-    protected void setExchangeable(boolean exchangeable) {
-        isExchangeable = exchangeable;
+    public static void setExchangeable(String idItem, boolean exchangeable) {
+        //TODO
     }
 
     /**
-     * modifies the state of this Item, accordingly to the value of the parameter
+     * modifies the state of this Item in the database if it is still exchangeable, according to the value of the parameter
      * @param service If set on true, the Item becomes a service, otherwise it becomes a good
+     * @param idItem the id of the item to modify
+     * @param isExchangeable the status of the item
      * @throws NonModifiableException if this Item is not exchangeable
      */
-    protected void setService(boolean service) throws NonModifiableException {
-        if (!this.isExchangeable) throw new NonModifiableException();
-        isService = service;
+    public static void setService(String idItem, boolean isExchangeable, boolean service) throws NonModifiableException {
+        if (isExchangeable) throw new NonModifiableException();
+        //TODO
     }
 
     /**
-     * adds a category which this Item belongs to.
-     * (NO: as side effect, adds this item to the set of items of the specified Category.)
+     * adds a category in the database which this Item belongs to
+     * (as side effect, add this item to the set of items of the specified Category.)
      * @param category the title of the category
-     * @return true if the specified category exists and was not already contained in the set
-     * of this Item categories, false otherwise.
-     * @see Category
-     * @see Item#getCategories()
+     * @param isExchangeable the status of the item
+     * @param idItem the id of the item to modify
+     * @throws NonModifiableException if this Item is not exchangeable
      */
-    protected boolean addCategory(String category) {
-        Category c = Category.getCategoryByTitle(category);
-        if (c != null) {
-            //c.addItemToCategory(this);
-            return this.categories.add(c);
-        } else return false;
+    public static void addCategory(String idItem, boolean isExchangeable, String category) throws NonModifiableException {
+        if (isExchangeable) throw new NonModifiableException();
+        //TODO;
     }
     /**
      * removes a category which this Item does not belong anymore
-     * (NO:as side effect, removes this item to the set of items of the specified Category.)
+     * as side effect, remove this item to the set of items of the specified Category.
      * @param category the title of the category
-     * @return true if the category exists and was contained in the set, false otherwise
-     * @see Category
-     * @see Item#getCategories()
+     * @param idItem the id of the item to modify
+     * @param isExchangeable the status of the item
+     * @throws NonModifiableException if this Item is not exchangeable
      */
-    protected boolean removeCategory(String category) {
-        Category c = Category.getCategoryByTitle(category);
-        if (c!= null) {
-            //c.removeItemFromCategory(this);
-            return this.categories.remove(c);
-        } else return false;
+    public static void removeCategory(String idItem, boolean isExchangeable, String category) throws NonModifiableException {
+        if (isExchangeable) throw new NonModifiableException();
+        //TODO;
     }
 
     /**
-     * adds a string which represents an image to be displayed for this Item
+     * adds a string which represents an image to be displayed for this Item in the database
      * @param image the string which represents the image
-     * @return true if the image was not already contained in the collection of this Item images
-     * @see Item#getImages()
+     * @param isExchangeable the status of the item
+     * @param idItem the id of the item to modify
+     * @throws NonModifiableException if this Item is not exchangeable
      */
-    protected boolean addImage(String image) {
-        return this.images.add(image);
+    public static void addImage(String idItem, boolean isExchangeable, String image) throws NonModifiableException{
+        if (isExchangeable) throw new NonModifiableException();
+        //TODO;
     }
     /**
      * removes a string which represents an image for this Item
      * @param image the string which represents the image
-     * @return true if the image was contained in the set, false otherwise
-     * @see Item#getImages()
+     * @param isExchangeable the status of the item
+     * @param idItem the id of the item to modify
+     * @throws NonModifiableException if this Item is not exchangeable
      */
-    protected boolean removeImage(String image) {
-        return this.images.remove(image);
+    public static void removeImage(String idItem, boolean isExchangeable, String image) throws NonModifiableException {
+        if (isExchangeable) throw new NonModifiableException();
+        //TODO;
+    }
+
+    /**
+     * delete the provided item from the database (if it is exchangeable) <p>
+     * Also Removes the item from the sets of items of all the correspondent
+     * categories which this item belonged to in the database <p>
+     * also removes the item from its owner's board
+     * @param idItem
+     * @param isExchangeable the status of the item
+     * @throws NonModifiableException if this Item is not exchangeable
+     */
+    public static void deleteItem(String idItem, boolean isExchangeable) throws NonModifiableException {
+        if (isExchangeable) throw new NonModifiableException();
+        //TODO;
     }
 
 }

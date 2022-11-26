@@ -24,22 +24,25 @@ import java.util.*;
  * @since 1.0
  */
 public class Review {
-    //to give info about the class in a log
+
+    public static final String CLASS_REVIEW_DB = "review";
+    public static final int REVIEW_INFO_LENGTH = 5;
     public static final String TAG = "Review";
-    //id_review
-    private final String idReview = UUID.randomUUID().toString();
-    //id_author, just the id in DB
-    private final User author;
-    //id_receiver, just the id in DB
-    private final User receiver;
-    //stars
+    public static final String ID_REVIEW_DB = "id_review";
+    public static final String ID_AUTHOR_DB = "id_author";
+    public static final String ID_RECEIVER_DB = "id_receiver";
+    public static final String ID_EXCHANGE_DB = "id_exchange";
+    public static final String STARS_DB = "stars";
+    public static final String TEXT_DB = "text";
+
+    /*private final String idReview = UUID.randomUUID().toString();
+    private final String idAuthor;
+    private final String idReceiver;
     private final Integer stars ;
-    //text
-    private final String text;
-    //reference to the DB
-// ...
+    private final String text;*/
 
 
+//TODO: CLASSE DA RIVEDERE COMPLETAMENTE
     /**
      * constructor of a Review (to examine an existing review in the DB)
      * @param author the User author of this Review
@@ -47,12 +50,12 @@ public class Review {
      * @param stars an integer value which belongs to [1,5].
      * @param text the text of this Review
      */
-    private Review(User author, User receiver, Integer stars, String text) {
+    /*private Review(User author, User receiver, Integer stars, String text) {
         this.author = author;
         this.receiver = receiver;
         this.stars = stars;
         this.text = text;
-    }
+    }*/
 
     /**
      * method to create a new Review. Called before inserting a new review in the DB
@@ -64,7 +67,7 @@ public class Review {
      * @return a new Review if all the conditions are guaranteed
      * @throws Exception if at least one condition is not guaranteed
      */
-    private Review createReview(@NonNull User author, @NonNull User receiver, Integer stars, String text) throws Exception {
+    /*private Review createReview(@NonNull User author, @NonNull User receiver, Integer stars, String text) throws Exception {
         String feedback = "this Review has some problems";
         boolean go = true;
         if (author.equals(receiver)) {
@@ -76,51 +79,50 @@ public class Review {
         }
         if (go) return new Review(author, receiver, stars, text);
         else throw new Exception(feedback);
-    }
-
+    }*/
 
     /**
      *
      * @return the id of this Review
      */
-    public String getIdReview() {
+    /*public String getIdReview() {
         return idReview;
-    }
+    }*/
 
     /**
      *
      * @return the id of the User who writes this Review
      */
-    public User getAuthor() {
+   /* public User getAuthor() {
         return this.author;
-    }
+    }*/
 
     /**
      *
      * @return the id of the User who receives this Review
      */
-    public User getReceiver() {
+    /*public User getReceiver() {
         return this.receiver;
-    }
+    }*/
 
     /**
      *
      * @return the amount of stars the author gave to the receiver
      * in this Review
      */
-    public Integer getStars() {
+    /*public Integer getStars() {
         return this.stars;
-    }
+    }*/
 
     /**
      *
      * @return the text of this Review
      */
-    public String getText() {
+   /* public String getText() {
         return this.text;
-    }
+    }*/
 
-    @Override
+    /*@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || (!(o instanceof Review))) return false;
@@ -138,25 +140,5 @@ public class Review {
         result = prime * result + stars.hashCode();
         result = prime * result + text.hashCode();
         return result;
-    }
-
-    /*ValueEventListener ExchangeStatusListener = new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-            // Get Post object and use the values to update the UI
-            String exchangeStatus = dataSnapshot.getValue(String.class);
-            // ..
-        }
-
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-            // Getting Post failed, log a message
-            Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-        }
-    };*/
-
-
-
-
-
+    }*/
 }
