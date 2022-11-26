@@ -1,7 +1,17 @@
 package com.lacliquep.barattopoli.classes;
+import android.content.Context;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+
+import java.lang.reflect.Array;
 import java.util.*;
+import java.util.function.Consumer;
 
 
 /**
@@ -21,7 +31,7 @@ public class Item {
     public static final String IS_CHARITY_DB = "is_charity";
     public static final String IS_EXCHANGEABLE_DB = "is_exchangeable";
     public static final String IS_SERVICE_DB = "is_service";
-    public static final String ID_CATEGORIES_DB = "id_category";
+    public static final String ID_CATEGORIES_DB = "categories";
     public static final String IMAGES_DB = "images";
     public static final int ITEM_INFO_LENGTH = 8;
 
@@ -84,6 +94,49 @@ public class Item {
    public static Item createItem(String title, String description, String idRange, String currentUser, String location, boolean isCharity, boolean isService, @NonNull Collection<String> categories ,@NonNull Collection<String> images) {
         return new Item(UUID.randomUUID().toString(), title, description, idRange, currentUser, location, isCharity, true, isService, categories, images);
    }
+
+
+    //DA CONTROLLARE
+    /**
+     * read from the database all the values regarding the User with the provided id <p>
+     * Don't try taking out data from the consumer: it is not going to work
+     * @param context the activity/fragment where this method is called
+     * @param dbRef the database reference
+     * @param id the id of the User to retrieve
+     * @param consumer the way the fetched data are being used
+     */
+    public static void retrieveItemById(Context context, DatabaseReference dbRef, String id, Consumer<Item> consumer) {
+        dbRef.child(Item.CLASS_ITEM_DB).child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Map<String, Object> map = new HashMap<>();
+                    for (DataSnapshot child: snapshot.getChildren()) {
+                        map.put(child.getKey(), child.getValue());
+                    }
+                    ArrayList<String> ItemData = new ArrayList<>();
+                    for (int i = 0; i < 10; ++i) ItemData.add("");
+                    DataBaseInteractor.retrieveHelper(map, Item.TITLE_DB, ItemData,0);
+                    DataBaseInteractor.retrieveHelper(map, Item.DESCRIPTION_DB, ItemData,1);
+                    DataBaseInteractor.retrieveHelper(map, Item.ID_RANGE_DB, ItemData,2);
+                    DataBaseInteractor.retrieveHelper(map, Item.ID_OWNER_DB, ItemData,3);
+                    DataBaseInteractor.retrieveHelper(map, Item.LOCATION_DB, ItemData,4);
+                    DataBaseInteractor.retrieveHelper(map, Item.IS_CHARITY_DB, ItemData,5);
+                    DataBaseInteractor.retrieveHelper(map, Item.IS_EXCHANGEABLE_DB, ItemData,6);
+                    DataBaseInteractor.retrieveHelper(map, Item.IS_SERVICE_DB, ItemData,7);
+                    DataBaseInteractor.retrieveHelper(map, Item.ID_CATEGORIES_DB, ItemData,8);
+                    DataBaseInteractor.retrieveHelper(map, Item.IMAGES_DB, ItemData,9);
+                    ArrayList<String> cat = new ArrayList<>(Arrays.asList(ItemData.get(8).split("", 0)));
+                    ArrayList<String> img = new ArrayList<>(Arrays.asList(ItemData.get(9).split("", 0)));
+                    consumer.accept(new Item(id, ItemData.get(0), ItemData.get(1),ItemData.get(2), ItemData.get(3), ItemData.get(4), Boolean.getBoolean(ItemData.get(5)), Boolean.getBoolean(ItemData.get(6)), Boolean.getBoolean(ItemData.get(7)), cat, img));
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w(context.toString(), "load:onCancelled", error.toException());
+            }
+        });
+    }
      
     //TODO: insert Item in the database with side effects on range and categories
 

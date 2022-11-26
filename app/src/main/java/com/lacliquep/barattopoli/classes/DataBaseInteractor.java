@@ -17,6 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -110,7 +111,7 @@ public class DataBaseInteractor {
                         if (info != null) {
                             String toSplit = info.toString();
                             String[] tmpAr = toSplit.split(toSplit, infoLength);
-                            for (int i = 0; i < infoLength; ++i) tmp.add(tmpAr[i]);
+                            tmp.addAll(Arrays.asList(tmpAr).subList(0, infoLength));
                             idAndInfo.put(key, tmp);
                         }
                     }
@@ -123,6 +124,14 @@ public class DataBaseInteractor {
                 Log.w(context.toString(), "load:onCancelled", error.toException());
             }
         });
+    }
+
+    //FUNZIONA
+    public static void retrieveHelper(Map<String, Object> map, String dataBaseKeyTag, ArrayList<String> mainData, int mainDataIndex) {
+        if (map.containsKey(dataBaseKeyTag)) {
+            Object value = map.get(dataBaseKeyTag);
+            mainData.set(mainDataIndex, value != null ? value.toString() : "");
+        } else mainData.set(mainDataIndex, "");
     }
 
     //TODO: ALL the retrieve, all the insert new and all the update in the classes
