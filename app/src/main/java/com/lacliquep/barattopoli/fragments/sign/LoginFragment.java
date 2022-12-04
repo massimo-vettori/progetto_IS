@@ -28,6 +28,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.lacliquep.barattopoli.MainActivity;
+import com.lacliquep.barattopoli.MyCameraActivity;
 import com.lacliquep.barattopoli.R;
 import com.lacliquep.barattopoli.SignActivity;
 
@@ -138,6 +139,7 @@ public class LoginFragment extends Fragment {
             Toast.makeText(getActivity(), getString(R.string.Login) + getString(R.string.success), Toast.LENGTH_SHORT).show();
             //TODO: after login start MainActivity
             startActivity(new Intent(getActivity(), MainActivity.class));
+
         });
     }
 

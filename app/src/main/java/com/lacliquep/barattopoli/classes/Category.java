@@ -16,6 +16,7 @@ import java.util.function.Consumer;
 
 //TODO: comments
 //TODO: put an annotation and make private on methods which modify the category
+
 /**
  * This class represents a Category stored in the database (categories in DB)
  *
@@ -24,9 +25,12 @@ import java.util.function.Consumer;
  */
 public class Category {
     public static final String CLASS_CATEGORY_DB = "category";
+    public static final String ID_CATEGORY_DB = "id_category";
+    public static final String ID_ITEMS_DB = "id_items";
     public static final int ITEM_INFO_LENGTH = 8;
-
     private final String idCategory;
+
+    public static final DatabaseReference dbRefCategories = FirebaseDatabase.getInstance().getReference().child(Category.CLASS_CATEGORY_DB);
 
     /**
      * a Set containing all the available categories. Each one has its correspondence in strings.xml
@@ -60,21 +64,7 @@ public class Category {
     }
 
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == this) return true;
-        if (o == null || !(o instanceof Category)) return false;
-        Category c = (Category) o;
-        return  this.idCategory.equals(c.getTitle());
-    }
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + idCategory.hashCode();
-        return result;
-    }
-
+    //da verificare se funziona
     /**
      * Retrieve from the database the main information about the items which belong to the provided category
      * by saving them in a map which be manipulated by the consumer
@@ -86,16 +76,17 @@ public class Category {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(Category.CLASS_CATEGORY_DB);
         DataBaseInteractor.getMapWithIdAndInfo(context, dbRef, category, Category.ITEM_INFO_LENGTH, consumer);
     }
+    //da verificare se funziona
     /**
      * add a new item with its main information to a category <p>
      * (to be called only when adding a category to an existing item
      * or when adding a new item in the database)
      * @param idItem the id of the item to be added to the provided category
-     * @param itemInfo the CSV format for the main information about the item
+     * @param itemBasicInfo the CSV format for the main information about the item
      * @param category the category which the item belongs to
      */
-    public static void addItemToCategory(String idItem, String itemInfo, String category) {
-        //TODO
+    public static void addItemToCategory(String idItem, String itemBasicInfo, String category) {
+        dbRefCategories.child(category).child(Category.ID_ITEMS_DB).child(idItem).setValue(itemBasicInfo);
     }
 
     /**
@@ -116,6 +107,21 @@ public class Category {
         Collection<String> res = new ArrayList<>();
         for(Category s: Category.categories) res.add(s.getTitle());
         return res;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (o == null || !(o instanceof Category)) return false;
+        Category c = (Category) o;
+        return  this.idCategory.equals(c.getTitle());
+    }
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + idCategory.hashCode();
+        return result;
     }
 
 }

@@ -39,11 +39,20 @@ public class User {
     public static final String ID_OBSERVED_ITEMS_DB = "observed_items";
     public static final String ID_EXCHANGES_DB = "exchanges";
     public static final int REVIEWS_INFO_LENGTH = Review.REVIEW_INFO_LENGTH;
-    public static final int ITEMS_ON_BOARD_INFO_LENGTH = Item.ITEM_INFO_LENGTH;
-    public static final int OBSERVED_ITEMS_INFO_LENGTH = Item.ITEM_INFO_LENGTH;
+    public static final int ITEMS_ON_BOARD_INFO_LENGTH = Item.INFO_LENGTH;
+    //TODO: how to reflect the changes of an item on the list of the observed items for all the users?
+    public static final int OBSERVED_ITEMS_INFO_LENGTH = Item.INFO_LENGTH;
     public static final int EXCHANGES_INFO_LENGTH = Exchange.EXCHANGE_INFO_LENGTH;
+    /**
+     * the number of the basic info elements about a User when stored in a different class
+     */
+    public static final int INFO_LENGTH = 4;
+    /**
+     * the basic info elements about a User when stored in a different class
+     */
+    public static final String INFO_PARAM = "id,image,rank,username";
 
-    public static DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child(User.CLASS_USER_DB);
+    public static DatabaseReference dbRefUsers = FirebaseDatabase.getInstance().getReference().child(User.CLASS_USER_DB);
     public static FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     private final String idUser;
@@ -53,6 +62,7 @@ public class User {
     private final String coord;
     private final String image;
     private final Integer rank;
+    private final String userBasicInfo;
 
 
 
@@ -78,6 +88,8 @@ public class User {
         this.coord = coord;
         this.rank = rank;
         this.image = image;
+        //the basic info when a User is stored in an Item
+        this.userBasicInfo = this.idUser + "," + this.image + "," + this.rank + "," + this.username;
     }
     /**
      * creator of a User, to be called when creating a new User to store in the DB
@@ -96,19 +108,13 @@ public class User {
     }
 
 
-    //FUNZIONA
-    private static void retrieveHelper(Map<String, Object> map, String dataBaseKeyTag, ArrayList<String> mainData, int mainDataIndex) {
-        if (map.containsKey(dataBaseKeyTag)) {
-            Object value = map.get(dataBaseKeyTag);
-            mainData.set(mainDataIndex, value != null ? value.toString() : "");
-        } else mainData.set(mainDataIndex, "");
-    }
+
     //FUNZIONA
     /**
      * read from the database all the values regarding the User with the provided id <p>
      * Don't try taking out data from the consumer: it is not going to work
      * @param context the activity/fragment where this method is called
-     * @param dbRef the database reference
+     * @param dbRef the "root" database reference
      * @param id the id of the User to retrieve
      * @param consumer the way the fetched data are being used
      */
@@ -123,12 +129,12 @@ public class User {
                     }
                     ArrayList<String> UserData = new ArrayList<>();
                     for (int i = 0; i < 7; ++i) UserData.add("");
-                    User.retrieveHelper(map, User.USERNAME_DB, UserData,0);
-                    User.retrieveHelper(map, User.NAME_DB, UserData,1);
-                    User.retrieveHelper(map, User.SURNAME_DB, UserData,2);
-                    User.retrieveHelper(map, User.COORD_DB, UserData,3);
-                    User.retrieveHelper(map, User.RANK_DB, UserData,4);
-                    User.retrieveHelper(map, User.IMAGE_DB, UserData,5);
+                    DataBaseInteractor.retrieveHelper(map, User.USERNAME_DB, UserData,0);
+                    DataBaseInteractor.retrieveHelper(map, User.NAME_DB, UserData,1);
+                    DataBaseInteractor.retrieveHelper(map, User.SURNAME_DB, UserData,2);
+                    DataBaseInteractor.retrieveHelper(map, User.COORD_DB, UserData,3);
+                    DataBaseInteractor.retrieveHelper(map, User.RANK_DB, UserData,4);
+                    DataBaseInteractor.retrieveHelper(map, User.IMAGE_DB, UserData,5);
                     Integer rank = UserData.get(4).equals("")?0: Integer.valueOf(UserData.get(4));
                     consumer.accept(new User(id, UserData.get(0), UserData.get(1), UserData.get(2), UserData.get(3), rank, UserData.get(5)));
                 }
@@ -139,9 +145,31 @@ public class User {
             }
         });
     }
+    /**
+     * read from the database all the values regarding the current logged User <p>
+     * Don't try taking out data from the consumer: it is not going to work
+     * @param context the activity/fragment where this method is called
+     * @param dbRef the "root" database reference
+     * @param consumer the way the fetched data are being used
+     */
+    public static void retrieveCurrentUser(Context context, DatabaseReference dbRef, Consumer<User> consumer){
+        User.retrieveUserById(context, dbRef, mAuth.getUid(), consumer);
+    }
 
-    public static void retrieveCurrentUser(Context context, DatabaseReference dbRefUsers, Consumer<User> consumer){
-        User.retrieveUserById(context, dbRefUsers, mAuth.getUid(), consumer);
+    /**
+     * insert in the DataBase the basic User's info provided when setting them for the first time,
+     * ideally, after the registration
+     * @param user the user's basic info
+     */
+    public static void insertUserInDataBase(User user) {
+        DatabaseReference dbRefUser = dbRefUsers.child(user.idUser);
+        dbRefUser.child(User.ID_USER_DB).setValue(user.idUser);
+        dbRefUser.child(User.USERNAME_DB).setValue(user.username);
+        dbRefUser.child(User.NAME_DB).setValue(user.name);
+        dbRefUser.child(User.SURNAME_DB).setValue(user.surname);
+        dbRefUser.child(User.COORD_DB).setValue(user.coord);
+        dbRefUser.child(User.IMAGE_DB).setValue(user.image);
+        dbRefUser.child(User.RANK_DB).setValue(user.rank);
     }
 
     public static Integer getMediumRank() {
@@ -162,11 +190,12 @@ public class User {
     }
     /**
      * changes this User's name
-     *
+     * @param idUser the id of the User
      * @param name the name of this User
      */
-    public static void setName(String name) {
-        //TODO
+    public static void setName(String idUser, String name) {
+        DatabaseReference dbRefUser = dbRefUsers.child(idUser);
+        dbRefUser.child(User.NAME_DB).setValue(name);
     }
 
     /**
@@ -176,12 +205,12 @@ public class User {
         return this.surname;
     }
     /**
-     * changes this User's surname
-     *
-     * @param surname the surname of this User
+     * @param idUser the id of the User
+     * @param surname the new surname of the User
      */
-    public static void setSurname(String surname) {
-        //TODO
+    public static void setSurname(String idUser, String surname) {
+        DatabaseReference dbRefUser = dbRefUsers.child(idUser);
+        dbRefUser.child(User.SURNAME_DB).setValue(surname);
     }
 
     /**
@@ -193,10 +222,12 @@ public class User {
     /**
      * changes this User's username
      * in the database
-     * @param username the username of this User
+     * @param idUser the id of the User
+     * @param username the username of the User
      */
     public static void setUsername(String username, String idUser) {
-        //TODO
+        DatabaseReference dbRefUser = dbRefUsers.child(idUser);
+        dbRefUser.child(User.USERNAME_DB).setValue(username);
     }
 
     /**
@@ -207,10 +238,12 @@ public class User {
     }
     /**
      * changes the coordinates of this User's location in the database
+     * @param idUser the id of the User
      * @param coord the coordinates of this User's new location
      */
     public static void setCoord(String coord, String idUser) {
-        //TODO
+        DatabaseReference dbRefUser = dbRefUsers.child(idUser);
+        dbRefUser.child(User.COORD_DB).setValue(coord);
     }
 
     /**
@@ -221,7 +254,7 @@ public class User {
      * @param consumer the way the fetched data are used
      */
     public static void  getReviews(Context context,String idUser, Consumer<Map<String, ArrayList<String>>> consumer) {
-        DataBaseInteractor.getMapWithIdAndInfo(context, mDatabase.child(idUser), User.ID_REVIEWS_DB, User.REVIEWS_INFO_LENGTH, consumer);
+        DataBaseInteractor.getMapWithIdAndInfo(context, dbRefUsers.child(idUser), User.ID_REVIEWS_DB, User.REVIEWS_INFO_LENGTH, consumer);
     }
 
     /**
@@ -251,18 +284,27 @@ public class User {
      * @param consumer the way the fetched data are used
      */
     public static void  getItemsOnBoard(Context context,String idUser, Consumer<Map<String, ArrayList<String>>> consumer) {
-        DataBaseInteractor.getMapWithIdAndInfo(context, mDatabase.child(idUser), User.ID_ITEMS_ON_BOARD_DB, User.ITEMS_ON_BOARD_INFO_LENGTH, consumer);
+        DataBaseInteractor.getMapWithIdAndInfo(context, dbRefUsers.child(idUser), User.ID_ITEMS_ON_BOARD_DB, User.ITEMS_ON_BOARD_INFO_LENGTH, consumer);
     }
 
     /**
-     * add a new Item with its basic info  to the provided User's board in the database <p>
-     * (to be called only when creating a new item)
-     * @param idItem the new item id
-     * @param idUser the id of the User
-     * @param info the basic info of the item in CSV format
+     * create and add a new Item with its basic info  to the provided User's board and in the class Items in the database <p>
+     * @param itemTitle the title of the new Item
+     * @param itemDescription a description of the new Item
+     * @param itemIdRange the id of the Range of value of the new Item
+     * @param currentUserBasicInfo the info param of the owner
+     * @param itemLocation the location of the new Item
+     * @param itemIsCharity if the new Item is offered for free
+     * @param itemIsService if the new Item is a service
+     * @param itemCategories a collection of categories which the new item belongs to
+     *                      (if the category does not exists, it will be ignored)
+     * @param itemImages a collection of Strings representing the images to display
      */
-    public static void addItemOnBoard(String idUser, String idItem, String info) {
-        //TODO
+
+    public static void addNewItemOnBoard(String itemTitle, String itemDescription, String itemIdRange, ArrayList<String> currentUserBasicInfo, String itemLocation, boolean itemIsCharity, boolean itemIsService, @NonNull ArrayList<String> itemCategories ,@NonNull ArrayList<String> itemImages) {
+        Item newItem = Item.createItem(itemTitle,itemDescription,itemIdRange,currentUserBasicInfo,itemLocation,itemIsCharity,itemIsService,itemCategories,itemImages);
+        dbRefUsers.child(currentUserBasicInfo.get(0)).child(User.ID_ITEMS_ON_BOARD_DB).child(newItem.getIdItem()).setValue(newItem.getItemBasicInfo());
+        Item.insertItemInDataBase(newItem);
     }
     /**
      * removes an Item from the provided user's board in the database <p>
@@ -281,7 +323,7 @@ public class User {
      * @param consumer the way the fetched data are used
      */
     public static void getObservedItems(Context context, String idUser, Consumer<Map<String, ArrayList<String>>> consumer ) {
-        DataBaseInteractor.getMapWithIdAndInfo(context, mDatabase.child(idUser), User.ID_OBSERVED_ITEMS_DB, User.OBSERVED_ITEMS_INFO_LENGTH, consumer);
+        DataBaseInteractor.getMapWithIdAndInfo(context, dbRefUsers.child(idUser), User.ID_OBSERVED_ITEMS_DB, User.OBSERVED_ITEMS_INFO_LENGTH, consumer);
     }
 
     /**
@@ -309,7 +351,7 @@ public class User {
      * @param consumer the way the fetched data are used
      */
     public static void getExchanges(Context context, String idUser, Consumer<Map<String, ArrayList<String>>> consumer ) {
-        DataBaseInteractor.getMapWithIdAndInfo(context, mDatabase.child(idUser), User.ID_EXCHANGES_DB, User.EXCHANGES_INFO_LENGTH, consumer);
+        DataBaseInteractor.getMapWithIdAndInfo(context, dbRefUsers.child(idUser), User.ID_EXCHANGES_DB, User.EXCHANGES_INFO_LENGTH, consumer);
     }
 
     /**
@@ -340,13 +382,22 @@ public class User {
         return image;
     }
 
+    /**
+     * changes the coordinates of this User's location in the database
+     * @param idUser the id of the User
+     * @param image the new profile picture of this User
+     */
+    public static void setImage(String idUser, String image) {
+        DatabaseReference dbRefUser = dbRefUsers.child(idUser);
+        dbRefUser.child(User.IMAGE_DB).setValue(image);
+    }
 
     /**
      * @return this User's Rank: an integer which represents the degree of this User's reliability,
      * according to the way they handled their exchanges
      */
     public Integer getRank() {
-        return rank;
+        return this.rank;
     }
     /**
      * Updates the current value of this User's rank in the database, by adding the value passed in valueToAdd
@@ -369,6 +420,12 @@ public class User {
         long cnt = this.sumOfStarsAndCntOfReviews().get(1) + 1;
         return (int)((((float)sts/(float)cnt) * HIGHEST_RANK)/5);
     }
+
+    /**
+     *
+     * @return A CSV string with the basic information of this user when saved in an Item
+     */
+    public String getUserBasicInfo() { return this.userBasicInfo; }
 
     @Override
     public boolean equals(Object o) {

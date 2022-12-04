@@ -1,6 +1,9 @@
 package com.lacliquep.barattopoli.classes;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -15,9 +18,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,21 +48,21 @@ public class DataBaseInteractor {
 
     //funziona
     /**
-     * read from the database a list of id which represent the children of
+     * map from the database a list of id and their values which represent the children of
      * the snapshot at the provided database reference <p>
      * Don't try taking out data from the consumer: it is not going to work
-     * @param context the activity where this method is called
-     * @param dbRef a reference to the database location
+     * @param context the Activity/Fragment where this method is called
+     * @param dbRef a reference to the database location of the father node
      * @param consumer the way the fetched data are being used
      */
-    public static void readListOfId(Context context, DatabaseReference dbRef, Consumer<ArrayList<String>> consumer) {
+    public static void mapChildren(Context context, DatabaseReference dbRef, Consumer<Map<String, String>> consumer) {
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    ArrayList<String> children = new ArrayList<>();
+                    Map<String, String> children = new HashMap<>();
                     for(DataSnapshot child: snapshot.getChildren()) {
-                        children.add(child.getKey());
+                        children.put(child.getKey(), child.getValue().toString());
                     }
                     consumer.accept(children);
                 }
@@ -132,6 +142,27 @@ public class DataBaseInteractor {
             Object value = map.get(dataBaseKeyTag);
             mainData.set(mainDataIndex, value != null ? value.toString() : "");
         } else mainData.set(mainDataIndex, "");
+    }
+
+    //to convert an image into a Base64 string
+    public static String encodeImageToBase64(Bitmap bitmap){
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream .toByteArray();
+        String encodedFile = new String(Base64.getEncoder().encode(byteArray));
+        return encodedFile;
+    }
+
+    public static Bitmap decodeFileFromBase64(String encodedImage) {
+        byte[] decodedString = Base64.getDecoder().decode(encodedImage);
+        return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+    }
+
+    public static ArrayList<String> listOfIdFromMap(Map<String, ArrayList<String>> idAndInfoMap) {
+        Set<String> keyset = idAndInfoMap.keySet();
+        ArrayList<String> keylist = new ArrayList<>();
+        keylist.addAll(keyset);
+        return keylist;
     }
 
     //TODO: ALL the retrieve, all the insert new and all the update in the classes
