@@ -20,4 +20,13 @@
     <string name="success">: azione avvenuta con successo</string>
     <string name="failure">: fallimento, qualcosa è andato storto</string>
     <string name="empty_text">: il testo non può essere vuoto!</string>
+    <string name="Tech">Tecnologia</string>
+    <string name="Clothes">Abbigliamento</string>
+    <string name="Handmade">Artigianato</string>
+    <string name="Games">Giochi</string>
+    <string name="House_and_garden">Casa e giardino</string>
+    <string name="Food">Cibo</string>
+    <string name="School">Istruzione</string>
+    <string name="Fun">Divertimento</string>
+
 </resources>

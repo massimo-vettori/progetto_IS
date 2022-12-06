@@ -8,6 +8,7 @@
     tools:context=".MainActivity">
 
     <ScrollView
+        android:id="@+id/scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigator"
@@ -29,12 +30,6 @@
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="20dp" />
 
-            <include
-                layout="@layout/view_item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="20dp" />
 
         </LinearLayout>
     </ScrollView>
@@ -47,7 +42,6 @@
         android:background="@color/white"
         android:gravity="center"
         android:orientation="horizontal"
-        android:paddingVertical="15dp"
         android:weightSum="4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -56,46 +50,88 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
             android:orientation="vertical">
 
-            <TextView
+            <Button
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textAlignment="center" />
+                android:text="insert"/>
 
-            <TextView
-                android:id="@+id/textView23"
+            <CheckBox
+                android:id="@+id/tech"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textAlignment="center" />
+                android:text="Tech" />
+            <CheckBox
+                android:id="@+id/fun"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fun" />
+
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView32"
+            <CheckBox
+                android:id="@+id/range0"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textAlignment="center" />
+                android:text="range 0" />
 
-            <TextView
-                android:id="@+id/textView243"
+            <CheckBox
+                android:id="@+id/range1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textAlignment="center" />
+                android:text="range 1" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="insert description" />
+
+            <EditText
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="insert title" />
+            <Button
+                android:id="@+id/take_picture"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="take picture" />
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <CheckBox
+                android:id="@+id/is_charity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="is charity" />
+            <CheckBox
+                android:id="@+id/is_service"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="is service" />
+
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
