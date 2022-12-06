@@ -66,7 +66,7 @@ public class SignActivity extends AppCompatActivity {
             // Change activity
             /*Intent intent = new Intent(SignActivity.this, MainActivity.class);
             startActivity(intent);*/
-            startActivity(new Intent(SignActivity.this, TestActivity.class));
+            startActivity(new Intent(SignActivity.this, MainActivity.class));
         } else {
             loadFragment(new SignInUpFragment());
             Toast.makeText(this, "User is not signed in", Toast.LENGTH_SHORT).show();
