@@ -54,6 +54,19 @@
     <string name="is_charity">è beneficienza</string>
     <string name="is_service">è un servizio</string>
     <string name="insert">inserisci</string>
+    <string name="take_picture_user">scatta una foto profilo</string>
+    <string name="non_mandatory_fields">campi non obbligatori</string>
+    <string name="insert_name">inserisci il tuo nome</string>
+    <string name="insert_surname">inserisci il tuo cognome</string>
+    <string name="mandatory_fields">campi obbligatori</string>
+    <string name="insert_username">scegli un soprannome</string>
+    <string name="insert_email">inserisci la tua email</string>
+    <string name="insert_password">scegli una password</string>
+    <string name="confirm_password">inserici nuovamente la password scelta</string>
+    <string name="insert_city">inserisci la città</string>
+    <string name="insert_province">inserisci la provincia</string>
+    <string name="insert_region">inserisci la regione</string>
+    <string name="insert_country">inserisci la nazione</string>
 
 
 </resources>

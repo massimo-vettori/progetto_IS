@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -129,12 +128,12 @@ public class User {
                     }
                     ArrayList<String> UserData = new ArrayList<>();
                     for (int i = 0; i < 7; ++i) UserData.add("");
-                    DataBaseInteractor.retrieveHelper(map, User.USERNAME_DB, UserData,0);
-                    DataBaseInteractor.retrieveHelper(map, User.NAME_DB, UserData,1);
-                    DataBaseInteractor.retrieveHelper(map, User.SURNAME_DB, UserData,2);
-                    DataBaseInteractor.retrieveHelper(map, User.COORD_DB, UserData,3);
-                    DataBaseInteractor.retrieveHelper(map, User.RANK_DB, UserData,4);
-                    DataBaseInteractor.retrieveHelper(map, User.IMAGE_DB, UserData,5);
+                    BarattopolyUtil.retrieveHelper(map, User.USERNAME_DB, UserData,0);
+                    BarattopolyUtil.retrieveHelper(map, User.NAME_DB, UserData,1);
+                    BarattopolyUtil.retrieveHelper(map, User.SURNAME_DB, UserData,2);
+                    BarattopolyUtil.retrieveHelper(map, User.COORD_DB, UserData,3);
+                    BarattopolyUtil.retrieveHelper(map, User.RANK_DB, UserData,4);
+                    BarattopolyUtil.retrieveHelper(map, User.IMAGE_DB, UserData,5);
                     Integer rank = UserData.get(4).equals("")?0: Integer.valueOf(UserData.get(4));
                     consumer.accept(new User(id, UserData.get(0), UserData.get(1), UserData.get(2), UserData.get(3), rank, UserData.get(5)));
                 }
@@ -254,7 +253,7 @@ public class User {
      * @param consumer the way the fetched data are used
      */
     public static void  getReviews(Context context,String idUser, Consumer<Map<String, ArrayList<String>>> consumer) {
-        DataBaseInteractor.getMapWithIdAndInfo(context, dbRefUsers.child(idUser), User.ID_REVIEWS_DB, User.REVIEWS_INFO_LENGTH, consumer);
+        BarattopolyUtil.getMapWithIdAndInfo(context, dbRefUsers.child(idUser), User.ID_REVIEWS_DB, User.REVIEWS_INFO_LENGTH, consumer);
     }
 
     /**
@@ -284,7 +283,7 @@ public class User {
      * @param consumer the way the fetched data are used
      */
     public static void  getItemsOnBoard(Context context,String idUser, Consumer<Map<String, ArrayList<String>>> consumer) {
-        DataBaseInteractor.getMapWithIdAndInfo(context, dbRefUsers.child(idUser), User.ID_ITEMS_ON_BOARD_DB, User.ITEMS_ON_BOARD_INFO_LENGTH, consumer);
+        BarattopolyUtil.getMapWithIdAndInfo(context, dbRefUsers.child(idUser), User.ID_ITEMS_ON_BOARD_DB, User.ITEMS_ON_BOARD_INFO_LENGTH, consumer);
     }
 
     /**
@@ -326,7 +325,7 @@ public class User {
      * @param consumer the way the fetched data are used
      */
     public static void getObservedItems(Context context, String idUser, Consumer<Map<String, ArrayList<String>>> consumer ) {
-        DataBaseInteractor.getMapWithIdAndInfo(context, dbRefUsers.child(idUser), User.ID_OBSERVED_ITEMS_DB, User.OBSERVED_ITEMS_INFO_LENGTH, consumer);
+        BarattopolyUtil.getMapWithIdAndInfo(context, dbRefUsers.child(idUser), User.ID_OBSERVED_ITEMS_DB, User.OBSERVED_ITEMS_INFO_LENGTH, consumer);
     }
 
     /**
@@ -354,7 +353,7 @@ public class User {
      * @param consumer the way the fetched data are used
      */
     public static void getExchanges(Context context, String idUser, Consumer<Map<String, ArrayList<String>>> consumer ) {
-        DataBaseInteractor.getMapWithIdAndInfo(context, dbRefUsers.child(idUser), User.ID_EXCHANGES_DB, User.EXCHANGES_INFO_LENGTH, consumer);
+        BarattopolyUtil.getMapWithIdAndInfo(context, dbRefUsers.child(idUser), User.ID_EXCHANGES_DB, User.EXCHANGES_INFO_LENGTH, consumer);
     }
 
     /**

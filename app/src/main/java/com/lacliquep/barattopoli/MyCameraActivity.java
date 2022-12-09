@@ -1,25 +1,18 @@
 package com.lacliquep.barattopoli;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 
-import com.lacliquep.barattopoli.classes.DataBaseInteractor;
+import com.lacliquep.barattopoli.classes.BarattopolyUtil;
 
 public class MyCameraActivity extends Activity
 {
@@ -85,7 +78,7 @@ public class MyCameraActivity extends Activity
         {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             //photo encoding as a string
-            encodedImage = DataBaseInteractor.encodeImageToBase64(photo);
+            encodedImage = BarattopolyUtil.encodeImageToBase64(photo);
             //passing the encoded image back to the previous activity
             //create a bundle between the two activities
             Bundle c = getIntent().getExtras();

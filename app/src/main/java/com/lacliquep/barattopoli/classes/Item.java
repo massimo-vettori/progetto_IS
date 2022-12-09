@@ -11,7 +11,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -169,16 +168,16 @@ public class Item {
                     }
                     ArrayList<String> ItemData = new ArrayList<>();
                     for (int i = 0; i < 10; ++i) ItemData.add("");
-                    DataBaseInteractor.retrieveHelper(map, Item.TITLE_DB, ItemData,0);
-                    DataBaseInteractor.retrieveHelper(map, Item.DESCRIPTION_DB, ItemData,1);
-                    DataBaseInteractor.retrieveHelper(map, Item.ID_RANGE_DB, ItemData,2);
-                    DataBaseInteractor.retrieveHelper(map, Item.OWNER_DB, ItemData,3);
-                    DataBaseInteractor.retrieveHelper(map, Item.LOCATION_DB, ItemData,4);
-                    DataBaseInteractor.retrieveHelper(map, Item.IS_CHARITY_DB, ItemData,5);
-                    DataBaseInteractor.retrieveHelper(map, Item.IS_EXCHANGEABLE_DB, ItemData,6);
-                    DataBaseInteractor.retrieveHelper(map, Item.IS_SERVICE_DB, ItemData,7);
-                    DataBaseInteractor.retrieveHelper(map, Item.ID_CATEGORIES_DB, ItemData,8);
-                    DataBaseInteractor.retrieveHelper(map, Item.IMAGES_DB, ItemData,9);
+                    BarattopolyUtil.retrieveHelper(map, Item.TITLE_DB, ItemData,0);
+                    BarattopolyUtil.retrieveHelper(map, Item.DESCRIPTION_DB, ItemData,1);
+                    BarattopolyUtil.retrieveHelper(map, Item.ID_RANGE_DB, ItemData,2);
+                    BarattopolyUtil.retrieveHelper(map, Item.OWNER_DB, ItemData,3);
+                    BarattopolyUtil.retrieveHelper(map, Item.LOCATION_DB, ItemData,4);
+                    BarattopolyUtil.retrieveHelper(map, Item.IS_CHARITY_DB, ItemData,5);
+                    BarattopolyUtil.retrieveHelper(map, Item.IS_EXCHANGEABLE_DB, ItemData,6);
+                    BarattopolyUtil.retrieveHelper(map, Item.IS_SERVICE_DB, ItemData,7);
+                    BarattopolyUtil.retrieveHelper(map, Item.ID_CATEGORIES_DB, ItemData,8);
+                    BarattopolyUtil.retrieveHelper(map, Item.IMAGES_DB, ItemData,9);
                     ArrayList<String> own = new ArrayList<>(Arrays.asList(ItemData.get(3).split(",", User.INFO_LENGTH)));
                     ArrayList<String> cat = new ArrayList<>(Arrays.asList(ItemData.get(8).split(",", 0)));
                     ArrayList<String> img = new ArrayList<>(Arrays.asList(ItemData.get(9).split(",", 0)));
@@ -278,7 +277,7 @@ public class Item {
      *                 while in the correspondent values are the categories titles
      */
     public static void  getCategories(Context context,String idItem, Consumer<Map<String, String>> consumer) {
-        DataBaseInteractor.mapChildren(context, dbRefItems.child(idItem).child(Item.ID_CATEGORIES_DB), consumer);
+        BarattopolyUtil.mapChildren(context, dbRefItems.child(idItem).child(Item.ID_CATEGORIES_DB), consumer);
     }
 
     /**
@@ -422,7 +421,7 @@ public class Item {
         if (isExchangeable) throw new NonModifiableException();
         if (Category.getCategories().contains(category)) {
             DatabaseReference dbRef = dbRefItems.child(idItem).child(Item.ID_CATEGORIES_DB);
-            DataBaseInteractor.readData(context, dbRef, new Consumer<Object>() {
+            BarattopolyUtil.readData(context, dbRef, new Consumer<Object>() {
                     @Override
                     public void accept(Object o) {
                         String newCategories = "";
