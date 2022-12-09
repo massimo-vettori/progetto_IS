@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.Objects;
@@ -50,4 +52,46 @@ public class ItemViewActivity extends AppCompatActivity {
         this.findViewById(R.id.propose_btn).setEnabled(false);
     }
 
+    /**
+     * Returns the list of images in the horizontal image scroller
+     * @return ImageView[] containing the images in the horizontal image scroller
+     */
+    protected ImageView[] getImageList() {
+        // The horizontal linear layout containing the images
+        LinearLayout imageList = findViewById(R.id.scrollable_images);
+        // Creates an array of ImageView objects with the same length as the number of children of the imageList
+        ImageView[] images = new ImageView[imageList.getChildCount()];
+
+        // Iterates through the children of the imageList and adds them to the images array
+        for (int i = 0; i < imageList.getChildCount(); i++) {
+            images[i] = (ImageView) imageList.getChildAt(i);
+        }
+
+        // Returns the array of ImageView objects
+        return images;
+    }
+
+    /**
+     * Appends an ImageView to the horizontal image scroller
+     * @param image The ImageView to append to the horizontal image scroller
+     * @implNote Do not call this method in any "drawing" methods, such as draw(), onDraw(), onMeasure(), etc.
+     */
+    protected void addImageToImageList(ImageView image) {
+        // The horizontal linear layout containing the images
+        LinearLayout imageList = findViewById(R.id.scrollable_images);
+        // Adds the image to the imageList
+        imageList.addView(image);
+    }
+
+    /**
+     * Removes an ImageView from the horizontal image scroller
+     * @param image The ImageView to remove from the horizontal image scroller
+     * @implNote Do not call this method in any "drawing" methods, such as draw(), onDraw(), onMeasure(), etc.
+     */
+    protected void removeImageFromImageList(ImageView image) {
+        // The horizontal linear layout containing the images
+        LinearLayout imageList = findViewById(R.id.scrollable_images);
+        // Removes the image from the imageList
+        imageList.removeView(image);
+    }
 }
