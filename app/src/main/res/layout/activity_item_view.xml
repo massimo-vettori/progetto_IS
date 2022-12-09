@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/default_gradient_bg"
     tools:context=".ItemViewActivity">
 
 
@@ -16,7 +17,7 @@
         android:textAlignment="center"
         app:icon="?attr/actionModeCloseDrawable"
         app:iconPadding="0dp"
-        app:iconTint="#000000"
+        app:iconTint="@color/blue_100"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="SpeakableTextPresentCheck" />
@@ -25,11 +26,13 @@
         android:id="@+id/propose_btn"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginStart="?attr/paddingMd"
+        android:layout_marginEnd="?attr/paddingMd"
+        android:layout_marginBottom="?attr/paddingMd"
         android:fontFamily="@font/inter_medium"
         android:text="@string/fai_la_tua_proposta"
+        android:backgroundTint="@color/gray_700"
+        android:textColor="@color/gray_400"
         android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,10 +41,12 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:paddingTop="?attr/paddingMd"
         android:paddingBottom="15dp"
-        app:layout_constraintBottom_toTopOf="@+id/propose_btn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/propose_btn"
+        app:layout_constraintTop_toBottomOf="@+id/back_button">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -56,14 +61,14 @@
                 <LinearLayout
                     android:id="@+id/scrollable_images"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="?attr/paddingSm">
 
                     <ImageView
                         android:id="@+id/imageView1"
                         android:layout_width="220dp"
                         android:layout_height="260dp"
-                        android:layout_marginHorizontal="15dp"
-                        android:layout_marginStart="15dp"
+                        android:layout_marginHorizontal="?attr/paddingSm"
                         android:elevation="0dp"
                         android:scaleType="centerCrop"
                         android:src="@drawable/surface" />
@@ -72,8 +77,7 @@
                         android:id="@+id/imageView2"
                         android:layout_width="220dp"
                         android:layout_height="260dp"
-                        android:layout_marginHorizontal="15dp"
-                        android:layout_marginStart="15dp"
+                        android:layout_marginHorizontal="?attr/paddingSm"
                         android:elevation="0dp"
                         android:scaleType="centerCrop"
                         android:src="@drawable/surface" />
@@ -82,9 +86,7 @@
                         android:id="@+id/imageView3"
                         android:layout_width="220dp"
                         android:layout_height="260dp"
-                        android:layout_marginHorizontal="15dp"
-                        android:layout_marginStart="15dp"
-                        android:layout_marginEnd="15dp"
+                        android:layout_marginHorizontal="?attr/paddingSm"
                         android:elevation="0dp"
                         android:scaleType="centerCrop"
                         android:src="@drawable/surface" />
@@ -94,13 +96,14 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="15dp">
+                android:layout_marginStart="?attr/paddingMd"
+                android:layout_marginTop="?attr/paddingXl"
+                android:layout_marginEnd="?attr/paddingMd">
 
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:contentDescription="@string/avatar_desc"
                     android:scaleType="centerCrop"
                     tools:srcCompat="@tools:sample/avatars" />
 
@@ -114,59 +117,90 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/inter_medium"
-                        android:text="Nome Utente" />
+                        android:fontFamily="@font/inter_bold"
+                        android:text="Nome Utente"
+                        android:textColor="@color/white" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_medium"
-                        android:text="Ha proposto questo scambio" />
+                        android:text="Ha proposto questo scambio"
+                        android:textColor="@color/gray_400" />
                 </LinearLayout>
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="?attr/paddingMd"
+                android:layout_marginTop="?attr/paddingLg"
+                android:layout_marginEnd="?attr/paddingMd"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_bold"
+                    android:text="Surface Pro 9"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_medium"
+                    android:text="$300-400"
+                    android:textColor="@color/sky_200"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="15dp"
+                android:layout_marginStart="?attr/paddingMd"
+                android:layout_marginTop="?attr/paddingLg"
+                android:layout_marginEnd="?attr/paddingMd"
                 android:fontFamily="@font/inter_medium"
                 android:text="@string/descrizione_dell_offerente"
-                android:textSize="20sp" />
+                android:textColor="@color/white"
+                android:textSize="17sp" />
 
             <TextView
                 android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="15dp"
+                android:layout_marginStart="?attr/paddingMd"
+                android:layout_marginTop="?attr/paddingSm"
+                android:layout_marginEnd="?attr/paddingMd"
                 android:fontFamily="@font/inter_medium"
                 android:text="@string/lorem"
+                android:textColor="@color/gray_400"
                 android:textSize="13sp" />
 
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="15dp"
+                android:layout_marginStart="?attr/paddingMd"
+                android:layout_marginTop="?attr/paddingLg"
+                android:layout_marginEnd="?attr/paddingMd"
                 android:fontFamily="@font/inter_medium"
                 android:text="@string/stato_dell_oggetto"
-                android:textSize="20sp" />
+                android:textColor="@color/white"
+                android:textSize="17sp" />
 
             <TextView
                 android:id="@+id/obj_state"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="15dp"
+                android:layout_marginStart="?attr/paddingMd"
+                android:layout_marginTop="?attr/paddingSm"
+                android:layout_marginEnd="?attr/paddingMd"
                 android:fontFamily="@font/inter_medium"
                 android:text="@string/lorem"
+                android:textColor="@color/gray_400"
                 android:textSize="13sp" />
         </LinearLayout>
     </ScrollView>

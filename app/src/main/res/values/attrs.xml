@@ -4,6 +4,10 @@
     <!-- Other values-->
     <attr name="bgGradientTopColor" format="reference" />
     <attr name="bgGradientBottomColor" format="reference" />
+    <attr name="paddingSm" format="dimension" />
+    <attr name="paddingMd" format="dimension" />
+    <attr name="paddingLg" format="dimension" />
+    <attr name="paddingXl" format="dimension" />
 
     <declare-styleable name="ItemCardView">
         <attr name="top"    format="string"/>

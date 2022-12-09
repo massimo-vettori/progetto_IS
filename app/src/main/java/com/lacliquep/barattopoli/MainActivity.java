@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -45,6 +46,6 @@ public class MainActivity extends AppCompatActivity {
         bottomText = findViewById(R.id.bottom_text);
         imageContainer = findViewById(R.id.image_container);
 
-
+        Objects.requireNonNull(getSupportActionBar()).hide();
     }
 }
