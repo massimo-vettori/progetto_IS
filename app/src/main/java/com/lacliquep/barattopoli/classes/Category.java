@@ -24,7 +24,7 @@ import java.util.function.Consumer;
  * @since 1.0
  */
 public class Category {
-    public static final String CLASS_CATEGORY_DB = "category";
+    public static final String CLASS_CATEGORY_DB = "categories";
     public static final String ID_CATEGORY_DB = "id_category";
     public static final String ID_ITEMS_DB = "id_items";
     public static final int ITEM_INFO_LENGTH = 8;

@@ -23,35 +23,36 @@ import com.lacliquep.barattopoli.classes.DataBaseInteractor;
 
 public class MyCameraActivity extends Activity
 {
+    //
     private static final int CAMERA_REQUEST = 1888;
-    private ImageView imageView;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
-    public static String encodedImage;
+    //string-encoded image to pass back to the activity bundled with this activity
+    private static String encodedImage;
+    //tag name for the logcat
+    private static final String ACTIVITY_TAG_NAME = "MyCameraActivity";
+
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_camera);
-        this.imageView = (ImageView)this.findViewById(R.id.imageView1);
-        Button photoButton = (Button) this.findViewById(R.id.button1);
+        Button photoButton = (Button) this.findViewById(R.id.take_picture);
         photoButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
+                //TODO: enable permissions in manifest
                 /*if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
                 {
                     requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
                 }
-                else
-                {*/
-
+                else*/
+                {
                     Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivityForResult(cameraIntent,CAMERA_REQUEST);
-
-
-               // }
+                }
             }
         });
     }
@@ -83,35 +84,37 @@ public class MyCameraActivity extends Activity
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK)
         {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
-            imageView.setImageBitmap(photo);
+            //photo encoding as a string
             encodedImage = DataBaseInteractor.encodeImageToBase64(photo);
-            //passing the encodedimage back to main activity
+            //passing the encoded image back to the previous activity
+            //create a bundle between the two activities
             Bundle c = getIntent().getExtras();
-            Context context; // or other values
-            String con = (c != null)? c.getString("previous activity"):"";
+            //fetching the previous activity class name
+            String con = "";
             Intent intent;
+            if (c != null) {
+                con = c.getString(getString(R.string.Bundle_tag_Previous_activity));
+                con = (con != null) ? con : "";
+            }
             try {
                 //get the class name of the previous activity
                 Class<?> cls = Class.forName(con);
                 //attach a string with the image encoding to pass it back
                 Bundle b = new Bundle();
-                b.putString("encodedImage", encodedImage); //Your id
+                b.putString(getString(R.string.Bundle_tag_encoded_image), encodedImage);
                 //create intent to came back to the previous activity
                 intent = new Intent(MyCameraActivity.this, cls);
                 //attach the string
-                intent.putExtras(b); //Put your id to your next Intent
+                intent.putExtras(b);
             } catch (ClassNotFoundException e) {
-                //don't loop please, go back to main activity
+                //don't loop please, go back to the main activity if sth went wrong
                 intent = new Intent(MyCameraActivity.this, MainActivity.class);
-                //TODO:change in alert
-                Toast.makeText(MyCameraActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                //TODO:change in alert?
+                //logcat when debugging
+                Log.d(MyCameraActivity.ACTIVITY_TAG_NAME, e.getMessage());
             }
             startActivity(intent);
             finish();
-
-
-
-
         }
     }
 }

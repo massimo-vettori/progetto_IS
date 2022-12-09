@@ -289,6 +289,7 @@ public class User {
 
     /**
      * create and add a new Item with its basic info  to the provided User's board and in the class Items in the database <p>
+     * as side effect, the item will be added to its correspondent categories, its correspondent range and in Items
      * @param itemTitle the title of the new Item
      * @param itemDescription a description of the new Item
      * @param itemIdRange the id of the Range of value of the new Item
@@ -303,7 +304,9 @@ public class User {
 
     public static void addNewItemOnBoard(String itemTitle, String itemDescription, String itemIdRange, ArrayList<String> currentUserBasicInfo, String itemLocation, boolean itemIsCharity, boolean itemIsService, @NonNull ArrayList<String> itemCategories ,@NonNull ArrayList<String> itemImages) {
         Item newItem = Item.createItem(itemTitle,itemDescription,itemIdRange,currentUserBasicInfo,itemLocation,itemIsCharity,itemIsService,itemCategories,itemImages);
-        dbRefUsers.child(currentUserBasicInfo.get(0)).child(User.ID_ITEMS_ON_BOARD_DB).child(newItem.getIdItem()).setValue(newItem.getItemBasicInfo());
+        String userId = currentUserBasicInfo.get(0);
+        Log.d("TAG", userId + "  " + "mmNsy71Nf5e8ATR79b4LNk3uRSh1");
+        dbRefUsers.child("mmNsy71Nf5e8ATR79b4LNk3uRSh1").child(User.ID_ITEMS_ON_BOARD_DB).child(newItem.getIdItem()).setValue(newItem.getItemBasicInfo());
         Item.insertItemInDataBase(newItem);
     }
     /**

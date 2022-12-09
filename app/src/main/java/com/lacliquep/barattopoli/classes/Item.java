@@ -119,8 +119,8 @@ public class Item {
    }
 
     /**
-     * to be called when the current User is creating a new Item. Store the item in the database in Items
-     * and add the item to all the correspondent categories
+     * to be called when the current User is creating a new Item(from User.addNewItemOnBoard) . Store the item in the database in Items
+     * and add the item to all the correspondent categories, and to its correspondent range
      * @see User#addNewItemOnBoard(String, String, String, ArrayList, String, boolean, boolean, ArrayList, ArrayList)
      * @param item the new item
      */
@@ -145,7 +145,8 @@ public class Item {
        for(String category: item.categories) {
            Category.addItemToCategory(item.idItem, item.itemBasicInfo, category);
        }
-
+       //add the item to its correspondent range
+       Range.addItemToRange(item.idItem,item.itemBasicInfo, item.idRange);
    }
 
 

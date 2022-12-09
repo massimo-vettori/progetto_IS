@@ -39,7 +39,7 @@ public class Range {
     }
 
     //dedicated Exception
-    static class noSuchRangeException extends Exception {
+    public static class noSuchRangeException extends Exception {
         public noSuchRangeException(String s) {
             super(s);
         }
@@ -50,7 +50,7 @@ public class Range {
      * To add a new range, it needs to be added here and in the database
      */
     public static final Set<Range> ranges = new HashSet<>();
-    {
+    static {
         ranges.add(new Range("0",0,10));
         ranges.add(new Range("1",11,20));
         ranges.add(new Range("2",21,30));

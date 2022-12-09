@@ -83,11 +83,11 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView32"
+            <Button
+                android:id="@+id/insertNewItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                android:text="insert new item"
                 android:textAlignment="center" />
 
             <TextView
