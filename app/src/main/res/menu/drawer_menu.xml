@@ -5,6 +5,7 @@
 
 <!--    here we put all the menu files that we want to show in navigation drawer-->
     <group android:checkableBehavior="single">
+
         <item android:id="@+id/nav_object"
             android:icon="@drawable/ic_baseline_object_24"
             android:title="@string/objects" />

@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         Toolbar toolbar = findViewById(R.id.toolbar); // define the toolbar because we removed the default ActionBar
         setSupportActionBar(toolbar); // set our ActionBar
 
@@ -37,26 +38,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.addDrawerListener(toggle);
         toggle.syncState(); // rotating the hamburger icon
 
-        if(savedInstanceState == null) {
+        if(savedInstanceState == null)
+        {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ObjectFragment()).commit(); // this start for the first when you open this activity
+        }
+
+        /*if(savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ObjectFragment()).commit(); // this start for the first when you open this activity
             navigationView.setCheckedItem(R.id.nav_object);
-        }
+        }*/
     }
 
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        boolean enter = false;
         switch (item.getItemId()){
-            case R.id.nav_object:
+            /*case R.id.nav_object:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ObjectFragment()).commit();
-                break;
+                enter = true;
+                break;*/
             case R.id.nav_services:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ServicesFragment()).commit();
+                enter = true;
                 break;
         }
 
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+        if(enter){
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
+        }
+        return false;
     }
 
     @Override
