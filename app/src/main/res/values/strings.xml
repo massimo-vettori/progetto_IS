@@ -41,13 +41,6 @@
     <string name="range">%1$s %2$d %3$s %4$d</string>
     <string name="inserting_a_new_item">Inserimento di un nuovo oggetto o servizio nella tua bacheca</string>
     <string name="take_picture">Scatta una foto per il tuo oggetto o servizio</string>
-
-    <!-- don't translate -->
-    <string name="Bundle_tag_Previous_activity">previous Activity</string>
-    <string name="Bundle_tag_user_basic_info">user\'s basic info</string>
-    <string name="Bundle_tag_encoded_image">encoded image</string>
-
-    <string name="text_preview">Text Preview</string>
     <string name="insert_description">inserisci una descrizione</string>
     <string name="insert_title">inserisci un titolo</string>
     <string name="insert_location">inserisci il luogo</string>
@@ -67,6 +60,17 @@
     <string name="insert_province">inserisci la provincia</string>
     <string name="insert_region">inserisci la regione</string>
     <string name="insert_country">inserisci la nazione</string>
+
+    <string name="wrong_choice">: scelta incorretta. Scegli fra una di queste:</string>
+    <string name="understood">ho capito</string>
+
+    <!-- don't translate -->
+    <string name="Bundle_tag_Previous_activity">previous Activity</string>
+    <string name="Bundle_tag_user_basic_info">user\'s basic info</string>
+    <string name="Bundle_tag_encoded_image">encoded image</string>
+
+    <string name="text_preview">Text Preview</string>
+
 
 
 </resources>

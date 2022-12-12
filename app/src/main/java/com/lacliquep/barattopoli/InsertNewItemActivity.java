@@ -87,7 +87,7 @@ public class InsertNewItemActivity extends AppCompatActivity {
         //EditTexts
         insertDescription = findViewById(R.id.description);
         insertTitle = findViewById(R.id.title);
-        insertLocation = findViewById(R.id.location); //TODO: substitute with user's location
+        //insertLocation = findViewById(R.id.location); //TODO: substitute with user's location
 
         //ImageView
         imageContainer = findViewById(R.id.image_container);
@@ -137,6 +137,7 @@ public class InsertNewItemActivity extends AppCompatActivity {
                 //TODO: understand why it does not work if wrapped in asyncTask
                 insertButton(encodedImage[0]);
         }});
+
 
 
         /*
@@ -237,7 +238,7 @@ public class InsertNewItemActivity extends AppCompatActivity {
         //fetching the user's choices
         String insertedTitle = insertTitle.getText().toString();
         String insertedDescription = insertDescription.getText().toString();
-        String insertedLocation = insertLocation.getText().toString();
+        //String insertedLocation = insertLocation.getText().toString();
         isForCharity = isCharity.isChecked();
         isAService = isService.isChecked();
         //sanity checks
@@ -247,9 +248,9 @@ public class InsertNewItemActivity extends AppCompatActivity {
             if(insertedDescription.equals("")) Toast.makeText(InsertNewItemActivity.this, "description missing", Toast.LENGTH_LONG).show();
             else {
                 description = insertedDescription;
-                if(insertedLocation.equals("")) Toast.makeText(InsertNewItemActivity.this, "location missing", Toast.LENGTH_LONG).show();
-                else {
-                    location = insertedLocation;
+                /*if(insertedLocation.equals("")) Toast.makeText(InsertNewItemActivity.this, "location missing", Toast.LENGTH_LONG).show();
+                else*/ {
+                    //location = insertedLocation;
                     if(tech.isChecked()) categories.add("Tech");
                     if(clothes.isChecked()) categories.add("Clothes");
                     if(houseAndGarden.isChecked()) categories.add("House_and_garden");
@@ -291,15 +292,15 @@ public class InsertNewItemActivity extends AppCompatActivity {
                                         public void onClick(DialogInterface dialog, int id) {
                                             //insert the item in the database
                                             images.add(image);
-                                            User.retrieveCurrentUser(InsertNewItemActivity.this, dbRef, new Consumer<User>() {
+                                            User.retrieveCurrentUser(InsertNewItemActivity.ACTIVITY_TAG_NAME, dbRef, new Consumer<User>() {
                                                 @Override
                                                 public void accept(User user) {
                                                     //set here the owner's basic info (otherwise it won't be fetched)
                                                     //set the location to be the same as the user's automatically for now
                                                     //TODO: further improvement: add the same thing in insertUserActivity for choosing a different location
-                                                    String userLocation = user.getCoord();
+                                                    ArrayList<String> userLocation = user.getLocation();
                                                     ArrayList<String> owner = new ArrayList<>(Arrays.asList(user.getUserBasicInfo().split(",", 0)));
-                                                    User.addNewItemOnBoard(title,description,idRange,owner, userLocation, isForCharity,isAService,categories, images);
+                                                    User.addNewItemOnBoard(InsertNewItemActivity.ACTIVITY_TAG_NAME, title,description,idRange,owner, userLocation, isForCharity,isAService,categories, images);
                                                     Toast.makeText(InsertNewItemActivity.this, getString(R.string.inserting_a_new_item) + getString(R.string.success), Toast.LENGTH_LONG).show();
                                                     //back to the main activity //TODO: back to the "OnBoardActivity
                                                     startActivity(new Intent(InsertNewItemActivity.this, MainActivity.class));

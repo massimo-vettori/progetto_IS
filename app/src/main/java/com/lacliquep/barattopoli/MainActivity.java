@@ -10,15 +10,19 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.lacliquep.barattopoli.classes.User;
+
 public class MainActivity extends AppCompatActivity {
 
-    View view;
-    TextView topText;
-    ImageView imageContainer;
-    TextView bottomText;
-    Button insertNewItem;
+    private static String ACTIVITY_TAG_NAME = "MainActivity";
+    private View view;
+    private TextView topText;
+    private ImageView imageContainer;
+    private TextView bottomText;
+    private Button insertNewItem;
+    private Button delete;
 
-    String userBasicInfo;
+    private String userBasicInfo;
 
 
     @Override
@@ -30,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         bottomText = findViewById(R.id.bottom_text);
         imageContainer = findViewById(R.id.image_container);
         insertNewItem = findViewById(R.id.insertNewItem);
+        delete = findViewById(R.id.deleteItem);
 
         //retrieving a previous activity value attached to the bundle
         Bundle b = getIntent().getExtras();
@@ -52,6 +57,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                User.removeItemFromBoard(MainActivity.ACTIVITY_TAG_NAME, "mmNsy71Nf5e8ATR79b4LNk3uRSh1","217b8390-b454-45b5-ab5f-6e947a08c29e");
+            }
+        });
+
 
     }
+
+
 }

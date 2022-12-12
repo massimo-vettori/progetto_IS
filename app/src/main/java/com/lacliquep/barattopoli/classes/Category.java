@@ -62,13 +62,13 @@ public class Category {
     /**
      * Retrieve from the database the main information about the items which belong to the provided category
      * by saving them in a map which be manipulated by the consumer
-     * @param context the activity/fragment where this method is called
+     * @param contextTag the string representing the activity/fragment where this method is called
      * @param category the category title
      * @param consumer the way the fetched data are being used
      */
-    public static void getItemsByCategory(Context context, String category, Consumer<Map<String, ArrayList<String>>> consumer) {
+    public static void getItemsByCategory(String contextTag, String category, Consumer<Map<String, ArrayList<String>>> consumer) {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(Category.CLASS_CATEGORY_DB);
-        BarattopolyUtil.getMapWithIdAndInfo(context, dbRef, category, Category.ITEM_INFO_LENGTH, consumer);
+        BarattopolyUtil.getMapWithIdAndInfo(contextTag, dbRef, category, Category.ITEM_INFO_LENGTH, consumer);
     }
     //da verificare se funziona
     /**

@@ -60,13 +60,13 @@ public class Range {
     /**
      * Retrieve from the database the id and the basic information about the items which belong to the specified range
      * by saving them in a map which will be manipulated by the consumer
-     * @param context the activity/fragment where this method is called
+     * @param contextTag the string representing the activity/fragment where this method is called
      * @param idRange the range id
      * @param consumer the way the fetched data are being used
      */
-    public static void getItemsIdAndInfo(Context context, String idRange, Consumer<Map<String, ArrayList<String>>> consumer) {
+    public static void getItemsIdAndInfo(String contextTag, String idRange, Consumer<Map<String, ArrayList<String>>> consumer) {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(Range.CLASS_RANGE_DB);
-        BarattopolyUtil.getMapWithIdAndInfo(context, dbRef, idRange, Item.INFO_LENGTH, consumer);
+        BarattopolyUtil.getMapWithIdAndInfo(contextTag, dbRef, idRange, Item.INFO_LENGTH, consumer);
     }
 
     //da verificare se funziona

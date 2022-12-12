@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 
 public class SignActivity extends AppCompatActivity {
 
+    private static final String ACTIVITY_TAG_NAME = "SignActivity";
     // Creates an instance of Firebase Authentication
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private final FirebaseUser user  = mAuth.getCurrentUser();
@@ -54,7 +55,7 @@ public class SignActivity extends AppCompatActivity {
             });
             Toast.makeText(this, "User is signed in", Toast.LENGTH_LONG).show();
 
-            User.retrieveCurrentUser(SignActivity.this, mDatabase, new Consumer<User>() {
+            User.retrieveCurrentUser(SignActivity.ACTIVITY_TAG_NAME, mDatabase, new Consumer<User>() {
                 @Override
                 public void accept(User user) {
                     Bundle c = new Bundle();
