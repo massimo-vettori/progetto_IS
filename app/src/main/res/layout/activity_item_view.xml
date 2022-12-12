@@ -31,8 +31,8 @@
         android:layout_marginBottom="?attr/paddingMd"
         android:fontFamily="@font/inter_medium"
         android:text="@string/fai_la_tua_proposta"
-        android:backgroundTint="@color/gray_700"
-        android:textColor="@color/gray_400"
+        android:backgroundTint="@color/zinc_700"
+        android:textColor="@color/zinc_400"
         android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -101,6 +101,7 @@
                 android:layout_marginEnd="?attr/paddingMd">
 
                 <ImageView
+                    android:id="@+id/user_avatar"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:contentDescription="@string/avatar_desc"
@@ -115,6 +116,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/user_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_bold"
@@ -126,7 +128,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_medium"
                         android:text="Ha proposto questo scambio"
-                        android:textColor="@color/gray_400" />
+                        android:textColor="@color/zinc_400" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -139,6 +141,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/item_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/inter_bold"
@@ -147,6 +150,7 @@
                     android:textSize="20sp" />
 
                 <TextView
+                    android:id="@+id/item_price_range"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/inter_medium"
@@ -176,7 +180,7 @@
                 android:layout_marginEnd="?attr/paddingMd"
                 android:fontFamily="@font/inter_medium"
                 android:text="@string/lorem"
-                android:textColor="@color/gray_400"
+                android:textColor="@color/zinc_400"
                 android:textSize="13sp" />
 
 
@@ -187,20 +191,20 @@
                 android:layout_marginTop="?attr/paddingLg"
                 android:layout_marginEnd="?attr/paddingMd"
                 android:fontFamily="@font/inter_medium"
-                android:text="@string/stato_dell_oggetto"
+                android:text="@string/locazione_fisica"
                 android:textColor="@color/white"
                 android:textSize="17sp" />
 
             <TextView
-                android:id="@+id/obj_state"
+                android:id="@+id/location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="?attr/paddingMd"
                 android:layout_marginTop="?attr/paddingSm"
                 android:layout_marginEnd="?attr/paddingMd"
                 android:fontFamily="@font/inter_medium"
-                android:text="@string/lorem"
-                android:textColor="@color/gray_400"
+                android:text="@string/lorem_short"
+                android:textColor="@color/zinc_400"
                 android:textSize="13sp" />
         </LinearLayout>
     </ScrollView>

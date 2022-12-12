@@ -1,14 +1,18 @@
 package com.lacliquep.barattopoli;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.Image;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.lacliquep.barattopoli.classes.Item;
 
 import java.util.Objects;
 
@@ -26,7 +30,28 @@ public class ItemViewActivity extends AppCompatActivity {
         backButton.setOnClickListener(view -> {
             ItemViewActivity.this.backToHome();
         });
+
+        // Get the intent that started this activity
+        Intent intent = getIntent();
+        // Get the serialized item from the intent and deserialize it into an Item object
+        Item item = (Item) intent.getSerializableExtra("item");
+        // Updates the UI with the item's data
+        if (item != null) this.setup(item);
     }
+
+    protected void setup(@NonNull Item item) {
+        updateItemDescription(item.getDescription());
+        updateItemTitle(item.getTitle());
+        updateItemLocation(item.getLocation());
+
+//        TODO: either implement image decoding or add methods to Item and User classes to get the images as a Bitmap
+//        updateUserAvatar(item.getOwner());
+//        for (Bitmap image : item.getImages()) {
+//            addImageToImageList(image);
+//        }
+    }
+
+
 
     protected void backToHome() {
         // This method is called when the back button is pressed
@@ -38,9 +63,19 @@ public class ItemViewActivity extends AppCompatActivity {
         ((TextView) this.findViewById(R.id.description)).setText(desc);
     }
 
-    protected void updateItemState(String state) {
-        // Finds the TextView for the item state and updates its text
-        ((TextView) this.findViewById(R.id.obj_state)).setText(state);
+    protected void updateItemTitle(String title) {
+        // Finds the TextView for the item title and updates its text
+        ((TextView) this.findViewById(R.id.title)).setText(title);
+    }
+
+    protected void updateItemLocation(String location) {
+        // Finds the TextView for the item location and updates its text
+        ((TextView) this.findViewById(R.id.location)).setText(location);
+    }
+
+    protected void updateUserAvatar(Bitmap avatar) {
+        // Finds the ImageView for the user avatar and updates its image
+        ((ImageView) this.findViewById(R.id.user_avatar)).setImageBitmap(avatar);
     }
 
     protected void enableProposeButton() {
@@ -77,11 +112,15 @@ public class ItemViewActivity extends AppCompatActivity {
      * @param image The ImageView to append to the horizontal image scroller
      * @implNote Do not call this method in any "drawing" methods, such as draw(), onDraw(), onMeasure(), etc.
      */
-    protected void addImageToImageList(ImageView image) {
+    protected void addImageToImageList(Bitmap image) {
+        // Creates a new ImageView object
+        ImageView img = new ImageView(this);
+        // Sets the image of the ImageView to the image passed as a parameter
+        img.setImageBitmap(image);
         // The horizontal linear layout containing the images
         LinearLayout imageList = findViewById(R.id.scrollable_images);
         // Adds the image to the imageList
-        imageList.addView(image);
+        imageList.addView(img);
     }
 
     /**
