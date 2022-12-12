@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Barattopoli</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <string name="login">Accedi</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
@@ -9,17 +8,24 @@
     <string name="register">Registrati</string>
     <string name="select_error">Necessario selezionare: </string>
     <string name="match_error">: devono coincidere</string>
-    <string name="in_progress">…in progress…</string>
+    <string name="in_progress">…in progresso…</string>
     <string name="accept_privacy">Conferma presa visione</string>
     <string name="forgot_password">Ho dimenticato la password</string>
     <string name="Login">Login</string>
     <string name="Logout">Logout</string>
     <string name="Registration">Registrazione</string>
-    <string name="error_email">inserire una email</string>
-    <string name="error_password">scegliere una password di almeno 6 caratteri!</string>
+    <string name="error_email">inserisci una email</string>
+    <string name="error_password">scegli una password di almeno 6 caratteri!</string>
     <string name="success">: azione avvenuta con successo</string>
     <string name="failure">: fallimento, qualcosa è andato storto</string>
     <string name="empty_text">: il testo non può essere vuoto!</string>
+    <string name="Yes">Sì</string>
+    <string name="No">No</string>
+    <string name="From">da</string>
+    <string name="To">a</string>
+
+    <string name="CATEGORIES">CATEGORIE</string>
+    <string name="RANGE">VALORE INDICATIVO</string>
     <string name="Tech">Tecnologia</string>
     <string name="Clothes">Abbigliamento</string>
     <string name="Handmade">Artigianato</string>
@@ -36,4 +42,40 @@
     <string name="text_placeholder">Placeholder (modify me)</string>
     <string name="avatar_desc">Avatar dell\'offerente</string>
     <string name="lorem_short">Lorem ipsum dolor sit amet.</string>
+
+    <string name="Alert_insert_item">Confermi di voler inserire l\'oggetto o servizio?</string>
+    <string name="Alert_take_new_picture">Se cambierai la foto, i campi finora selezionati torneranno ad essere vuoti. Procedere comunque?</string>
+
+    <string name="range">%1$s %2$d %3$s %4$d</string>
+    <string name="inserting_a_new_item">Inserimento di un nuovo oggetto o servizio nella tua bacheca</string>
+    <string name="take_picture">Scatta una foto per il tuo oggetto o servizio</string>
+    <string name="insert_description">inserisci una descrizione</string>
+    <string name="insert_title">inserisci un titolo</string>
+    <string name="insert_location">inserisci il luogo</string>
+    <string name="is_charity">è beneficienza</string>
+    <string name="is_service">è un servizio</string>
+    <string name="insert">inserisci</string>
+    <string name="take_picture_user">scatta una foto profilo</string>
+    <string name="non_mandatory_fields">campi non obbligatori</string>
+    <string name="insert_name">inserisci il tuo nome</string>
+    <string name="insert_surname">inserisci il tuo cognome</string>
+    <string name="mandatory_fields">campi obbligatori</string>
+    <string name="insert_username">scegli un soprannome</string>
+    <string name="insert_email">inserisci la tua email</string>
+    <string name="insert_password">scegli una password</string>
+    <string name="confirm_password">inserici nuovamente la password scelta</string>
+    <string name="insert_city">inserisci la città</string>
+    <string name="insert_province">inserisci la provincia</string>
+    <string name="insert_region">inserisci la regione</string>
+    <string name="insert_country">inserisci la nazione</string>
+
+    <string name="wrong_choice">: scelta incorretta. Scegli fra una di queste:</string>
+    <string name="understood">ho capito</string>
+
+    <!-- don't translate -->
+    <string name="Bundle_tag_Previous_activity">previous Activity</string>
+    <string name="Bundle_tag_user_basic_info">user\'s basic info</string>
+    <string name="Bundle_tag_encoded_image">encoded image</string>
+
+    <string name="text_preview">Text Preview</string>
 </resources>

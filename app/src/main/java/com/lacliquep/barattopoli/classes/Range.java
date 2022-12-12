@@ -2,8 +2,6 @@ package com.lacliquep.barattopoli.classes;
 
 import android.content.Context;
 
-import androidx.annotation.Nullable;
-
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -39,7 +37,7 @@ public class Range {
     }
 
     //dedicated Exception
-    static class noSuchRangeException extends Exception {
+    public static class noSuchRangeException extends Exception {
         public noSuchRangeException(String s) {
             super(s);
         }
@@ -50,7 +48,7 @@ public class Range {
      * To add a new range, it needs to be added here and in the database
      */
     public static final Set<Range> ranges = new HashSet<>();
-    {
+    static {
         ranges.add(new Range("0",0,10));
         ranges.add(new Range("1",11,20));
         ranges.add(new Range("2",21,30));
@@ -62,13 +60,13 @@ public class Range {
     /**
      * Retrieve from the database the id and the basic information about the items which belong to the specified range
      * by saving them in a map which will be manipulated by the consumer
-     * @param context the activity/fragment where this method is called
+     * @param contextTag the string representing the activity/fragment where this method is called
      * @param idRange the range id
      * @param consumer the way the fetched data are being used
      */
-    public static void getItemsIdAndInfo(Context context, String idRange, Consumer<Map<String, ArrayList<String>>> consumer) {
+    public static void getItemsIdAndInfo(String contextTag, String idRange, Consumer<Map<String, ArrayList<String>>> consumer) {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(Range.CLASS_RANGE_DB);
-        DataBaseInteractor.getMapWithIdAndInfo(context, dbRef, idRange, Item.INFO_LENGTH, consumer);
+        BarattopolyUtil.getMapWithIdAndInfo(contextTag, dbRef, idRange, Item.INFO_LENGTH, consumer);
     }
 
     //da verificare se funziona

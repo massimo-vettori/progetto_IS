@@ -1,15 +1,9 @@
 package com.lacliquep.barattopoli.classes;
 
 import android.content.Context;
-import android.util.Log;
 
-import androidx.annotation.NonNull;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -24,7 +18,7 @@ import java.util.function.Consumer;
  * @since 1.0
  */
 public class Category {
-    public static final String CLASS_CATEGORY_DB = "category";
+    public static final String CLASS_CATEGORY_DB = "categories";
     public static final String ID_CATEGORY_DB = "id_category";
     public static final String ID_ITEMS_DB = "id_items";
     public static final int ITEM_INFO_LENGTH = 8;
@@ -68,13 +62,13 @@ public class Category {
     /**
      * Retrieve from the database the main information about the items which belong to the provided category
      * by saving them in a map which be manipulated by the consumer
-     * @param context the activity/fragment where this method is called
+     * @param contextTag the string representing the activity/fragment where this method is called
      * @param category the category title
      * @param consumer the way the fetched data are being used
      */
-    public static void getItemsByCategory(Context context, String category, Consumer<Map<String, ArrayList<String>>> consumer) {
+    public static void getItemsByCategory(String contextTag, String category, Consumer<Map<String, ArrayList<String>>> consumer) {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(Category.CLASS_CATEGORY_DB);
-        DataBaseInteractor.getMapWithIdAndInfo(context, dbRef, category, Category.ITEM_INFO_LENGTH, consumer);
+        BarattopolyUtil.getMapWithIdAndInfo(contextTag, dbRef, category, Category.ITEM_INFO_LENGTH, consumer);
     }
     //da verificare se funziona
     /**

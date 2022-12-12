@@ -3,22 +3,12 @@ package com.lacliquep.barattopoli;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.lacliquep.barattopoli.classes.DataBaseInteractor;
-import com.lacliquep.barattopoli.classes.Item;
-import com.lacliquep.barattopoli.classes.User;
-import com.lacliquep.barattopoli.views.ItemView;
-
-import android.graphics.Bitmap;
-import android.media.Image;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -29,12 +19,20 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import com.lacliquep.barattopoli.classes.User;
+
+
 public class MainActivity extends AppCompatActivity {
 
-    View view;
-    TextView topText;
-    ImageView imageContainer;
-    TextView bottomText;
+    private static String ACTIVITY_TAG_NAME = "MainActivity";
+    private View view;
+    private TextView topText;
+    private ImageView imageContainer;
+    private TextView bottomText;
+    private Button insertNewItem;
+    private Button delete;
+
+    private String userBasicInfo;
 
 
     @Override
@@ -45,7 +43,39 @@ public class MainActivity extends AppCompatActivity {
         topText = findViewById(R.id.top_text);
         bottomText = findViewById(R.id.bottom_text);
         imageContainer = findViewById(R.id.image_container);
+        insertNewItem = findViewById(R.id.insertNewItem);
+        delete = findViewById(R.id.deleteItem);
+
+        //retrieving a previous activity value attached to the bundle
+        Bundle b = getIntent().getExtras();
+        //retrieving user's info if this Activity is started by the previous activity in its natural chain
+        userBasicInfo = (b!= null)? b.getString(getString(R.string.Bundle_tag_user_basic_info)):"";
+
+        insertNewItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent;
+                //attach a string with the current logged user basic info encoding to pass it forward
+                Bundle c = new Bundle();
+                c.putString(getString(R.string.Bundle_tag_user_basic_info), userBasicInfo);
+                //create intent
+                intent = new Intent(MainActivity.this, InsertNewItemActivity.class);
+                //attach the string
+                intent.putExtras(c);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                User.removeItemFromBoard(MainActivity.ACTIVITY_TAG_NAME, "mmNsy71Nf5e8ATR79b4LNk3uRSh1","217b8390-b454-45b5-ab5f-6e947a08c29e");
+            }
+        });
 
         Objects.requireNonNull(getSupportActionBar()).hide();
     }
+
+
 }

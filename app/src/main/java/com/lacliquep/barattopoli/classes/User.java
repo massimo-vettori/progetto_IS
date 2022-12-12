@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -12,6 +11,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.core.SyncTree;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -24,13 +24,14 @@ import java.util.function.Consumer;
  */
 public class User {
 
+    private static final String CLASS_TAG_NAME = "User";
     public static final Integer HIGHEST_RANK = 100;
     public static final String CLASS_USER_DB = "users";
     public static final String ID_USER_DB = "id_user";
     public static final String NAME_DB = "name";
     public static final String SURNAME_DB = "surname";
     public static final String USERNAME_DB = "username";
-    public static final String COORD_DB = "coord";
+    public static final String LOCATION_DB = "location";
     public static final String IMAGE_DB = "image";
     public static final String RANK_DB = "rank";
     public static final String ID_REVIEWS_DB = "reviews";
@@ -59,7 +60,7 @@ public class User {
     private final String name;
     private final String surname;
     private final String username;
-    private final String coord;
+    private final ArrayList<String> location;
     private final String image;
     private final Integer rank;
     private final String userBasicInfo;
@@ -74,18 +75,18 @@ public class User {
      * @param username the username of this User
      * @param name the name of this User
      * @param surname the surname of this User
-     * @param coord    the coordinates of this User's location
+     * @param location    the coordinates of this User's location
      * @param image the profile picture for this User
      * @param rank the rank of this User, an Iteger value between 1 and HIGHER_RANK
      * @see com.google.firebase.auth.FirebaseAuth
      * @see User#HIGHEST_RANK
      */
-    User(String idUser, String username, String name, String surname, String coord, Integer rank, String image) {
+    User(String idUser, String username, String name, String surname, ArrayList<String> location, Integer rank, String image) {
         this.idUser = idUser;
         this.username = username;
         this.name = name;
         this.surname = surname;
-        this.coord = coord;
+        this.location = location;
         this.rank = rank;
         this.image = image;
         //the basic info when a User is stored in an Item
@@ -98,13 +99,13 @@ public class User {
      * @param username the username of this User
      * @param name the name of this User
      * @param surname the surname of this User
-     * @param coord    the coordinates of this User's location
+     * @param location the location of this User
      * @param image the profile picture for this User
      * @see com.google.firebase.auth.FirebaseAuth
      * @see User#HIGHEST_RANK
      */
-    public static User createUser(String idUser, String username, String name, String surname, String coord, String image) {
-        return new User(idUser, username, name, surname, coord, getMediumRank() , image);
+    public static User createUser(String idUser, String username, String name, String surname, ArrayList<String> location, String image) {
+        return new User(idUser, username, name, surname, location, getMediumRank() , image);
     }
 
 
@@ -113,12 +114,12 @@ public class User {
     /**
      * read from the database all the values regarding the User with the provided id <p>
      * Don't try taking out data from the consumer: it is not going to work
-     * @param context the activity/fragment where this method is called
+     * @param contextTag the string representing the activity/fragment where this method is called
      * @param dbRef the "root" database reference
      * @param id the id of the User to retrieve
      * @param consumer the way the fetched data are being used
      */
-    public static void retrieveUserById(Context context, DatabaseReference dbRef, String id, Consumer<User> consumer) {
+    public static void retrieveUserById(String contextTag, DatabaseReference dbRef, String id, Consumer<User> consumer) {
         dbRef.child(User.CLASS_USER_DB).child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -129,31 +130,44 @@ public class User {
                     }
                     ArrayList<String> UserData = new ArrayList<>();
                     for (int i = 0; i < 7; ++i) UserData.add("");
-                    DataBaseInteractor.retrieveHelper(map, User.USERNAME_DB, UserData,0);
-                    DataBaseInteractor.retrieveHelper(map, User.NAME_DB, UserData,1);
-                    DataBaseInteractor.retrieveHelper(map, User.SURNAME_DB, UserData,2);
-                    DataBaseInteractor.retrieveHelper(map, User.COORD_DB, UserData,3);
-                    DataBaseInteractor.retrieveHelper(map, User.RANK_DB, UserData,4);
-                    DataBaseInteractor.retrieveHelper(map, User.IMAGE_DB, UserData,5);
+                    BarattopolyUtil.retrieveHelper(map, User.USERNAME_DB, UserData,0);
+                    BarattopolyUtil.retrieveHelper(map, User.NAME_DB, UserData,1);
+                    BarattopolyUtil.retrieveHelper(map, User.SURNAME_DB, UserData,2);
+                    //BarattopolyUtil.retrieveHelper(map, User.LOCATION_DB, UserData,3);
+                    BarattopolyUtil.retrieveHelper(map, User.RANK_DB, UserData,4);
+                    BarattopolyUtil.retrieveHelper(map, User.IMAGE_DB, UserData,5);
                     Integer rank = UserData.get(4).equals("")?0: Integer.valueOf(UserData.get(4));
-                    consumer.accept(new User(id, UserData.get(0), UserData.get(1), UserData.get(2), UserData.get(3), rank, UserData.get(5)));
+                    //since location is a nested data
+                    BarattopolyUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(id), User.LOCATION_DB, 1, new Consumer<Map<String, ArrayList<String>>>() {
+                        @Override
+                        public void accept(Map<String, ArrayList<String>> stringArrayListMap) {
+                            ArrayList<String> location = new ArrayList<>();
+                            location.add(stringArrayListMap.get("country").get(0));
+                            location.add(stringArrayListMap.get("region").get(0));
+                            location.add(stringArrayListMap.get("province").get(0));
+                            location.add(stringArrayListMap.get("city").get(0));
+                            Log.d("User", location.toString());
+                            consumer.accept(new User(id, UserData.get(0), UserData.get(1), UserData.get(2), location, rank, UserData.get(5)));
+                        }
+                    });
+
                 }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.w(context.toString(), "load:onCancelled", error.toException());
+                Log.w(contextTag, "load:onCancelled", error.toException());
             }
         });
     }
     /**
      * read from the database all the values regarding the current logged User <p>
      * Don't try taking out data from the consumer: it is not going to work
-     * @param context the activity/fragment where this method is called
+     * @param contextTag the string representing the activity/fragment where this method is called
      * @param dbRef the "root" database reference
      * @param consumer the way the fetched data are being used
      */
-    public static void retrieveCurrentUser(Context context, DatabaseReference dbRef, Consumer<User> consumer){
-        User.retrieveUserById(context, dbRef, mAuth.getUid(), consumer);
+    public static void retrieveCurrentUser(String contextTag, DatabaseReference dbRef, Consumer<User> consumer){
+        User.retrieveUserById(contextTag, dbRef, mAuth.getUid(), consumer);
     }
 
     /**
@@ -163,12 +177,13 @@ public class User {
      */
     public static void insertUserInDataBase(User user) {
         DatabaseReference dbRefUser = dbRefUsers.child(user.idUser);
+
         dbRefUser.child(User.ID_USER_DB).setValue(user.idUser);
-        dbRefUser.child(User.USERNAME_DB).setValue(user.username);
-        dbRefUser.child(User.NAME_DB).setValue(user.name);
-        dbRefUser.child(User.SURNAME_DB).setValue(user.surname);
-        dbRefUser.child(User.COORD_DB).setValue(user.coord);
-        dbRefUser.child(User.IMAGE_DB).setValue(user.image);
+        setUsername(user.username,dbRefUser);
+        setName(user.name,dbRefUser);
+        setSurname(user.surname,dbRefUser);
+        setLocation(user.location,dbRefUser);
+        setImage(user.image,dbRefUser);
         dbRefUser.child(User.RANK_DB).setValue(user.rank);
     }
 
@@ -190,11 +205,10 @@ public class User {
     }
     /**
      * changes this User's name
-     * @param idUser the id of the User
+     * @param dbRefUser the location od the User node in the database
      * @param name the name of this User
      */
-    public static void setName(String idUser, String name) {
-        DatabaseReference dbRefUser = dbRefUsers.child(idUser);
+    public static void setName(String name, DatabaseReference dbRefUser) {
         dbRefUser.child(User.NAME_DB).setValue(name);
     }
 
@@ -205,11 +219,10 @@ public class User {
         return this.surname;
     }
     /**
-     * @param idUser the id of the User
+     * @param dbRefUser the location od the User node in the database
      * @param surname the new surname of the User
      */
-    public static void setSurname(String idUser, String surname) {
-        DatabaseReference dbRefUser = dbRefUsers.child(idUser);
+    public static void setSurname(String surname, DatabaseReference dbRefUser) {
         dbRefUser.child(User.SURNAME_DB).setValue(surname);
     }
 
@@ -222,39 +235,41 @@ public class User {
     /**
      * changes this User's username
      * in the database
-     * @param idUser the id of the User
+     * @param dbRefUser the location od the User node in the database
      * @param username the username of the User
      */
-    public static void setUsername(String username, String idUser) {
-        DatabaseReference dbRefUser = dbRefUsers.child(idUser);
+    public static void setUsername(String username, DatabaseReference dbRefUser) {
         dbRefUser.child(User.USERNAME_DB).setValue(username);
     }
 
     /**
-     * @return the coordinated of this User's location
+     * @return the location of this User's location
      */
-    public String getCoord() {
-        return coord;
+    public ArrayList<String> getLocation() {
+        return location;
     }
     /**
      * changes the coordinates of this User's location in the database
-     * @param idUser the id of the User
-     * @param coord the coordinates of this User's new location
+     * @param dbRefUser the location od the User node in the database
+     * @param location the location of this User's new location
      */
-    public static void setCoord(String coord, String idUser) {
-        DatabaseReference dbRefUser = dbRefUsers.child(idUser);
-        dbRefUser.child(User.COORD_DB).setValue(coord);
+    public static void setLocation(ArrayList<String> location, DatabaseReference dbRefUser) {
+        DatabaseReference dbRefUserLocation = dbRefUser.child(User.LOCATION_DB);
+        dbRefUserLocation.child("country").setValue(location.get(0));
+        dbRefUserLocation.child("region").setValue(location.get(1));
+        dbRefUserLocation.child("province").setValue(location.get(2));
+        dbRefUserLocation.child("city").setValue(location.get(3));
     }
 
     /**
      * retrieve the reviews the provided user gave to another user or another user gave to the provided user
      * with their basic info (text not included) in the database
-     * @param context the activity/fragment where this method is called
+     * @param contextTag the string representing the activity/fragment where this method is called
      * @param idUser the id of the provided user
      * @param consumer the way the fetched data are used
      */
-    public static void  getReviews(Context context,String idUser, Consumer<Map<String, ArrayList<String>>> consumer) {
-        DataBaseInteractor.getMapWithIdAndInfo(context, dbRefUsers.child(idUser), User.ID_REVIEWS_DB, User.REVIEWS_INFO_LENGTH, consumer);
+    public static void  getReviews(String contextTag,String idUser, Consumer<Map<String, ArrayList<String>>> consumer) {
+        BarattopolyUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(idUser), User.ID_REVIEWS_DB, User.REVIEWS_INFO_LENGTH, consumer);
     }
 
     /**
@@ -279,16 +294,17 @@ public class User {
     /**
      * retrieve the items on the provided user's board
      * with their basic info in the database
-     * @param context the activity/fragment where this method is called
+     * @param contextTag the activity/fragment where this method is called
      * @param idUser the id of the provided user
      * @param consumer the way the fetched data are used
      */
-    public static void  getItemsOnBoard(Context context,String idUser, Consumer<Map<String, ArrayList<String>>> consumer) {
-        DataBaseInteractor.getMapWithIdAndInfo(context, dbRefUsers.child(idUser), User.ID_ITEMS_ON_BOARD_DB, User.ITEMS_ON_BOARD_INFO_LENGTH, consumer);
+    public static void  getItemsOnBoard(String contextTag,String idUser, Consumer<Map<String, ArrayList<String>>> consumer) {
+        BarattopolyUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(idUser), User.ID_ITEMS_ON_BOARD_DB, User.ITEMS_ON_BOARD_INFO_LENGTH, consumer);
     }
 
     /**
      * create and add a new Item with its basic info  to the provided User's board and in the class Items in the database <p>
+     * as side effect, the item will be added to its correspondent categories, its correspondent range and in Items
      * @param itemTitle the title of the new Item
      * @param itemDescription a description of the new Item
      * @param itemIdRange the id of the Range of value of the new Item
@@ -301,29 +317,53 @@ public class User {
      * @param itemImages a collection of Strings representing the images to display
      */
 
-    public static void addNewItemOnBoard(String itemTitle, String itemDescription, String itemIdRange, ArrayList<String> currentUserBasicInfo, String itemLocation, boolean itemIsCharity, boolean itemIsService, @NonNull ArrayList<String> itemCategories ,@NonNull ArrayList<String> itemImages) {
+    public static void addNewItemOnBoard(String contextTag, String itemTitle, String itemDescription, String itemIdRange, ArrayList<String> currentUserBasicInfo, ArrayList<String> itemLocation, boolean itemIsCharity, boolean itemIsService, @NonNull ArrayList<String> itemCategories ,@NonNull ArrayList<String> itemImages) {
         Item newItem = Item.createItem(itemTitle,itemDescription,itemIdRange,currentUserBasicInfo,itemLocation,itemIsCharity,itemIsService,itemCategories,itemImages);
-        dbRefUsers.child(currentUserBasicInfo.get(0)).child(User.ID_ITEMS_ON_BOARD_DB).child(newItem.getIdItem()).setValue(newItem.getItemBasicInfo());
-        Item.insertItemInDataBase(newItem);
+        String userId = currentUserBasicInfo.get(0);
+        Log.d("TAG", userId + "  " + "mmNsy71Nf5e8ATR79b4LNk3uRSh1");
+        dbRefUsers.child("mmNsy71Nf5e8ATR79b4LNk3uRSh1").child(User.ID_ITEMS_ON_BOARD_DB).child(newItem.getIdItem()).setValue(newItem.getItemBasicInfo());
+        Item.insertItemInDataBase(contextTag, newItem);
     }
+
+    //it works
     /**
      * removes an Item from the provided user's board in the database <p>
-     * (to be called only when deleting an item)
      * @param idItem the item to remove
+     * @param contextTag the string which represent the Activity/Fragment wher this method is called
      * @param idUser the id of the user
      */
-    public static void removeItemFromBoard(String idUser, String idItem) {
-        //TODO
+    public static void removeItemFromBoard(String contextTag, String idUser, String idItem) {
+        Item.retrieveItemById(contextTag, BarattopolyUtil.mDatabase, idItem, new Consumer<Item>() {
+            @Override
+            public void accept(Item item) {
+                Log.d(contextTag,item != null? "item exists": "item does not exist");
+                if (item != null && item.isExchangeable()) {
+                    //remove item from User's Board
+                    dbRefUsers.child(idUser).child(User.ID_ITEMS_ON_BOARD_DB).child(idItem).removeValue();
+                    //remove item from range
+                    Log.d(contextTag,"Range: " + item.getIdRange());
+                    Range.dbRefRange.child(item.getIdRange()).child(Range.ID_ITEMS_DB).child(idItem).removeValue();
+                    for(String category: item.getCategories()) {
+                        //remove the item from all its categories
+                        Log.d(contextTag,"Category: " + category);
+                        (Category.dbRefCategories).child(category).child(Category.ID_ITEMS_DB).child(idItem).removeValue();
+                    }
+                    //remove the item from Items node
+                    (Item.dbRefItems).child(idItem).removeValue();
+                } else Log.d(contextTag, "Item " + idItem + " not exchangeable, therefore, not removable from database" );
+            }});
+
+
     }
     /**
      * retrieve the items on the provided user's observed items
      * with their basic info in the database
-     * @param context the activity/fragment where this method is called
+     * @param contextTag the activity/fragment where this method is called
      * @param idUser the id of the provided user
      * @param consumer the way the fetched data are used
      */
-    public static void getObservedItems(Context context, String idUser, Consumer<Map<String, ArrayList<String>>> consumer ) {
-        DataBaseInteractor.getMapWithIdAndInfo(context, dbRefUsers.child(idUser), User.ID_OBSERVED_ITEMS_DB, User.OBSERVED_ITEMS_INFO_LENGTH, consumer);
+    public static void getObservedItems(String contextTag, String idUser, Consumer<Map<String, ArrayList<String>>> consumer ) {
+        BarattopolyUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(idUser), User.ID_OBSERVED_ITEMS_DB, User.OBSERVED_ITEMS_INFO_LENGTH, consumer);
     }
 
     /**
@@ -346,12 +386,12 @@ public class User {
     /**
      * retrieve the exchanges the provided user's is involved into
      * with their basic info in the database
-     * @param context the activity/fragment where this method is called
+     * @param contextTag the string representing the activity/fragment where this method is called
      * @param idUser the id of the provided user
      * @param consumer the way the fetched data are used
      */
-    public static void getExchanges(Context context, String idUser, Consumer<Map<String, ArrayList<String>>> consumer ) {
-        DataBaseInteractor.getMapWithIdAndInfo(context, dbRefUsers.child(idUser), User.ID_EXCHANGES_DB, User.EXCHANGES_INFO_LENGTH, consumer);
+    public static void getExchanges(String contextTag, String idUser, Consumer<Map<String, ArrayList<String>>> consumer ) {
+        BarattopolyUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(idUser), User.ID_EXCHANGES_DB, User.EXCHANGES_INFO_LENGTH, consumer);
     }
 
     /**
@@ -384,11 +424,10 @@ public class User {
 
     /**
      * changes the coordinates of this User's location in the database
-     * @param idUser the id of the User
+     * @param dbRefUser the location od the User node in the database
      * @param image the new profile picture of this User
      */
-    public static void setImage(String idUser, String image) {
-        DatabaseReference dbRefUser = dbRefUsers.child(idUser);
+    public static void setImage(String image, DatabaseReference dbRefUser) {
         dbRefUser.child(User.IMAGE_DB).setValue(image);
     }
 

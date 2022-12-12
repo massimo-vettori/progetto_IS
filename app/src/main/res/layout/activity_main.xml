@@ -87,20 +87,22 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView32"
+            <Button
+                android:id="@+id/insertNewItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:text="@string/text_placeholder"
+                <!-- android:text="@string/text_placeholder" -->
+                android:text="insert new item"
                 android:textAlignment="center" />
 
-            <TextView
-                android:id="@+id/textView243"
+            <Button
+                android:id="@+id/deleteItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:text="@string/text_placeholder"
+                <!-- android:text="@string/text_placeholder" -->
+                android:text="try delete"
                 android:textAlignment="center" />
         </LinearLayout>
     </LinearLayout>

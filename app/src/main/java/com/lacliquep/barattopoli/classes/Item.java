@@ -11,7 +11,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -38,17 +37,18 @@ public class Item {
     /**
      * the number of the basic info elements about an Item when stored in a different class
      */
-    public static final int INFO_LENGTH = 8;
+    public static final int INFO_LENGTH = 11;
     /**
      * the basic info elements about an Item when stored in a different class
      */
-    public static final String INFO_PARAM = "category,range,image,is_charity,is_exchangeable,is_service,location,title";
+    public static final String INFO_PARAM = "category,range,image,is_charity,is_exchangeable,is_service,country,region,province,city,title";
 
     private final String idItem;
     private String title;
     private String description;
     private final String idRange;
-    private String location;
+    //location: country, region, province, city
+    private ArrayList<String> location = new ArrayList<>();
     private boolean isCharity;
     private boolean isExchangeable;
     private boolean isService;
@@ -80,14 +80,15 @@ public class Item {
      * @param images a collection of Strings representing the images to display
      *
      */
-    Item(String idItem, String title, String description,@NonNull String idRange, Collection<String> owner, String location, boolean isCharity, boolean isExchangeable, boolean isService, @NonNull ArrayList<String> categories ,@NonNull Collection<String> images) {
+    Item(String idItem, String title, String description,@NonNull String idRange, Collection<String> owner, ArrayList<String> location, boolean isCharity, boolean isExchangeable, boolean isService, @NonNull ArrayList<String> categories ,@NonNull Collection<String> images) {
         this.idItem = idItem;
         this.description = description;
         this.title = title;
         this.idRange = idRange;
         this.owner.addAll(owner);
         this.isCharity = isCharity;
-        this.isExchangeable = isExchangeable;
+        //this.isExchangeable = isExchangeable;
+        this.isExchangeable = true;
         this.isService = isService;
         this.location = location;
         //for(String cat: categories) if (Category.getCategories().contains(cat)) this
@@ -96,7 +97,7 @@ public class Item {
         String category = "", image = "";
         if (!(this.categories.isEmpty())) category = this.categories.toArray()[0].toString();
         if (!(this.images.isEmpty())) image = this.images.toArray()[0].toString();
-        this.itemBasicInfo = category + "," + idRange + "," + image + "," + String.valueOf(isCharity) + "," + String.valueOf(isExchangeable) + "," + String.valueOf(isService) + "," + location + "," + title;
+        this.itemBasicInfo = category + "," + idRange + "," + image + "," + String.valueOf(isCharity) + "," + String.valueOf(isExchangeable) + "," + String.valueOf(isService) + "," + location.get(0) + "," + location.get(1) + "," + location.get(2) + "," + location.get(3) + "," + title;
     }
     /**
      * Creator of a new Item, to be called when the current User is creating a new Item, to store in the DB <p>
@@ -114,50 +115,55 @@ public class Item {
      * @param images a collection of Strings representing the images to display
      *
      */
-   static Item createItem(String title, String description, String idRange, ArrayList<String> currentUserBasicInfo, String location, boolean isCharity, boolean isService, @NonNull ArrayList<String> categories ,@NonNull ArrayList<String> images) {
+   static Item createItem(String title, String description, String idRange, ArrayList<String> currentUserBasicInfo, ArrayList<String> location, boolean isCharity, boolean isService, @NonNull ArrayList<String> categories ,@NonNull ArrayList<String> images) {
         return new Item(UUID.randomUUID().toString(), title, description, idRange, currentUserBasicInfo, location, isCharity, true, isService, categories, images);
    }
 
     /**
-     * to be called when the current User is creating a new Item. Store the item in the database in Items
-     * and add the item to all the correspondent categories
-     * @see User#addNewItemOnBoard(String, String, String, ArrayList, String, boolean, boolean, ArrayList, ArrayList)
+     * to be called when the current User is creating a new Item(from User.addNewItemOnBoard) . Store the item in the database in Items
+     * and add the item to all the correspondent categories, and to its correspondent range
+     * @see User#addNewItemOnBoard(String, String, String, String, ArrayList, ArrayList, boolean, boolean, ArrayList, ArrayList)
      * @param item the new item
      */
-   static void insertItemInDataBase(Item item) {
-       dbRefItems.child(item.idItem).child(Item.ID_ITEM_DB).setValue(item.idItem);
-       dbRefItems.child(item.idItem).child(Item.DESCRIPTION_DB).setValue(item.description);
-       dbRefItems.child(item.idItem).child(Item.TITLE_DB).setValue(item.title);
-       dbRefItems.child(item.idItem).child(Item.ID_RANGE_DB).setValue(item.idRange);
-       dbRefItems.child(item.idItem).child(Item.LOCATION_DB).setValue(item.location);
-       dbRefItems.child(item.idItem).child(Item.IS_CHARITY_DB).setValue(item.isCharity);
-       dbRefItems.child(item.idItem).child(Item.IS_EXCHANGEABLE_DB).setValue(item.isExchangeable);
-       dbRefItems.child(item.idItem).child(Item.IS_SERVICE_DB).setValue(item.isService);
+   static void insertItemInDataBase(String contextTag, Item item) {
+       DatabaseReference dbRefItemsItem = dbRefItems.child(item.idItem);
+       dbRefItemsItem.child(Item.ID_ITEM_DB).setValue(item.idItem);
+       try {
+           setDescription(true, item.description, dbRefItemsItem);
+           setTitle(true, item.title, dbRefItemsItem);
+           setLocation(true, item.location, dbRefItemsItem);
+           setCharity(item.idItem, true, item.isCharity, dbRefItemsItem);
+           setRange(item.idItem, item.itemBasicInfo, true, item.idRange, dbRefItemsItem);
+           setExchangeable(true, dbRefItemsItem);
+           setService(true, item.isService, dbRefItemsItem);
+       } catch (NonModifiableException e) {
+           Log.d(contextTag, e.getMessage());
+       }
        String imgs = "", cats = "", ownr = "";
        //preparing the CSV strings for the database
        for(String img: item.images) imgs += (img + ",");
        for(String cat: item.categories) cats += (cat + ",");
        for(String info: item.owner) ownr += (info + ",");
-       dbRefItems.child(item.idItem).child(Item.IMAGES_DB).setValue(imgs);
-       dbRefItems.child(item.idItem).child(Item.ID_CATEGORIES_DB).setValue(cats);
-       dbRefItems.child(item.idItem).child(Item.OWNER_DB).setValue(ownr);
+       dbRefItemsItem.child(Item.IMAGES_DB).setValue(imgs);
+       dbRefItemsItem.child(Item.ID_CATEGORIES_DB).setValue(cats);
+       dbRefItemsItem.child(Item.OWNER_DB).setValue(ownr);
        //add the item to all the correspondent categories
        for(String category: item.categories) {
            Category.addItemToCategory(item.idItem, item.itemBasicInfo, category);
        }
-
+       //add the item to its correspondent range: done in setRange
    }
 
 
     /**
      * read from the database all the values regarding the User with the provided id <p>
      * Don't try taking out data from the consumer: it is not going to work
-     * @param context the activity/fragment where this method is called
+     * @param contextTag the string representing the activity/fragment where this method is called
      * @param dbRef the database reference
-     * @param id the id of the User to retrieve
+     * @param id the id of the Item to retrieve
      * @param consumer the way the fetched data are being used
      */
-    public static void retrieveItemById(Context context, DatabaseReference dbRef, String id, Consumer<Item> consumer) {
+    public static void retrieveItemById(String contextTag, DatabaseReference dbRef, String id, Consumer<Item> consumer) {
         dbRef.child(Item.CLASS_ITEM_DB).child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -168,30 +174,40 @@ public class Item {
                     }
                     ArrayList<String> ItemData = new ArrayList<>();
                     for (int i = 0; i < 10; ++i) ItemData.add("");
-                    DataBaseInteractor.retrieveHelper(map, Item.TITLE_DB, ItemData,0);
-                    DataBaseInteractor.retrieveHelper(map, Item.DESCRIPTION_DB, ItemData,1);
-                    DataBaseInteractor.retrieveHelper(map, Item.ID_RANGE_DB, ItemData,2);
-                    DataBaseInteractor.retrieveHelper(map, Item.OWNER_DB, ItemData,3);
-                    DataBaseInteractor.retrieveHelper(map, Item.LOCATION_DB, ItemData,4);
-                    DataBaseInteractor.retrieveHelper(map, Item.IS_CHARITY_DB, ItemData,5);
-                    DataBaseInteractor.retrieveHelper(map, Item.IS_EXCHANGEABLE_DB, ItemData,6);
-                    DataBaseInteractor.retrieveHelper(map, Item.IS_SERVICE_DB, ItemData,7);
-                    DataBaseInteractor.retrieveHelper(map, Item.ID_CATEGORIES_DB, ItemData,8);
-                    DataBaseInteractor.retrieveHelper(map, Item.IMAGES_DB, ItemData,9);
+                    BarattopolyUtil.retrieveHelper(map, Item.TITLE_DB, ItemData,0);
+                    BarattopolyUtil.retrieveHelper(map, Item.DESCRIPTION_DB, ItemData,1);
+                    BarattopolyUtil.retrieveHelper(map, Item.ID_RANGE_DB, ItemData,2);
+                    BarattopolyUtil.retrieveHelper(map, Item.OWNER_DB, ItemData,3);
+                    //BarattopolyUtil.retrieveHelper(map, Item.LOCATION_DB, ItemData,4);
+                    BarattopolyUtil.retrieveHelper(map, Item.IS_CHARITY_DB, ItemData,5);
+                    BarattopolyUtil.retrieveHelper(map, Item.IS_EXCHANGEABLE_DB, ItemData,6);
+                    BarattopolyUtil.retrieveHelper(map, Item.IS_SERVICE_DB, ItemData,7);
+                    BarattopolyUtil.retrieveHelper(map, Item.ID_CATEGORIES_DB, ItemData,8);
+                    BarattopolyUtil.retrieveHelper(map, Item.IMAGES_DB, ItemData,9);
                     ArrayList<String> own = new ArrayList<>(Arrays.asList(ItemData.get(3).split(",", User.INFO_LENGTH)));
                     ArrayList<String> cat = new ArrayList<>(Arrays.asList(ItemData.get(8).split(",", 0)));
                     ArrayList<String> img = new ArrayList<>(Arrays.asList(ItemData.get(9).split(",", 0)));
-                    consumer.accept(new Item(id, ItemData.get(0), ItemData.get(1),ItemData.get(2), own, ItemData.get(4), Boolean.getBoolean(ItemData.get(5)), Boolean.getBoolean(ItemData.get(6)), Boolean.getBoolean(ItemData.get(7)), cat, img));
+                    //since location is a nested data
+                    BarattopolyUtil.getMapWithIdAndInfo(contextTag, dbRefItems.child(id), User.LOCATION_DB, 1, new Consumer<Map<String, ArrayList<String>>>() {
+                        @Override
+                        public void accept(Map<String, ArrayList<String>> stringArrayListMap) {
+                            ArrayList<String> location = new ArrayList<>();
+                            location.add(stringArrayListMap.get("country").get(0));
+                            location.add(stringArrayListMap.get("region").get(0));
+                            location.add(stringArrayListMap.get("province").get(0));
+                            location.add(stringArrayListMap.get("city").get(0));
+                            consumer.accept(new Item(id, ItemData.get(0), ItemData.get(1),ItemData.get(2), own, location, Boolean.getBoolean(ItemData.get(5)), Boolean.getBoolean(ItemData.get(6)), Boolean.getBoolean(ItemData.get(7)), cat, img));
+                        }
+                    });
+
                 }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.w(context.toString(), "load:onCancelled", error.toException());
+                Log.w(contextTag, "load:onCancelled", error.toException());
             }
         });
     }
-     
-    //TODO: insert Item in the database with side effects on range and categories
 
     //GETTERS
 
@@ -240,7 +256,7 @@ public class Item {
      *
      * @return the location where this Item is
      */
-    public String getLocation() {
+    public ArrayList<String> getLocation() {
         return this.location;
     }
 
@@ -270,15 +286,12 @@ public class Item {
     }
 
     /**
-     *
-     * @param context the Activity/Fragment where the method is called
-     * @param idItem the id of the item
-     * @param consumer how the data are going to be used. The keys of the map are the string value of incremental Integer values,
-     *                 while in the correspondent values are the categories titles
+     * @return a set containing the categories this item belongs to
      */
-    public static void  getCategories(Context context,String idItem, Consumer<Map<String, String>> consumer) {
-        DataBaseInteractor.mapChildren(context, dbRefItems.child(idItem).child(Item.ID_CATEGORIES_DB), consumer);
+    public Set<String> getCategories() {
+        return this.categories;
     }
+
 
     /**
      *
@@ -325,24 +338,24 @@ public class Item {
      * modifies the description of this Item in the database
      * @param description the new description
      * @throws NonModifiableException if this Item is not exchangeable
-     * @param idItem the id of the item to modify
+     * @param dbRefItem the location of the Item in the database
      * @param isExchangeable the status of the item
      */
-    public static void setDescription(String idItem, boolean isExchangeable, String description) throws NonModifiableException {
+    public static void setDescription(boolean isExchangeable, String description, DatabaseReference dbRefItem) throws NonModifiableException {
         if (!isExchangeable) throw new NonModifiableException();
-        dbRefItems.child(idItem).child(Item.DESCRIPTION_DB).setValue(description);
+        dbRefItem.child(Item.DESCRIPTION_DB).setValue(description);
     }
 
     /**
      * modifies the title of this Item in the database if it is still exchangeable
      * @param title the new title
-     * @param idItem the id of the item to modify
+     * @param dbRefItem the location of the Item in the database
      * @param isExchangeable the status of the item
      * @throws NonModifiableException if this Item is not exchangeable
      */
-    public static void setTitle(String idItem, boolean isExchangeable, String title) throws NonModifiableException {
+    public static void setTitle(boolean isExchangeable, String title, DatabaseReference dbRefItem) throws NonModifiableException {
         if (!isExchangeable) throw new NonModifiableException();
-        dbRefItems.child(idItem).child(Item.TITLE_DB).setValue(title);
+        dbRefItem.child(Item.TITLE_DB).setValue(title);
     }
 
     /**
@@ -350,78 +363,86 @@ public class Item {
      * it modifies the collection of items in the specified range in the database
      * @param idRange the id of the Range of value of this Item
      * @param idItem the id of the item to modify
+     * @param dbRefItem the location of the Item in the database
      * @param itemBasicInfo the basic info of the item when stored in a different class
      * @param isExchangeable the status of the item
      * @throws NonModifiableException if this Item is not exchangeable
      */
-    public static void setRange(String idItem, String itemBasicInfo,boolean isExchangeable, String idRange) throws NonModifiableException {
-        if (isExchangeable) throw new NonModifiableException();
-        dbRefItems.child(idItem).child(Item.ID_RANGE_DB).setValue(idRange);
+    public static void setRange(String idItem, String itemBasicInfo,boolean isExchangeable, String idRange, DatabaseReference dbRefItem) throws NonModifiableException {
+        if (!isExchangeable) throw new NonModifiableException();
+        dbRefItem.child(Item.ID_RANGE_DB).setValue(idRange);
         Range.addItemToRange(idItem,itemBasicInfo, idRange);
     }
 
     /**
      * modifies the current location of this Item in the database if it is still exchangeable
      * @param location the current location where this Item is
-     * @param idItem the id of the item to modify
+     * @param dbRefItem the location of the Item in the database
      * @param isExchangeable the status of the item
      * @throws NonModifiableException if this Item is not exchangeable
      */
-    public static void setLocation(String idItem, boolean isExchangeable, String location)throws NonModifiableException {
-        if (isExchangeable) throw new NonModifiableException();
-        dbRefItems.child(idItem).child(Item.LOCATION_DB).setValue(location);
+    public static void setLocation(boolean isExchangeable, ArrayList<String> location, DatabaseReference dbRefItem)throws NonModifiableException {
+        if (!isExchangeable) throw new NonModifiableException();
+        DatabaseReference dbRefItemLocation = dbRefItem.child(User.LOCATION_DB);
+        dbRefItemLocation.child("country").setValue(location.get(0));
+        dbRefItemLocation.child("region").setValue(location.get(1));
+        dbRefItemLocation.child("province").setValue(location.get(2));
+        dbRefItemLocation.child("city").setValue(location.get(3));
     }
 
     /**
      * modifies the state of this Item in the database if it is still exchangeable, according to the value of the parameter
      * @param charity If set on true, the Item becomes a good or service which is offered for free
      * @param idItem the id of the item to modify
+     * @param dbRefItem the location of the Item in the database
      * @param isExchangeable the status of the item
      * @throws NonModifiableException if this Item is not exchangeable
      */
-    public static void setCharity(String idItem, boolean isExchangeable, boolean charity) throws NonModifiableException {
-        if (isExchangeable) throw new NonModifiableException();
-        dbRefItems.child(idItem).child(Item.IS_CHARITY_DB).setValue(charity);
+    public static void setCharity(String idItem, boolean isExchangeable, boolean charity, DatabaseReference dbRefItem) throws NonModifiableException {
+        if (!isExchangeable) throw new NonModifiableException();
+        dbRefItem.child(Item.IS_CHARITY_DB).setValue(charity);
     }
 
     /**
      * modifies the state of this Item, according to the value of the parameter <p>
      * (called only as consequence of an exchange)
-     * @param exchangeable If set on true, the Item becomes a good or service which is possible to exchange, <p>
+     * @param isExchangeable If set on true, the Item becomes a good or service which is possible to exchange, <p>
      * e.g. it might be set to true after the refusal of an exchange or it could be set to false if
      * the Item has been proposed for an exchange
-     * @param idItem the id of the item to modify
+     * @param dbRefItem the location of the Item in the database
      */
-    public static void setExchangeable(String idItem, boolean exchangeable) {
-        dbRefItems.child(idItem).child(Item.IS_EXCHANGEABLE_DB).setValue(exchangeable);
+    public static void setExchangeable(boolean isExchangeable, DatabaseReference dbRefItem) {
+        dbRefItem.child(Item.IS_EXCHANGEABLE_DB).setValue(isExchangeable);
     }
 
     /**
      * modifies the state of this Item in the database if it is still exchangeable, according to the value of the parameter
      * @param service If set on true, the Item becomes a service, otherwise it becomes a good
-     * @param idItem the id of the item to modify
+     * @param dbRefItem the location of the Item in the database
      * @param isExchangeable the status of the item
      * @throws NonModifiableException if this Item is not exchangeable
      */
-    public static void setService(String idItem, boolean isExchangeable, boolean service) throws NonModifiableException {
-        if (isExchangeable) throw new NonModifiableException();
-        dbRefItems.child(idItem).child(Item.IS_SERVICE_DB).setValue(service);
+    public static void setService(boolean isExchangeable, boolean service, DatabaseReference dbRefItem) throws NonModifiableException {
+        if (!isExchangeable) throw new NonModifiableException();
+        dbRefItem.child(Item.IS_SERVICE_DB).setValue(service);
     }
 
     /**
      * adds a category in the database which this Item belongs to
      * (as side effect, add this item to the set of items of the specified Category.)
+     * @param contextTag the string representing the Activity/Fragment where this method is called
      * @param category the title of the category
      * @param isExchangeable the status of the item
      * @param idItem the id of the item to modify
+     * @param dbRefItem the location of the Item in the database
      * @throws NonModifiableException if this Item is not exchangeable
      */
-    //da verificare se funziona veramente
-    public static void addCategory(Context context, String idItem, String ItemBasicInfo, boolean isExchangeable, String category) throws NonModifiableException {
-        if (isExchangeable) throw new NonModifiableException();
+    //TODO:da verificare se funziona veramente
+    public static void addCategory(String contextTag, String idItem, DatabaseReference dbRefItem, String ItemBasicInfo, boolean isExchangeable, String category) throws NonModifiableException {
+        if (!isExchangeable) throw new NonModifiableException();
         if (Category.getCategories().contains(category)) {
-            DatabaseReference dbRef = dbRefItems.child(idItem).child(Item.ID_CATEGORIES_DB);
-            DataBaseInteractor.readData(context, dbRef, new Consumer<Object>() {
+            DatabaseReference dbRef = dbRefItem.child(Item.ID_CATEGORIES_DB);
+            BarattopolyUtil.readData(contextTag, dbRef, new Consumer<Object>() {
                     @Override
                     public void accept(Object o) {
                         String newCategories = "";
@@ -443,11 +464,12 @@ public class Item {
      * as side effect, remove this item to the set of items of the specified Category.
      * @param category the title of the category
      * @param idItem the id of the item to modify
+     * @param dbRefItem the location of the Item in the database
      * @param isExchangeable the status of the item
      * @throws NonModifiableException if this Item is not exchangeable
      */
-    public static void removeCategory(String idItem, boolean isExchangeable, String category) throws NonModifiableException {
-        if (isExchangeable) throw new NonModifiableException();
+    public static void removeCategory(boolean isExchangeable, String category, String idItem, DatabaseReference dbRefItem) throws NonModifiableException {
+        if (!isExchangeable) throw new NonModifiableException();
         //TODO: se addcategory funziona, fare cose simili
     }
 
@@ -455,22 +477,24 @@ public class Item {
      * adds a string which represents an image to be displayed for this Item in the database
      * @param image the string which represents the image
      * @param isExchangeable the status of the item
+     * @param dbRefItem the location of the Item in the database
      * @param idItem the id of the item to modify
      * @throws NonModifiableException if this Item is not exchangeable
      */
-    public static void addImage(String idItem, boolean isExchangeable, String image) throws NonModifiableException{
-        if (isExchangeable) throw new NonModifiableException();
+    public static void addImage(String idItem, boolean isExchangeable, String image, DatabaseReference dbRefItem) throws NonModifiableException{
+        if (!isExchangeable) throw new NonModifiableException();
         //TODO: se addcategory funziona fare cose simili
     }
     /**
      * removes a string which represents an image for this Item
      * @param image the string which represents the image
      * @param isExchangeable the status of the item
+     * @param dbRefItem the location of the Item in the database
      * @param idItem the id of the item to modify
      * @throws NonModifiableException if this Item is not exchangeable
      */
-    public static void removeImage(String idItem, boolean isExchangeable, String image) throws NonModifiableException {
-        if (isExchangeable) throw new NonModifiableException();
+    public static void removeImage(String idItem, boolean isExchangeable, String image, DatabaseReference dbRefItem) throws NonModifiableException {
+        if (!isExchangeable) throw new NonModifiableException();
         //TODO: se addimage funziona, fare cose simili
     }
 
@@ -481,11 +505,12 @@ public class Item {
      * categories which this item belonged to in the database <p>
      * also removes the item from its owner's board
      * @param idItem
+     * @param dbRefItem the location of the Item in the database
      * @param isExchangeable the status of the item
      * @throws NonModifiableException if this Item is not exchangeable
      */
-    public static void deleteItem(String idItem, boolean isExchangeable) throws NonModifiableException {
-        if (isExchangeable) throw new NonModifiableException();
+    public static void deleteItem(String idItem, boolean isExchangeable, DatabaseReference dbRefItem) throws NonModifiableException {
+        if (!isExchangeable) throw new NonModifiableException();
         //TODO;
     }
 
