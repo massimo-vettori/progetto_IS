@@ -10,7 +10,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Consumer;
+
 import com.lacliquep.barattopoli.classes.User;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        Objects.requireNonNull(getSupportActionBar()).hide();
     }
 
 

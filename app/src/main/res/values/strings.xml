@@ -35,6 +35,14 @@
     <string name="School">Istruzione</string>
     <string name="Fun">Divertimento</string>
 
+    <string name="fai_la_tua_proposta">Fai la tua proposta</string>
+    <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+    <string name="locazione_fisica">Locazione fisica dell\'oggetto</string>
+    <string name="descrizione_dell_offerente">Descrizione dell\'offerente</string>
+    <string name="text_placeholder">Placeholder (modify me)</string>
+    <string name="avatar_desc">Avatar dell\'offerente</string>
+    <string name="lorem_short">Lorem ipsum dolor sit amet.</string>
+
     <string name="Alert_insert_item">Confermi di voler inserire l\'oggetto o servizio?</string>
     <string name="Alert_take_new_picture">Se cambierai la foto, i campi finora selezionati torneranno ad essere vuoti. Procedere comunque?</string>
 
@@ -70,7 +78,4 @@
     <string name="Bundle_tag_encoded_image">encoded image</string>
 
     <string name="text_preview">Text Preview</string>
-
-
-
 </resources>
