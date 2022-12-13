@@ -35,6 +35,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
+            android:theme="@style/Theme.Barattopoli.NoActionBar"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
