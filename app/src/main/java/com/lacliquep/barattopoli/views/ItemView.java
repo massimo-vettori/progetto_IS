@@ -1,13 +1,17 @@
 package com.lacliquep.barattopoli.views;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.lacliquep.barattopoli.ItemViewActivity;
 import com.lacliquep.barattopoli.R;
 
 public class ItemView extends ConstraintLayout {
@@ -21,6 +25,9 @@ public class ItemView extends ConstraintLayout {
         super(context, attrs);
         this.setClipToOutline(true);
         init(context, attrs);
+        Log.d("[ItemView]", "Created new ItemView");
+
+        this.setOnClickListener();
     }
 
     private void init(Context ctx, AttributeSet attrs) {
@@ -31,6 +38,16 @@ public class ItemView extends ConstraintLayout {
         this.setItem(arr.getString(0), arr.getString(1), arr.getString(2));
 
         arr.recycle();
+    }
+
+    public void setOnClickListener() {
+        Log.d("[ItemView]", "Added new onClickListener()");
+
+        this.setOnClickListener(view -> {
+            Log.d("[ItemView]", "onClick: " + title);
+            Intent intent = new Intent(view.getContext(), ItemViewActivity.class);
+            view.getContext().startActivity(intent);
+        });
     }
 
 

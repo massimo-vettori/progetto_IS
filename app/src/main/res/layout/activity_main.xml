@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/gray_900"
     tools:context=".MainActivity"
     android:id="@+id/drawer_layout"
     android:fitsSystemWindows="true"
@@ -13,8 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -30,6 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </LinearLayout>
+
 
     <com.google.android.material.navigation.NavigationView
         android:layout_width="wrap_content"
