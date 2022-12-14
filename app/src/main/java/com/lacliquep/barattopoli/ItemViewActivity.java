@@ -42,7 +42,7 @@ public class ItemViewActivity extends AppCompatActivity {
     protected void setup(@NonNull Item item) {
         updateItemDescription(item.getDescription());
         updateItemTitle(item.getTitle());
-        updateItemLocation(item.getLocation());
+        updateItemLocation(item.getLocation().toString());
 
 //        TODO: either implement image decoding or add methods to Item and User classes to get the images as a Bitmap
 //        updateUserAvatar(item.getOwner());
