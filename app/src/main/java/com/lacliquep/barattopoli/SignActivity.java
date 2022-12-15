@@ -78,8 +78,8 @@ public class SignActivity extends AppCompatActivity {
                 // Change activity
                 /*Intent intent = new Intent(SignActivity.this, MainActivity.class);
                 startActivity(intent);*/
-                //startActivity(new Intent(SignActivity.this, MainActivity.class));
-                loadFragment(new SignInUpFragment());
+                startActivity(new Intent(SignActivity.this, MainActivity.class));
+//                loadFragment(new SignInUpFragment());
 
             } else {
                 loadFragment(new SignInUpFragment());

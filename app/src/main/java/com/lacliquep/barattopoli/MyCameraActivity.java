@@ -27,40 +27,43 @@ public class MyCameraActivity extends Activity
     private static final String ACTIVITY_TAG_NAME = "MyCameraActivity";
     private static String con = "";
 
+    private Button preferNotTo, photoButton;
+
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_camera);
-        Button photoButton = (Button) this.findViewById(R.id.take_picture);
-        Button preferNotTo = (Button) this.findViewById(R.id.no);
+        photoButton = (Button) this.findViewById(R.id.take_picture);
+        preferNotTo = (Button) this.findViewById(R.id.no);
         Bundle c = getIntent().getExtras();
         //fetching the previous activity class name
+
+        this.setupButtons();
 
         if (c != null) {
             con = c.getString(getString(R.string.Bundle_tag_Previous_activity));
             con = (con != null) ? con : "";
             photoButton.setText(getString(R.string.take_profile_picture));
         }
-        photoButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                //TODO: enable permissions in manifest
-                /*if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-                {
-                    requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
-                }
-                else*/
-                {
-                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(cameraIntent,CAMERA_REQUEST);
-                }
-            }
-        });
     }
 
+    protected void setupButtons() {
+        preferNotTo.setOnClickListener(view -> {
+            finish();
+        });
+
+        photoButton.setOnClickListener(view -> {
+            //TODO: enable permissions in manifest
+            /*if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+            {
+                requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
+            }
+            else*/
+
+            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(cameraIntent,CAMERA_REQUEST);
+        });
+    }
 
 
     @Override

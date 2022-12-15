@@ -48,14 +48,14 @@ public class SignInUpFragment extends Fragment {
         // perform setOnClickListener on login
         choice_sign_in_button.setOnClickListener(v -> {
             //change of fragment
-            //loadFragment(new LoginFragment());
+            loadFragment(new LoginFragment());
             /*Item.retrieveMapWithAllItems(true,true,null, true, "mmNsy71Nf5e8ATR79b4LNk3uRSh1", new ArrayList<String>(Arrays.asList("Italia", "Veneto", "Venezia", "Venezia")), new Consumer<Map<String, Map<String, String>>>() {
                 @Override
                 public void accept(Map<String, Map<String, String>> stringMapMap) {
                     Log.d("Item", stringMapMap.toString());
                 }
             });*/
-            startActivity(new Intent(getContext(), ProfileActivity.class));
+//            startActivity(new Intent(getContext(), ProfileActivity.class));
         });
         // perform setOnClickListener on register
         choice_sign_up_button.setOnClickListener(v -> {

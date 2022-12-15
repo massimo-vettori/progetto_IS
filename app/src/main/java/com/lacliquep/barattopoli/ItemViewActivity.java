@@ -78,12 +78,8 @@ public class ItemViewActivity extends AppCompatActivity {
 
     protected void backToHome() {
         // This method is called when the back button is pressed
+        finish();
 
-
-        // If the caller is not the MainActivity, it clears the back stack and starts the MainActivity
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
     }
 
     protected void updateItemDescription(String desc) {

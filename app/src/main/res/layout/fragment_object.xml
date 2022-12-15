@@ -13,8 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/default_gradient_bg"
-
-        app:layout_constraintBottom_toTopOf="@+id/bottom_navigator"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -24,21 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingVertical="20dp">
-
-            <include
-                layout="@layout/view_item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="?attr/paddingLg"
-                android:layout_marginTop="?attr/paddingLg" />
-
-            <include
-                layout="@layout/view_item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="?attr/paddingLg"
-                android:layout_marginTop="?attr/paddingLg" />
+            android:paddingVertical="?attr/paddingLg">
 
         </LinearLayout>
     </ScrollView>

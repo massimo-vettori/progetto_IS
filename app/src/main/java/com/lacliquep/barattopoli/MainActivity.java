@@ -122,6 +122,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         boolean enter = false;
+        Intent intent = null;
+
         if (item != null) {
             switch (item.getItemId()) {
                 case R.id.nav_object:
@@ -137,6 +139,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     enter = true;
                     break;
 
+                case R.id.nav_profile:
+                    intent = new Intent(MainActivity.this, ProfileActivity.class);
+                    intent.putExtra("caller", ACTIVITY_TAG_NAME);
+                    startActivity(intent);
+                    break;
+
+                case R.id.nav_dashboard:
+                    intent = new Intent(MainActivity.this, MyBoardActivity.class);
+                    intent.putExtra("caller", ACTIVITY_TAG_NAME);
+                    startActivity(intent);
+                    break;
+
                 /*case R.id.nav_chat:
                     Intent intent = new Intent(MainActivity.this, ItemViewActivity.class);
                     startActivity(intent);
@@ -144,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     break;*/
                 case R.id.nav_logout:
                     mAuth.signOut();
-                    Intent intent = new Intent(MainActivity.this, SignActivity.class);
+                    intent = new Intent(MainActivity.this, SignActivity.class);
                     startActivity(intent);
                     finish();
                     break;
