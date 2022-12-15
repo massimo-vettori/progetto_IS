@@ -24,4 +24,15 @@
         <item name="paddingLg">30dp</item>
         <item name="paddingXl">40dp</item>
     </style>
+
+    <!-- style for navigation bar -->
+    <style name="Theme.Barattopoli.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="Theme.Barattopoli.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.Barattopoli.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

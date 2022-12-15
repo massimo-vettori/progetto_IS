@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Barattopoli</string>
+    <string name="APP_NAME">BARATTOPOLI</string>
 
     <string name="login">Accedi</string>
     <string name="email">Email</string>
@@ -19,6 +20,7 @@
     <string name="success">: azione avvenuta con successo</string>
     <string name="failure">: fallimento, qualcosa è andato storto</string>
     <string name="empty_text">: il testo non può essere vuoto!</string>
+
     <string name="Yes">Sì</string>
     <string name="No">No</string>
     <string name="From">da</string>
@@ -74,13 +76,26 @@
     <string name="delete_item">Elimina oggetto</string>
 
 
-    <!-- don't translate -->
-    <string name="Bundle_tag_Previous_activity">previous Activity</string>
-    <string name="Bundle_tag_user_basic_info">user\'s basic info</string>
-    <string name="Bundle_tag_encoded_image">encoded image</string>
+    <string name="text_preview">Text Preview</string>
 
+    <string name="objects">Oggetti</string>
+    <string name="services">Servizi</string>
+    <string name="charity">Beneficenza</string>
+    <string name="chat">Chat</string>
+    <string name="dashboard">Bacheca</string>
+    <string name="exchanges">I tuoi baratti</string>
+    <string name="notifications">Notifiche</string>
+    
     <string name="text_preview">Text Preview</string>
     <string name="proposal_text">Ha proposto questo scambio</string>
     <string name="lorem_tiny">Lorem ipsum.</string>
     <string name="sample_mail">user@example.com</string>
+
+    <!-- don't translate -->
+    <string name="Bundle_tag_Previous_activity">previous Activity</string>
+    <string name="Bundle_tag_user_basic_info">user\'s basic info</string>
+    <string name="Bundle_tag_encoded_image">encoded image</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="profile">Profilo</string>
 </resources>

@@ -53,6 +53,7 @@ public class ItemViewActivity extends AppCompatActivity {
         updateItemDescription(item.getDescription());
         updateItemTitle(item.getTitle());
         updateItemLocation(item.getLocation().toString());
+
         updatePriceRange(item.getIdRange());
         updateUserName(item.getOwner().stream().reduce("", (a, b) -> a + " " + b));
 
