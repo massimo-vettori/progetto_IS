@@ -1,5 +1,13 @@
 package com.lacliquep.barattopoli.classes;
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.util.Log;
+
+import androidx.appcompat.app.AlertDialog;
+
+import com.lacliquep.barattopoli.R;
+
 import java.util.*;
 
 /**
@@ -8,11 +16,7 @@ import java.util.*;
  * @since 1.0
  */
 public class Location {
-    private final static ArrayList<String> countries = new ArrayList<>(1);
-    private final static ArrayList<ArrayList<String>> regions = new ArrayList<>(1);
-    private final static ArrayList<ArrayList<ArrayList<String>>> provinces = new ArrayList<>(1);
-    private final static ArrayList<ArrayList<ArrayList<ArrayList<String>>>> cities = new ArrayList<>(1);
-
+    private final static Map<String, Map<String, Map<String, ArrayList<String>>>> countries = new HashMap<>();
     /**
      * the number of the basic elements about a location when stored in a User or Item
      */
@@ -22,136 +26,107 @@ public class Location {
      */
     public static final String INFO_PARAM = "country,region,province,city";
 
-    static {
+
+    public Location(){
         //only Italy for now
-        countries.set(0,"Italia");
-        regions.set(0, new ArrayList<>());
-        regions.get(0).addAll(Arrays.asList("Abruzzo", "Basilicata", "Calabria", "Campania", "Emilia-Romagna"));
-        regions.get(0).addAll(Arrays.asList("Friuli Venezia Giulia", "Lazio", "Liguria", "Lombardia", "Marche"));
-        regions.get(0).addAll(Arrays.asList("Molise", "Piemonte", "Puglia", "Sardegna", "Sicilia"));
-        regions.get(0).addAll(Arrays.asList("Toscana", "Trentino-Alto Adige", "Umbria", "Valle d'Aosta", "Veneto"));
-
-        provinces.set(0, new ArrayList<>());
-        provinces.get(0).set(0,new ArrayList<>(20));
-        //only Veneto for now
-        provinces.get(0).set(19,new ArrayList<>());
-        provinces.get(0).get(19).addAll(Arrays.asList("Belluno", "Padova", "Rovigo", "Treviso", "Venezia", "Verona", "Vicenza"));
-
-        //only Venezia for now
-        cities.set(0, new ArrayList<>());
-        cities.get(0).set(0,new ArrayList<>(20));
-        cities.get(0).set(19, new ArrayList<>(7));
-        cities.get(0).get(19).set(4, new ArrayList<>());
-        //only a couple of cities for now
-        cities.get(0).get(19).get(4).addAll(Arrays.asList("Venezia", "Mestre", "Marghera"));
+        countries.put("Italia", new HashMap<>());
+        countries.get("Italia").put("Veneto", new HashMap<>());
+        countries.get("Italia").get("Veneto").put("Venezia", new ArrayList<>(Arrays.asList("Venezia", "Mestre", "Marghera")));
     }
 
-    //dedicated Exception
-    public static class noSuchLocationException extends Exception {
-        public noSuchLocationException(String s) {
-            super(s);
-        }
-    }
-
-    //dedicated Exception
-    public static class noSuchCountryException extends noSuchLocationException {
-        public noSuchCountryException(String s) {
-            super("Country: " + s + " does not exist or is not available");
-        }
-    }
-
-    //dedicated Exception
-    public static class noSuchRegionException extends noSuchCountryException {
-        public noSuchRegionException(String s) {
-            super("Region: " + s + " does not exist or is not available");
-        }
-    }
-
-    //dedicated Exception
-    public static class noSuchProvinceException extends noSuchRegionException {
-        public noSuchProvinceException(String s) {
-            super("Province: " + s + " does not exist or is not available");
-        }
-    }
 
     public static ArrayList<String> getAvailableCountries() {
-        return countries;
+        return new ArrayList<>(countries.keySet());
     }
 
-    public static ArrayList<String> getAvailableRegionsForCountry(String country) throws noSuchCountryException {
-        if (country == null) throw new noSuchCountryException("NULL");
-        ArrayList<String> avCountries = getAvailableCountries();
-        if (!(avCountries.contains(country))) throw new noSuchCountryException(country);
-        else {
-            int i = 0;
-            boolean found = false;
-            ArrayList<String> res = new ArrayList<>();
-            while (i++ < avCountries.size() && !found) {
-                if (avCountries.get(i).equals(country)) {
-                    found = true;
-                    res = regions.get(i);
-                }
-            }
-            //return res;
-            //return only Veneto for now
-            return new ArrayList<>(Collections.singletonList("Veneto"));
-        }
+    public static ArrayList<String> getAvailableRegionsForCountry(String country) {
+        if (countries.containsKey(country)) return new ArrayList<>(countries.get(country).keySet());
+        else return new ArrayList<>();
     }
 
-    public static ArrayList<String> getAvailableProvincesForRegion(String region, String country) throws noSuchRegionException {
-        if (region == null) throw new noSuchRegionException("NULL");
-        ArrayList<String> avRegions = new ArrayList<>();
-        try {
-            avRegions = getAvailableRegionsForCountry(country);
-        } catch (noSuchCountryException e) {
-            throw new noSuchRegionException(region + " (country: " + country + ")");
-        }
-        if (!(avRegions.contains(region))) throw new noSuchRegionException(region + " (country: " + country + ")");
-        else {
-            int i = 0;
-            boolean found = false;
-            ArrayList<String> res = new ArrayList<>();
-            while (i++ < avRegions.size() && !found) {
-                if (avRegions.get(i).equals(country)) {
-                    found = true;
-                    int countryIndex = country.indexOf(country);
-                    int regionIndex = regions.get(countryIndex).indexOf(region);
-                    res = provinces.get(countryIndex).get(regionIndex);
-                }
-            }
-            //return res;
-            //return only Venezia for now
-            return new ArrayList<>(Collections.singletonList("Venezia"));
-        }
+    public static ArrayList<String> getAvailableProvincesForRegion(String region, String country) {
+        if (countries.containsKey(country) && countries.get(country).containsKey(region)) return new ArrayList<>(countries.get(country).get(region).keySet());
+        else return new ArrayList<>();
     }
 
-    public static ArrayList<String> getAvailableCitiesForProvince(String province, String region, String country) throws noSuchProvinceException {
-        if (province == null) throw new noSuchProvinceException("NULL");
-        ArrayList<String> avProvinces = new ArrayList<>();
-        try {
-            avProvinces = getAvailableProvincesForRegion(region, country);
-        } catch (noSuchCountryException e) {
-            throw new noSuchProvinceException(province + " (region: " + region + ", country: " + country + ")");
+    public static ArrayList<String> getAvailableCitiesForProvince(String province, String region, String country) {
+        if (countries.containsKey(country) && countries.get(country).containsKey(region) && countries.get(country).get(region).containsKey(province))
+            return new ArrayList<>(countries.get(country).get(region).get(province));
+        else return new ArrayList<>();
+    }
+
+    private static void displayAlertLocation(Context context, String typeOfLocation, ArrayList<String> avail) {
+        String alertMessage = "";
+        ArrayList<String> availableToDisplay = new ArrayList<>();
+        alertMessage += typeOfLocation + context.getString(R.string.wrong_choice);
+        for (String a: avail) {
+            alertMessage += ("\n" + a);
         }
-        if (!(avProvinces.contains(region))) throw new noSuchProvinceException(province + " (region: " + region + ", country: " + country + ")");
+        final String finalMessage = alertMessage;
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        //display the item preview and insert in database if yes is clicked
+        builder.setMessage(finalMessage)
+                .setCancelable(false)
+                .setPositiveButton(context.getString(R.string.understood), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }}).show();
+    }
+    public static boolean checkCountry(Context context, String country) {
+        boolean ok = true;
+        ArrayList<String> avail = getAvailableCountries();
+        for (String s: avail) Log.d("TEST", s);
+        if (!(avail.contains(country))) {
+            displayAlertLocation(context, context.getString(R.string.insert_country), avail);
+            ok = false;
+        }
+        return ok;
+    }
+    public static boolean checkRegion(Context context, String country, String region) {
+        boolean ok = true;
+        ArrayList<String> avail = getAvailableRegionsForCountry(country);
+            if (!(avail.contains(region))) {
+                displayAlertLocation(context, context.getString(R.string.insert_region), avail);
+                ok = false;
+            }
+        return ok;
+    }
+
+    public static boolean checkProvince(Context context, String country, String region, String province) {
+        boolean ok = true;
+        ArrayList<String> avail = getAvailableProvincesForRegion(region, country);
+            if (!(avail.contains(province))) {
+                displayAlertLocation(context, context.getString(R.string.insert_province), avail);
+                ok = false;
+            }
+        return ok;
+    }
+
+    public static boolean checkCity(Context context, String country, String region, String province, String city) {
+        boolean ok = true;
+        ArrayList<String> avail = getAvailableCitiesForProvince(province, region, country);
+            if (!(avail.contains(city))) {
+                displayAlertLocation(context, context.getString(R.string.insert_city), avail);
+                ok = false;
+            }
+        return ok;
+    }
+    public static boolean checkLocation(Context context, String country, String region, String province, String city) {
+        boolean ok = true;
+        Location l = new Location();
+        if (!checkCountry(context, country)) ok = false;
         else {
-            int i = 0;
-            boolean found = false;
-            ArrayList<String> res = new ArrayList<>();
-            while (i++ < avProvinces.size() && !found) {
-                if (avProvinces.get(i).equals(country)) {
-                    found = true;
-                    int countryIndex = country.indexOf(country);
-                    int regionIndex = regions.get(countryIndex).indexOf(region);
-                    int provinceIndex = provinces.get(countryIndex).get(regionIndex).indexOf(province);
-                    res = cities.get(countryIndex).get(regionIndex).get(provinceIndex);
+            if (!checkRegion(context, country, region)) ok = false;
+            else {
+                if (!checkProvince(context, country, region, province)) ok = false;
+                else {
+                    if (!checkCity(context, country, region, province, city)) ok = false;
                 }
             }
-            //return res;
-            //return only a couple of cities for now
-            return new ArrayList<>(Arrays.asList("Venezia", "Mestre", "Marghera"));
         }
+        return ok;
     }
+
 
 
 }

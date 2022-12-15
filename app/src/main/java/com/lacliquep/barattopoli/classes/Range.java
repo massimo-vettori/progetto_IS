@@ -1,7 +1,5 @@
 package com.lacliquep.barattopoli.classes;
 
-import android.content.Context;
-
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -66,7 +64,7 @@ public class Range {
      */
     public static void getItemsIdAndInfo(String contextTag, String idRange, Consumer<Map<String, ArrayList<String>>> consumer) {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(Range.CLASS_RANGE_DB);
-        BarattopolyUtil.getMapWithIdAndInfo(contextTag, dbRef, idRange, Item.INFO_LENGTH, consumer);
+        BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRef, idRange, Item.INFO_LENGTH, consumer);
     }
 
     //da verificare se funziona

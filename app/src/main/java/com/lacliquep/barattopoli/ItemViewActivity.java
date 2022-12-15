@@ -52,7 +52,7 @@ public class ItemViewActivity extends AppCompatActivity {
     protected void setup(@NonNull Item item, @NonNull Ownership owner) {
         updateItemDescription(item.getDescription());
         updateItemTitle(item.getTitle());
-        updateItemLocation(item.getLocation().toString());
+        //updateItemLocation(item.getLocation()); //TODO:convert string fetch in array fetch
 
         updatePriceRange(item.getIdRange());
         updateUserName(item.getOwner().stream().reduce("", (a, b) -> a + " " + b));
@@ -67,6 +67,7 @@ public class ItemViewActivity extends AppCompatActivity {
                 ItemViewActivity.this.backToHome();
             });
         }
+
 
 //        TODO: either implement image decoding or add methods to Item and User classes to get the images as a Bitmap
 //        updateUserAvatar(item.getOwner());
