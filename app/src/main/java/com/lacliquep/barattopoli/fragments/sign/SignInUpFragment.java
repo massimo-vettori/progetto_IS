@@ -4,13 +4,23 @@ package com.lacliquep.barattopoli.fragments.sign;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
+
+import com.lacliquep.barattopoli.ProfileActivity;
 import com.lacliquep.barattopoli.R;
+import com.lacliquep.barattopoli.classes.Item;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Consumer;
 
 
 /**
@@ -39,11 +49,18 @@ public class SignInUpFragment extends Fragment {
         choice_sign_in_button.setOnClickListener(v -> {
             //change of fragment
             loadFragment(new LoginFragment());
+            /*Item.retrieveMapWithAllItems(true,true,null, true, "mmNsy71Nf5e8ATR79b4LNk3uRSh1", new ArrayList<String>(Arrays.asList("Italia", "Veneto", "Venezia", "Venezia")), new Consumer<Map<String, Map<String, String>>>() {
+                @Override
+                public void accept(Map<String, Map<String, String>> stringMapMap) {
+                    Log.d("Item", stringMapMap.toString());
+                }
+            });*/
+//            startActivity(new Intent(getContext(), ProfileActivity.class));
         });
         // perform setOnClickListener on register
         choice_sign_up_button.setOnClickListener(v -> {
             //change of fragment
-            loadFragment(new RegisterFragment());
+            loadFragment(new InsertNewUserFragment());
         });
 
         return view;

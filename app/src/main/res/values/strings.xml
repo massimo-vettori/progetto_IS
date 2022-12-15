@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Barattopoli</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="APP_NAME">BARATTOPOLI</string>
+
     <string name="login">Accedi</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
@@ -9,15 +9,102 @@
     <string name="register">Registrati</string>
     <string name="select_error">Necessario selezionare: </string>
     <string name="match_error">: devono coincidere</string>
-    <string name="in_progress">…in progress…</string>
+    <string name="in_progress">…in progresso…</string>
     <string name="accept_privacy">Conferma presa visione</string>
     <string name="forgot_password">Ho dimenticato la password</string>
     <string name="Login">Login</string>
     <string name="Logout">Logout</string>
     <string name="Registration">Registrazione</string>
-    <string name="error_email">inserire una email</string>
-    <string name="error_password">scegliere una password di almeno 6 caratteri!</string>
+    <string name="error_email">inserisci una email</string>
+    <string name="error_password">scegli una password di almeno 6 caratteri!</string>
     <string name="success">: azione avvenuta con successo</string>
     <string name="failure">: fallimento, qualcosa è andato storto</string>
     <string name="empty_text">: il testo non può essere vuoto!</string>
+
+    <string name="Yes">Sì</string>
+    <string name="No">No</string>
+    <string name="From">da</string>
+    <string name="To">a</string>
+
+    <string name="CATEGORIES">CATEGORIE</string>
+    <string name="RANGE">VALORE INDICATIVO</string>
+    <string name="Tech">Tecnologia</string>
+    <string name="Clothes">Abbigliamento</string>
+    <string name="Handmade">Artigianato</string>
+    <string name="Games">Giochi</string>
+    <string name="House_and_garden">Casa e giardino</string>
+    <string name="Food">Cibo</string>
+    <string name="School">Istruzione</string>
+    <string name="Fun">Divertimento</string>
+
+    <string name="fai_la_tua_proposta">Fai la tua proposta</string>
+    <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+    <string name="locazione_fisica">Locazione fisica dell\'oggetto</string>
+    <string name="descrizione_dell_offerente">Descrizione dell\'offerente</string>
+    <string name="text_placeholder">Placeholder (modify me)</string>
+    <string name="avatar_desc">Avatar dell\'offerente</string>
+    <string name="lorem_short">Lorem ipsum dolor sit amet.</string>
+
+    <string name="Alert_insert_item">Confermi di voler inserire l\'oggetto o servizio?</string>
+    <string name="Alert_take_new_picture">Se cambierai la foto, i campi finora selezionati torneranno ad essere vuoti. Procedere comunque?</string>
+
+    <string name="range">%1$s %2$d %3$s %4$d</string>
+    <string name="inserting_a_new_item">Inserimento di un nuovo oggetto o servizio nella tua bacheca</string>
+    <string name="take_picture">Scatta una foto per il tuo oggetto o servizio</string>
+    <string name="take_profile_picture">Scatta una foto profilo</string>
+    <string name="insert_description">inserisci una descrizione</string>
+    <string name="insert_title">inserisci un titolo</string>
+    <string name="insert_location">inserisci il luogo</string>
+    <string name="is_charity">è beneficienza</string>
+    <string name="is_service">è un servizio</string>
+    <string name="insert">inserisci</string>
+    <string name="take_picture_user">scatta una foto profilo</string>
+    <string name="non_mandatory_fields">campi non obbligatori</string>
+    <string name="insert_name">inserisci il tuo nome</string>
+    <string name="insert_surname">inserisci il tuo cognome</string>
+    <string name="mandatory_fields">campi obbligatori</string>
+    <string name="insert_username">scegli un soprannome</string>
+    <string name="insert_email">inserisci la tua email</string>
+    <string name="insert_password">scegli una password</string>
+    <string name="confirm_password">inserici nuovamente la password scelta</string>
+    <string name="insert_city">inserisci la città</string>
+    <string name="insert_province">inserisci la provincia</string>
+    <string name="insert_region">inserisci la regione</string>
+    <string name="insert_country">inserisci la nazione</string>
+
+    <string name="city">Città</string>
+    <string name="province">Provincia</string>
+    <string name="region">Regione</string>
+    <string name="country">Nazione</string>
+
+    <string name="wrong_choice">: scelta incorretta. Scegli fra una di queste:</string>
+    <string name="understood">ho capito</string>
+    <string name="delete_item">Elimina oggetto</string>
+
+
+
+    <string name="objects">Oggetti</string>
+    <string name="services">Servizi</string>
+    <string name="charity">Beneficenza</string>
+    <string name="chat">Chat</string>
+    <string name="dashboard">Bacheca</string>
+    <string name="exchanges">I tuoi baratti</string>
+    <string name="notifications">Notifiche</string>
+    
+    <string name="text_preview">Text Preview</string>
+    <string name="proposal_text">Ha proposto questo scambio</string>
+    <string name="lorem_tiny">Lorem ipsum.</string>
+    <string name="sample_mail">user@example.com</string>
+    <string name="prefer_not_to">Preferisco di no</string>
+    <string name="profile">Profilo</string>
+
+    <string name="basic_image">iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=</string>
+    <string name="blank_profile_pic">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</string>
+    <string name="camera_pic">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</string>
+    <!-- don't translate -->
+    <string name="Bundle_tag_Previous_activity">previous Activity</string>
+    <string name="Bundle_tag_user_basic_info">user\'s basic info</string>
+    <string name="Bundle_tag_encoded_image">encoded image</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>

@@ -4,45 +4,99 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:focusable="true"
+    android:clickable="true"
+    android:layout_marginHorizontal="?attr/paddingMd"
+    android:layout_marginTop="?attr/paddingMd"
     android:background="@drawable/round_outline">
 <!--    android:clipToOutline="true"> TODO: Duplicate the design file to allow the rounded corners to appear on later version of android -->
 
     <ImageView
         android:id="@+id/image_container"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="500dp"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+        android:src="@drawable/surface" />
 
-    <TextView
-        android:id="@+id/top_text"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:fontFamily="@font/inter_medium"
-        android:paddingVertical="10dp"
-        android:text="TextView"
-        android:textAlignment="center"
+        android:orientation="horizontal"
+        android:paddingVertical="?attr/paddingSm"
+        android:paddingHorizontal="?attr/paddingSm"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/blue_900"
+        app:layout_constraintStart_toStartOf="parent">
 
-    <TextView
-        android:id="@+id/bottom_text"
+        <ImageView
+            android:id="@+id/user_avatar"
+            android:src="@drawable/surface"
+            android:scaleType="centerCrop"
+            android:layout_width="50dp"
+            android:layout_marginEnd="?attr/paddingSm"
+            android:layout_height="50dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/zinc_50"
+                android:textSize="15sp"
+                android:fontFamily="@font/inter_bold"
+                android:text="@string/lorem_short" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_medium"
+                android:textSize="12sp"
+                android:textColor="@color/blue_200"
+                android:text="@string/proposal_text" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:fontFamily="@font/inter_medium"
-        android:paddingVertical="10dp"
-        android:text="TextView"
-        android:textAlignment="center"
+        android:orientation="horizontal"
+        android:paddingVertical="?attr/paddingMd"
+        android:paddingHorizontal="?attr/paddingMd"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:background="@color/blue_900"
+        app:layout_constraintStart_toStartOf="parent">
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/item_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/zinc_50"
+                android:textSize="18sp"
+                android:fontFamily="@font/inter_bold"
+                android:text="@string/lorem_short" />
+            <TextView
+                android:id="@+id/item_price_range"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_medium"
+                android:textSize="12sp"
+                android:textColor="@color/blue_200"
+                android:text="@string/RANGE" />
+        </LinearLayout>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

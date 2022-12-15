@@ -6,8 +6,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -18,17 +16,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.lacliquep.barattopoli.MainActivity;
 import com.lacliquep.barattopoli.R;
-import com.lacliquep.barattopoli.SignActivity;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 
 /**
  * A {@link Fragment} subclass to handle the sign-in.
@@ -128,11 +121,11 @@ public class LoginFragment extends Fragment {
      * @param password the provided password
      */
     private void loginUser(String email, String password) {
-        //TODO: wrap in async task
         auth.signInWithEmailAndPassword(email, password).addOnSuccessListener(authResult -> {
             Toast.makeText(getActivity(), getString(R.string.Login) + getString(R.string.success), Toast.LENGTH_SHORT).show();
             //TODO: after login start MainActivity
             startActivity(new Intent(getActivity(), MainActivity.class));
+
         });
     }
 

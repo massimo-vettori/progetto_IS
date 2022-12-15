@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/default_gradient_bg"
+    tools:context=".MyBoardActivity">
+
+    <Button
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="52dp"
+        android:background="#00000000"
+        android:text=""
+        android:textAlignment="center"
+        app:icon="?attr/actionModeCloseDrawable"
+        app:iconPadding="0dp"
+        app:iconTint="@color/blue_100"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="?attr/paddingMd"
+        android:fontFamily="@font/inter_medium"
+        android:text="La tua bacheca"
+        android:textColor="@color/zinc_50"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/back_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="?attr/paddingSm"
+        app:layout_constraintEnd_toEndOf="@+id/textView3"
+        app:layout_constraintTop_toBottomOf="@+id/textView3">
+
+        <Button
+            android:id="@+id/activate_grid_view_btn"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="?attr/paddingSm"
+            android:backgroundTint="@color/zinc_800"
+            android:fontFamily="@font/inter_medium"
+            android:text="Griglia"
+            android:textAllCaps="false"
+            android:textColor="@color/zinc_400"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/activate_list_view_btn"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="?attr/colorPrimary"
+            android:fontFamily="@font/inter_medium"
+            android:text="Lista"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="409dp"
+        android:layout_height="780dp"
+        android:layout_marginTop="?attr/paddingSm"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+        <LinearLayout
+            android:id="@+id/board_item_list"
+            android:layout_width="match_parent"
+            android:paddingHorizontal="?attr/paddingMd"
+            android:paddingVertical="?attr/paddingMd"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+<!--            <include layout="@layout/sample_list_item_view" />-->
+<!--            <include layout="@layout/sample_list_item_view" />-->
+<!--            <include layout="@layout/sample_list_item_view" />-->
+<!--            <include layout="@layout/sample_list_item_view" />-->
+<!--            <include layout="@layout/sample_list_item_view" />-->
+<!--            <include layout="@layout/sample_list_item_view" />-->
+<!--            <include layout="@layout/sample_list_item_view" />-->
+<!--            <include layout="@layout/sample_list_item_view" />-->
+
+        </LinearLayout>
+    </ScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
