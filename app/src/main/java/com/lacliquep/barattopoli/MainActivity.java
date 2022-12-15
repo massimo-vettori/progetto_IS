@@ -4,27 +4,27 @@ package com.lacliquep.barattopoli;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.function.Consumer;
 
+import com.lacliquep.barattopoli.classes.Item;
+import com.lacliquep.barattopoli.classes.Ownership;
 import com.lacliquep.barattopoli.classes.User;
+import com.lacliquep.barattopoli.views.ItemView;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private static String ACTIVITY_TAG_NAME = "MainActivity";
+    public static final String ACTIVITY_TAG_NAME = "MainActivity";
     private View view;
     private TextView topText;
     private ImageView imageContainer;
@@ -40,11 +40,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        topText = findViewById(R.id.top_text);
-        bottomText = findViewById(R.id.bottom_text);
-        imageContainer = findViewById(R.id.image_container);
+//        topText = findViewById(R.id.top_text);
+//        bottomText = findViewById(R.id.bottom_text);
+//        imageContainer = findViewById(R.id.image_container);
         insertNewItem = findViewById(R.id.insertNewItem);
         delete = findViewById(R.id.deleteItem);
+
+        this.addItem(Item.getSampleItem());
+        this.addItem(Item.getSampleItem());
+        this.addItem(Item.getSampleItem());
 
         //retrieving a previous activity value attached to the bundle
         Bundle b = getIntent().getExtras();
@@ -75,6 +79,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Objects.requireNonNull(getSupportActionBar()).hide();
+    }
+
+    protected void addItem(Item item) {
+        LinearLayout container = findViewById(R.id.main_scroller);
+        View view = ItemView.createAndInflate(this, item, container);
+        container.addView(view);
     }
 
 

@@ -25,19 +25,19 @@
             android:orientation="vertical"
             android:paddingVertical="20dp">
 
-            <include
-                layout="@layout/view_item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="?attr/paddingLg"
-                android:layout_marginTop="?attr/paddingLg" />
+<!--            <include-->
+<!--                layout="@layout/view_item"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginHorizontal="?attr/paddingLg"-->
+<!--                android:layout_marginTop="?attr/paddingLg" />-->
 
-            <include
-                layout="@layout/view_item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="?attr/paddingLg"
-                android:layout_marginTop="?attr/paddingLg" />
+<!--            <include-->
+<!--                layout="@layout/view_item"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginHorizontal="?attr/paddingLg"-->
+<!--                android:layout_marginTop="?attr/paddingLg" />-->
 
         </LinearLayout>
     </ScrollView>
@@ -92,18 +92,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                <!-- android:text="@string/text_placeholder" -->
                 android:text="insert new item"
                 android:textAlignment="center" />
+            <!-- android:text="@string/text_placeholder" -->
+
 
             <Button
                 android:id="@+id/deleteItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                <!-- android:text="@string/text_placeholder" -->
                 android:text="try delete"
                 android:textAlignment="center" />
+            <!-- android:text="@string/text_placeholder" -->
+
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

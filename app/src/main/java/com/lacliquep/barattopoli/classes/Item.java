@@ -1,5 +1,8 @@
 package com.lacliquep.barattopoli.classes;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -10,9 +13,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.lacliquep.barattopoli.R;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 
 /**
@@ -512,6 +518,67 @@ public class Item {
     public static void deleteItem(String idItem, boolean isExchangeable, DatabaseReference dbRefItem) throws NonModifiableException {
         if (!isExchangeable) throw new NonModifiableException();
         //TODO;
+    }
+
+    public static CharSequence[] serialize(Item item) {
+        CharSequence[] serializedItem = new CharSequence[11];
+        serializedItem[0] = item.getIdItem();
+        serializedItem[1] = item.getTitle();
+        serializedItem[2] = item.getDescription();
+        serializedItem[3] = item.getOwner().stream().reduce("", (a, b) -> a + "," + b);
+        serializedItem[4] = item.getCategories().stream().reduce("", (a, b) -> a + "," + b);
+        serializedItem[5] = item.getImages().stream().reduce("", (a, b) -> a + "," + b);
+        serializedItem[6] = item.isExchangeable() ? "1" : "0";
+        serializedItem[7] = item.isService() ? "1" : "0";
+        serializedItem[8] = item.isCharity() ? "1" : "0";
+        serializedItem[9] = item.getIdRange();
+        serializedItem[10] = item.getLocation().stream().reduce("", (a, b) -> a + "," + b);
+        return serializedItem;
+    }
+
+
+
+//    String idItem, String title, String description,@NonNull String idRange, Collection<String> owner, ArrayList<String> location, boolean isCharity, boolean isExchangeable, boolean isService, @NonNull ArrayList<String> categories ,@NonNull Collection<String> images
+    public static Item deserialize(CharSequence[] serializedItem) {
+        String id = serializedItem[0].toString();
+        String title = serializedItem[1].toString();
+        String description = serializedItem[2].toString();
+        ArrayList<String> owner = new ArrayList<>(Arrays.asList(serializedItem[3].toString().split(",")));
+        ArrayList<String> categories = new ArrayList<>(Arrays.asList(serializedItem[4].toString().split(",")));
+        ArrayList<String> images = new ArrayList<>(Arrays.asList(serializedItem[5].toString().split(",")));
+        boolean isExchangeable = serializedItem[6].toString().equals("1");
+        boolean isService = serializedItem[7].toString().equals("1");
+        boolean isCharity = serializedItem[8].toString().equals("1");
+        String idRange = serializedItem[9].toString();
+        ArrayList<String> location = new ArrayList<>(Arrays.asList(serializedItem[10].toString().split(",")));
+
+        return new Item(id, title, description, idRange, owner, location, isCharity, isExchangeable, isService, categories, images);
+    }
+
+    public static Item getSampleItem() {
+        ArrayList<String> owner = new ArrayList<>();
+        owner.add("owner");
+        ArrayList<String> categories = new ArrayList<>();
+        categories.add("category");
+        ArrayList<String> images = new ArrayList<>();
+//        images.add(BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.surface).toString());
+
+        ArrayList<String> location = new ArrayList<>();
+        location.add("stato");
+        location.add("regione");
+        location.add("provincia");
+        location.add("comune");
+        return new Item("id", "title", "description", "idRange", owner, location, false, true, false, categories, images);
+    }
+
+    public static void deleteItem(String itemID) {
+//        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(Item.CLASS_ITEM_DB).child(itemID);
+//        dbRef.removeValue();
+    }
+
+    public static void deleteItem(Item item) {
+//        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(Item.CLASS_ITEM_DB).child(item.idItem);
+//        dbRef.removeValue();
     }
 
 }

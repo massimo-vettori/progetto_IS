@@ -71,6 +71,8 @@
 
     <string name="wrong_choice">: scelta incorretta. Scegli fra una di queste:</string>
     <string name="understood">ho capito</string>
+    <string name="delete_item">Elimina oggetto</string>
+
 
     <!-- don't translate -->
     <string name="Bundle_tag_Previous_activity">previous Activity</string>
@@ -78,4 +80,7 @@
     <string name="Bundle_tag_encoded_image">encoded image</string>
 
     <string name="text_preview">Text Preview</string>
+    <string name="proposal_text">Ha proposto questo scambio</string>
+    <string name="lorem_tiny">Lorem ipsum.</string>
+    <string name="sample_mail">user@example.com</string>
 </resources>

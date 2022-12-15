@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.media.Image;
 import android.os.Bundle;
@@ -13,10 +14,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.lacliquep.barattopoli.classes.Item;
+import com.lacliquep.barattopoli.classes.Ownership;
 
 import java.util.Objects;
 
 public class ItemViewActivity extends AppCompatActivity {
+
+    protected String caller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,15 +38,34 @@ public class ItemViewActivity extends AppCompatActivity {
         // Get the intent that started this activity
         Intent intent = getIntent();
         // Get the serialized item from the intent and deserialize it into an Item object
-        Item item = (Item) intent.getSerializableExtra("item");
+        Item item       = Item.deserialize(intent.getCharSequenceArrayExtra("item"));
+        // Get the ownership of the item from the intent
+        Ownership owner = Ownership.from(intent.getStringExtra("owner"));
+        // Get the calling activity from the intent
+        caller = intent.getStringExtra("caller");
+
         // Updates the UI with the item's data
-        if (item != null) this.setup(item);
+        if (owner == null) owner = Ownership.OTHER; // If the owner is null, set it to OTHER, in order to prevent a NullPointerException
+        if (item != null) this.setup(item, owner);
     }
 
-    protected void setup(@NonNull Item item) {
+    protected void setup(@NonNull Item item, @NonNull Ownership owner) {
         updateItemDescription(item.getDescription());
         updateItemTitle(item.getTitle());
-        updateItemLocation(item.getLocation());
+        updateItemLocation(item.getLocation().toString());
+        updatePriceRange(item.getIdRange());
+        updateUserName(item.getOwner().stream().reduce("", (a, b) -> a + " " + b));
+
+        if (owner == Ownership.PERSONAL) {
+            Button delete = findViewById(R.id.propose_btn);
+            delete.setText(R.string.delete_item);
+            delete.setBackgroundColor(getResources().getColor(R.color.red_500, null));
+            delete.setTextColor(getResources().getColor(R.color.zinc_50, null));
+            delete.setOnClickListener(view -> {
+                Item.deleteItem(item);
+                ItemViewActivity.this.backToHome();
+            });
+        }
 
 //        TODO: either implement image decoding or add methods to Item and User classes to get the images as a Bitmap
 //        updateUserAvatar(item.getOwner());
@@ -51,11 +74,14 @@ public class ItemViewActivity extends AppCompatActivity {
 //        }
     }
 
-
-
     protected void backToHome() {
         // This method is called when the back button is pressed
-        finish();
+
+
+        // If the caller is not the MainActivity, it clears the back stack and starts the MainActivity
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     protected void updateItemDescription(String desc) {
@@ -65,7 +91,7 @@ public class ItemViewActivity extends AppCompatActivity {
 
     protected void updateItemTitle(String title) {
         // Finds the TextView for the item title and updates its text
-        ((TextView) this.findViewById(R.id.title)).setText(title);
+        ((TextView) this.findViewById(R.id.item_title)).setText(title);
     }
 
     protected void updateItemLocation(String location) {
@@ -75,7 +101,18 @@ public class ItemViewActivity extends AppCompatActivity {
 
     protected void updateUserAvatar(Bitmap avatar) {
         // Finds the ImageView for the user avatar and updates its image
+        if (avatar == null) return;
         ((ImageView) this.findViewById(R.id.user_avatar)).setImageBitmap(avatar);
+    }
+
+    protected void updatePriceRange(String priceRange) {
+        // Finds the TextView for the price range and updates its text
+        ((TextView) this.findViewById(R.id.item_price_range)).setText(priceRange);
+    }
+
+    protected void updateUserName(String name) {
+        // Finds the TextView for the user name and updates its text
+        ((TextView) this.findViewById(R.id.user_name)).setText(name);
     }
 
     protected void enableProposeButton() {
