@@ -72,6 +72,11 @@
     <string name="insert_region">inserisci la regione</string>
     <string name="insert_country">inserisci la nazione</string>
 
+    <string name="city">Città</string>
+    <string name="province">Provincia</string>
+    <string name="region">Regione</string>
+    <string name="country">Nazione</string>
+
     <string name="wrong_choice">: scelta incorretta. Scegli fra una di queste:</string>
     <string name="understood">ho capito</string>
 

@@ -25,7 +25,7 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="?attr/paddingMd"
+        android:layout_marginEnd="20dp"
         android:fontFamily="@font/inter_medium"
         android:text="Il tuo profilo"
         android:textColor="@color/zinc_50"
@@ -38,9 +38,9 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="?attr/paddingMd"
-        android:layout_marginStart="?attr/paddingMd"
-        android:layout_marginEnd="?attr/paddingMd"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
         android:background="@color/zinc_800"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/back_button"
@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_gravity="center"
-            android:padding="?attr/paddingSm">
+            android:padding="10dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -95,7 +95,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_medium"
                 android:textSize="15sp"
-                android:layout_marginBottom="?attr/paddingSm"
+                android:layout_marginBottom="10dp"
                 android:text="lorem tiny"/>
         </LinearLayout>
     </LinearLayout>
@@ -104,8 +104,8 @@
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="?attr/paddingMd"
-        android:layout_marginTop="?attr/paddingMd"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
         android:fontFamily="@font/inter_medium"
         android:text="I tuoi dati personali"
         android:textColor="@color/zinc_50"
@@ -118,8 +118,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginHorizontal="?attr/paddingMd"
-        android:layout_marginTop="?attr/paddingSm"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintTop_toBottomOf="@+id/textView5">
 
         <TextView
@@ -136,11 +136,35 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter_medium"
             android:textSize="15sp"
-            android:layout_marginBottom="?attr/paddingSm"
+            android:layout_marginBottom="10dp"
             android:text="sample mail"/>
 
         <TextView
-            android:id="@+id/location"
+            android:id="@+id/country"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:textSize="11sp"
+            android:textColor="@color/zinc_400"
+            android:text="Locazione fisica"/>
+        <TextView
+            android:id="@+id/region"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:textSize="11sp"
+            android:textColor="@color/zinc_400"
+            android:text="Locazione fisica"/>
+        <TextView
+            android:id="@+id/province"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:textSize="11sp"
+            android:textColor="@color/zinc_400"
+            android:text="Locazione fisica"/>
+        <TextView
+            android:id="@+id/city"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter_medium"
@@ -154,7 +178,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter_medium"
             android:textSize="15sp"
-            android:layout_marginBottom="?attr/paddingSm"
+            android:layout_marginBottom="10dp"
             android:text="@string/lorem_short"/>
     </LinearLayout>
 
@@ -162,8 +186,8 @@
         android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="?attr/paddingMd"
-        android:layout_marginBottom="?attr/paddingMd"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
