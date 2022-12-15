@@ -18,8 +18,10 @@ public class ObjectFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_object, container, false);
+        /*
+        For bottom bar
         ImageButton home = (ImageButton) v.findViewById(R.id.bottom_navigator_home);
-        home.setBackgroundColor(Color.BLUE);
+        home.setBackgroundColor(Color.BLUE);*/
 
         return v;
     }

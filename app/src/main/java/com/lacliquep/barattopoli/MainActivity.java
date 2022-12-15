@@ -3,49 +3,42 @@ package com.lacliquep.barattopoli;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Consumer;
-
-import com.lacliquep.barattopoli.classes.User;
-
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.lacliquep.barattopoli.fragments.ObjectFragment;
-import com.lacliquep.barattopoli.fragments.ServicesFragment;
-import com.lacliquep.barattopoli.views.ItemView;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
-import android.util.AttributeSet;
 import android.view.MenuItem;
-import android.widget.ImageButton;
+
+import java.util.Objects;
+
+import com.lacliquep.barattopoli.classes.Item;
+import com.lacliquep.barattopoli.classes.Ownership;
+import com.lacliquep.barattopoli.classes.User;
+import com.lacliquep.barattopoli.views.ItemView;
+
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawer;
+    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
-    private static String ACTIVITY_TAG_NAME = "MainActivity";
+    public static final String ACTIVITY_TAG_NAME = "MainActivity";
     private View view;
     private TextView topText;
     private ImageView imageContainer;
@@ -61,17 +54,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*
-        TODO: delete
-        topText = findViewById(R.id.top_text);
-        bottomText = findViewById(R.id.bottom_text);
-        imageContainer = findViewById(R.id.image_container);
-        insertNewItem = findViewById(R.id.insertNewItem);
-        delete = findViewById(R.id.deleteItem);
-        */
+       /* //retrieving a previous activity value attached to the bundle
 
+        this.addItem(Item.getSampleItem());
+        this.addItem(Item.getSampleItem());
+        this.addItem(Item.getSampleItem());
 
         //retrieving a previous activity value attached to the bundle
+
         Bundle b = getIntent().getExtras();
         //retrieving user's info if this Activity is started by the previous activity in its natural chain
         userBasicInfo = (b!= null)? b.getString(getString(R.string.Bundle_tag_user_basic_info)):"";
@@ -102,9 +92,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
         */
 
-        //TODO: ho dovuto commentare questa riga perchè crashava
-        //Objects.requireNonNull(getSupportActionBar()).hide();
-
 
         Toolbar toolbar = findViewById(R.id.toolbar); // define the toolbar because we removed the default ActionBar
         setSupportActionBar(toolbar); // set our ActionBar
@@ -122,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(savedInstanceState == null)
         {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ObjectFragment()).commit(); // this start for the first when you open this activity
+            navigationView.setCheckedItem(R.id.nav_object);
         }
 
         /*if(savedInstanceState == null) {
@@ -130,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }*/
     }
 
-
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -138,13 +125,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (item != null) {
             switch (item.getItemId()) {
                 case R.id.nav_object:
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ObjectFragment()).commit();
+                    changeItem(new ObjectFragment(),"Object");
                     enter = true;
                     break;
                 case R.id.nav_services:
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ServicesFragment()).commit();
+                    changeItem(new ObjectFragment(),"Service");
                     enter = true;
                     break;
+                case R.id.nav_charity:
+                    changeItem(new ObjectFragment(),"Charity");
+                    enter = true;
+                    break;
+
+                /*case R.id.nav_chat:
+                    Intent intent = new Intent(MainActivity.this, ItemViewActivity.class);
+                    startActivity(intent);
+                    // finish();
+                    break;*/
+                case R.id.nav_logout:
+                    mAuth.signOut();
+                    Intent intent = new Intent(MainActivity.this, SignActivity.class);
+                    startActivity(intent);
+                    finish();
+                    break;
+
             }
         }
 
@@ -164,7 +168,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-   public void replaceFragments(Object fragmentClass) { // for bottom navigation
+    private void changeItem(ObjectFragment fragment, String filter){
+        Bundle args = new Bundle();
+        args.putString("filter",filter);
+        fragment.setArguments(args);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+    }
+
+/*
+    protected void addItem(Item item) {
+        LinearLayout container = findViewById(R.id.main_scroller);
+        View view = ItemView.createAndInflate(this, item, container);
+        container.addView(view);
+    }
+*/
+
+
+    // for bottom navigation
+  /* public void replaceFragments(Object fragmentClass) { // for bottom navigation
         Fragment fragment = null;
         Object o = R.id.fragment_container;
         fragment = (Fragment) fragmentClass;
@@ -172,8 +193,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
                 .commit();
-
-    }
-
-
+    }*/
 }
