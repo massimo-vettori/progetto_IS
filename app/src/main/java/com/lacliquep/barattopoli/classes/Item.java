@@ -88,7 +88,7 @@ public class Item {
      * @param images a collection of Strings representing the images to display
      *
      */
-    Item(String idItem, String title, String description,@NonNull String idRange, Collection<String> owner, ArrayList<String> location, boolean isCharity, boolean isExchangeable, boolean isService, @NonNull ArrayList<String> categories ,@NonNull Collection<String> images) {
+    public Item(String idItem, String title, String description, @NonNull String idRange, Collection<String> owner, ArrayList<String> location, boolean isCharity, boolean isExchangeable, boolean isService, @NonNull ArrayList<String> categories, @NonNull Collection<String> images) {
         this.idItem = idItem;
         this.description = description;
         this.title = title;
@@ -103,8 +103,9 @@ public class Item {
         this.categories.addAll(categories);
         this.images.addAll(images);
         String category = "", image = "";
-        if (!(this.categories.isEmpty())) category = this.categories.toArray()[0].toString();
-        if (!(this.images.isEmpty())) image = this.images.toArray()[0].toString();
+
+        if (!(this.categories.isEmpty())) category = this.categories.stream().findFirst().orElse("");
+        if (!(this.images.isEmpty())) image = this.images.stream().findFirst().orElse("");
         this.itemBasicInfo = category + "," + idRange + "," + image + "," + String.valueOf(isCharity) + "," + String.valueOf(isExchangeable) + "," + String.valueOf(isService) + "," + location.get(0) + "," + location.get(1) + "," + location.get(2) + "," + location.get(3) + "," + title;
     }
     /**
@@ -330,7 +331,7 @@ public class Item {
      * @param location  the location where the items should be(ideally the User's one)
      * @param consumer  how the provided map will be used
      */
-    public static void retrieveMapWithAllItems(boolean showCharity, boolean showService, String category, boolean showUserBoard, String idUser, ArrayList<String> location, Consumer<Map<String, Map<String, String>>> consumer) {
+    public static void retrieveMapWithAllItems(boolean showCharity, boolean showService, String category, boolean showUserBoard, String idUser, ArrayList<String> location, Consumer<Map<String, Item>> consumer) {
         //sanity check
         if (!showUserBoard || (showUserBoard && idUser != null)) {
             if (showUserBoard) {
@@ -357,7 +358,31 @@ public class Item {
                                 }
                             }
                         }
-                        consumer.accept(items);
+
+                        Map<String, Item> itemsToReturn = new HashMap<>();
+
+
+                        for(String id: items.keySet()) {
+                            Map<String, String> item = items.get(id);
+
+                            if (item == null) continue;
+
+                            itemsToReturn.put(id, new Item(
+                                    id,
+                                    item.get(Item.TITLE_DB),
+                                    item.get(Item.DESCRIPTION_DB),
+                                    Objects.requireNonNull(item.get(Item.ID_RANGE_DB)),
+                                    new ArrayList<>(),
+                                    new ArrayList<>(Arrays.asList(item.get("country"), item.get("region"), item.get("province"), item.get("city"))),
+                                    Boolean.parseBoolean(item.get(Item.IS_CHARITY_DB)),
+                                    Boolean.parseBoolean(item.get(Item.IS_EXCHANGEABLE_DB)),
+                                    Boolean.parseBoolean(item.get(Item.IS_SERVICE_DB)),
+                                    new ArrayList<>(Arrays.asList(Objects.requireNonNull(item.get(Item.ID_CATEGORIES_DB)).split(","))),
+                                    new ArrayList<>(Arrays.asList(Objects.requireNonNull(item.get(Item.IMAGES_DB)).split(",")))
+                            ));
+                        }
+
+                        consumer.accept(itemsToReturn);
                     }
                 });
             } else {
@@ -400,7 +425,31 @@ public class Item {
                                                                 } else keep = false;
                                                                 if (!keep) items.remove(s);
                                                             }
-                                                            consumer.accept(items);
+
+
+                                                            Map<String, Item> itemsToReturn = new HashMap<>();
+                                                            for(String id: items.keySet()) {
+                                                                Map<String, String> item = items.get(id);
+
+                                                                if (item == null) continue;
+
+                                                                itemsToReturn.put(id, new Item(
+                                                                        id,
+                                                                        item.get(Item.TITLE_DB),
+                                                                        item.get(Item.DESCRIPTION_DB),
+                                                                        Objects.requireNonNull(item.get(Item.ID_RANGE_DB)),
+                                                                        new ArrayList<>(Arrays.asList(Objects.requireNonNull(item.get(Item.OWNER_DB)).split(","))),
+                                                                        new ArrayList<>(Arrays.asList(item.get("country"), item.get("region"), item.get("province"), item.get("city"))),
+                                                                        Boolean.parseBoolean(item.get(Item.IS_CHARITY_DB)),
+                                                                        Boolean.parseBoolean(item.get(Item.IS_EXCHANGEABLE_DB)),
+                                                                        Boolean.parseBoolean(item.get(Item.IS_SERVICE_DB)),
+                                                                        new ArrayList<>(Arrays.asList(Objects.requireNonNull(item.get(Item.ID_CATEGORIES_DB)).split(","))),
+                                                                        new ArrayList<>(Arrays.asList(Objects.requireNonNull(item.get(Item.IMAGES_DB)).split(",")))
+                                                                ));
+                                                            }
+
+                                                            consumer.accept(itemsToReturn);
+
                                                         }
                                                     }
                                                 }
@@ -678,6 +727,8 @@ public class Item {
         return new Item(id, title, description, idRange, owner, location, isCharity, isExchangeable, isService, categories, images);
     }
 
+
+    // TODO: remove this method
     public static Item getSampleItem() {
         ArrayList<String> owner = new ArrayList<>();
         owner.add("owner");

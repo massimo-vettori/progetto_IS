@@ -1,6 +1,8 @@
 package com.lacliquep.barattopoli;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -63,5 +65,19 @@ public class ProfileActivity extends AppCompatActivity {
             });
         }
 
+        backButton.setOnClickListener(v -> {
+            ProfileActivity.this.backToHome();
+        });
+    }
+
+    protected void backToHome() {
+        // This method is called when the back button is pressed
+        finish();
+        if (this.getIntent().getStringExtra("caller").equals(MainActivity.ACTIVITY_TAG_NAME)) return;
+
+        // If the caller is not the MainActivity, it clears the back stack and starts the MainActivity
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 }

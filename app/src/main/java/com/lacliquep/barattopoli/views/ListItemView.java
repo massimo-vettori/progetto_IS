@@ -24,7 +24,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.lacliquep.barattopoli.ItemViewActivity;
 import com.lacliquep.barattopoli.R;
-import com.lacliquep.barattopoli.classes.BarattopolyUtil;
+import com.lacliquep.barattopoli.classes.BarattopoliUtil;
 import com.lacliquep.barattopoli.classes.Item;
 import com.lacliquep.barattopoli.classes.Ownership;
 
@@ -47,16 +47,22 @@ public class ListItemView extends LinearLayout {
         TextView range  = itemView.findViewById(R.id.list_item_range);
         ImageView image = itemView.findViewById(R.id.list_item_image);
 
+        String thstring=null;
+        Bitmap thumbnail=null;
+
         title.setText(item.getTitle());
         range.setText(item.getIdRange());
-        image.setImageBitmap(BarattopolyUtil.decodeFileFromBase64(item.getImages().stream().findFirst().orElse(null)));
 
+        if (thumbnail != null) {
+            image.setImageBitmap(thumbnail);
+        }
 
         itemView.setOnClickListener(view -> {
             Intent intent = new Intent(view.getContext(), ItemViewActivity.class);
             Bundle bundle = new Bundle();
             bundle.putString("ownership", Ownership.PERSONAL.toString());
-            bundle.putCharSequenceArray("item", Item.serialize(item));
+            bundle.putString("caller", TAG);
+            bundle.putCharSequenceArray("item", Item.serialize(Item.getSampleItem()));
             intent.putExtras(bundle);
             view.getContext().startActivity(intent);
         });
@@ -133,7 +139,7 @@ public class ListItemView extends LinearLayout {
     }
 
     public void updateImage(String encodedImage) {
-        Bitmap image = BarattopolyUtil.decodeFileFromBase64(encodedImage);
+        Bitmap image = BarattopoliUtil.decodeFileFromBase64(encodedImage);
         this.updateImage(image);
     }
 }
