@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.lacliquep.barattopoli.classes.BarattopolyUtil;
+import com.lacliquep.barattopoli.classes.BarattopoliUtil;
 import com.lacliquep.barattopoli.classes.Range;
 import com.lacliquep.barattopoli.classes.User;
 
@@ -117,7 +117,7 @@ public class InsertNewItemActivity extends AppCompatActivity {
         isCharity = findViewById(R.id.is_charity);
         isService = findViewById(R.id.is_service);
 
-        imageContainer.setImageBitmap(BarattopolyUtil.decodeFileFromBase64(encodedImage[0]));
+        imageContainer.setImageBitmap(BarattopoliUtil.decodeFileFromBase64(encodedImage[0]));
 
         //set the correct text to display for the radio buttons
         try {
@@ -152,20 +152,20 @@ public class InsertNewItemActivity extends AppCompatActivity {
                     public void accept(Map<String, ArrayList<String>> stringArrayListMap) {
                         if (!(stringArrayListMap.isEmpty())) {
                             //retrieve the id of the first item on board
-                            String firstItemId = BarattopolyUtil.listOfIdFromMap(stringArrayListMap).get(0);
+                            String firstItemId = BarattopoliUtil.listOfIdFromMap(stringArrayListMap).get(0);
                             //retrieve its basic Info
                             ArrayList<String> firstItemInfo = stringArrayListMap.get(firstItemId);
                             if (firstItemInfo != null && firstItemInfo.size() >= Item.INFO_LENGTH) {
                                 topText.setText(firstItemInfo.get(7));
                                 bottomText.setText(firstItemInfo.get(0));
-                                Bitmap bm = BarattopolyUtil.decodeFileFromBase64(firstItemInfo.get(2));
+                                Bitmap bm = BarattopoliUtil.decodeFileFromBase64(firstItemInfo.get(2));
                                 if (bm != null)
-                                    imageContainer.setImageBitmap(BarattopolyUtil.decodeFileFromBase64(firstItemInfo.get(2)));
+                                    imageContainer.setImageBitmap(BarattopoliUtil.decodeFileFromBase64(firstItemInfo.get(2)));
                             }
                         } else {
                             Log.d("TAG", "emptyMap"); //TODO: substitute with sth like "no loaded items" instead of view
                             //load the basic image
-                            imageContainer.setImageBitmap(BarattopolyUtil.decodeFileFromBase64(encodedImage[0]));
+                            imageContainer.setImageBitmap(BarattopoliUtil.decodeFileFromBase64(encodedImage[0]));
                         }
 
                     }
@@ -176,9 +176,9 @@ public class InsertNewItemActivity extends AppCompatActivity {
 
 
 
-        /* sample of how to use the BarattopolyUtil methods: do not try taking out the values from the consumer
+        /* sample of how to use the BarattopoliUtil methods: do not try taking out the values from the consumer
             DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(User.CLASS_USER_DB);
-            BarattopolyUtil.retrieveUserById(MainActivity.this, dbRef, "mmNsy71Nf5e8ATR79b4LNk3uRSh1", new Consumer<User>() {
+            BarattopoliUtil.retrieveUserById(MainActivity.this, dbRef, "mmNsy71Nf5e8ATR79b4LNk3uRSh1", new Consumer<User>() {
                 @Override
                 public void accept(User u) {
                     Toast.makeText(MainActivity.this, u.getUsername(), Toast.LENGTH_LONG).show();
@@ -280,7 +280,7 @@ public class InsertNewItemActivity extends AppCompatActivity {
                             displayCategories.setText(categories.toString());
                             displayService.setText(isAService? "Service": "Item");
                             displayRange.setText(isForCharity? "Charity": rangeDescription);
-                            displayImage.setImageBitmap(BarattopolyUtil.decodeFileFromBase64(image));
+                            displayImage.setImageBitmap(BarattopoliUtil.decodeFileFromBase64(image));
 
                             //alert pop up to confirm the insert
                             AlertDialog.Builder builder = new AlertDialog.Builder(InsertNewItemActivity.this);

@@ -16,8 +16,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.lacliquep.barattopoli.ItemViewActivity;
 import com.lacliquep.barattopoli.R;
-import com.lacliquep.barattopoli.classes.BarattopolyUtil;
+import com.lacliquep.barattopoli.classes.BarattopoliUtil;
 import com.lacliquep.barattopoli.classes.Item;
+import com.lacliquep.barattopoli.classes.Ownership;
 
 public class ItemView extends ConstraintLayout {
     String title = "";
@@ -44,7 +45,7 @@ public class ItemView extends ConstraintLayout {
         TextView title    = view.findViewById(R.id.item_title);
         TextView price    = view.findViewById(R.id.item_price_range);
 
-        userName.setText(R.string.lorem_tiny);
+        userName.setText(item.getOwner().toString());
         title.setText(item.getTitle());
         price.setText(item.getIdRange());
 

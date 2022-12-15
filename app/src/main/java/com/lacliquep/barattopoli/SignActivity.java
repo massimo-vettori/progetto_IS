@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.lacliquep.barattopoli.classes.User;
+import com.lacliquep.barattopoli.fragments.sign.InsertNewUserFragment;
 import com.lacliquep.barattopoli.fragments.sign.SignInUpFragment;
 
 import android.content.Intent;
@@ -34,49 +35,56 @@ public class SignActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign);
-
-        if (user != null) {
-
-
-
-            //TODO: embed this button in new activity and delete it from SignActivity.xml
-            logout_button = findViewById(R.id.logout_button);
-            // User is signed in
-            String uid = user.getUid();
-            //called whenever the button logout is clicked
-            //leading to the Button_startActivity where the login or registration is required
-            logout_button.setOnClickListener(view -> {
-                //logout
-                // TODO wrap in asynctask??
-
-                mAuth.signOut();
-                Toast.makeText(SignActivity.this, getString(R.string.Logout)+getString(R.string.success), Toast.LENGTH_SHORT).show();
-                loadFragment(new SignInUpFragment());
-            });
-            Toast.makeText(this, "User is signed in", Toast.LENGTH_LONG).show();
-
-            User.retrieveCurrentUser(SignActivity.ACTIVITY_TAG_NAME, mDatabase, new Consumer<User>() {
-                @Override
-                public void accept(User user) {
-                    Bundle c = new Bundle();
-                    c.putString(getString(R.string.Bundle_tag_user_basic_info), user.getUserBasicInfo());
-                    // Change activity
-                    Intent intent = new Intent(SignActivity.this, MainActivity.class);
-                    //attach the string
-                    intent.putExtras(c);
-                    startActivity(intent);
-                    finish();
-                }
-            });
-
-            // Change activity
-            /*Intent intent = new Intent(SignActivity.this, MainActivity.class);
-            startActivity(intent);*/
-            startActivity(new Intent(SignActivity.this, MainActivity.class));
-
+        Bundle c = getIntent().getExtras();
+        if (c != null) {
+            if (c.containsKey("goToInsertNewUserFragment")) {
+                int i = c.getInt("goToInsertNewUserFragment");
+                if (i == 1) loadFragment(new InsertNewUserFragment());
+            }
         } else {
-            loadFragment(new SignInUpFragment());
-            Toast.makeText(this, "User is not signed in", Toast.LENGTH_SHORT).show();
+            if (user != null) {
+
+
+                //TODO: embed this button in new activity and delete it from SignActivity.xml
+                //logout_button = findViewById(R.id.logout_button);
+                // User is signed in
+                String uid = user.getUid();
+                //called whenever the button logout is clicked
+                //leading to the Button_startActivity where the login or registration is required
+                /*logout_button.setOnClickListener(view -> {
+                    //logout
+                    // TODO wrap in asynctask??
+
+                    mAuth.signOut();
+                    Toast.makeText(SignActivity.this, getString(R.string.Logout)+getString(R.string.success), Toast.LENGTH_SHORT).show();
+                    loadFragment(new SignInUpFragment());
+                });*/
+                Toast.makeText(this, "User is signed in", Toast.LENGTH_LONG).show();
+
+                /*User.retrieveCurrentUser(SignActivity.ACTIVITY_TAG_NAME, mDatabase, new Consumer<User>() {
+                    @Override
+                    public void accept(User user) {
+                        Bundle c = new Bundle();
+                        c.putString(getString(R.string.Bundle_tag_user_basic_info), user.getUserBasicInfo());
+                        // Change activity
+                        Intent intent = new Intent(SignActivity.this, MainActivity.class);
+                        //attach the string
+                        intent.putExtras(c);
+                        startActivity(intent);
+                        finish();
+                    }
+                });*/
+
+                // Change activity
+                /*Intent intent = new Intent(SignActivity.this, MainActivity.class);
+                startActivity(intent);*/
+                startActivity(new Intent(SignActivity.this, MainActivity.class));
+//                loadFragment(new SignInUpFragment());
+
+            } else {
+                loadFragment(new SignInUpFragment());
+                //Toast.makeText(this, "User is not signed in", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

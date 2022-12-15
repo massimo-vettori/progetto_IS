@@ -52,7 +52,7 @@ public class ItemViewActivity extends AppCompatActivity {
     protected void setup(@NonNull Item item, @NonNull Ownership owner) {
         updateItemDescription(item.getDescription());
         updateItemTitle(item.getTitle());
-        updateItemLocation(item.getLocation().toString());
+        //updateItemLocation(item.getLocation()); //TODO:convert string fetch in array fetch
 
         updatePriceRange(item.getIdRange());
         updateUserName(item.getOwner().stream().reduce("", (a, b) -> a + " " + b));
@@ -68,6 +68,7 @@ public class ItemViewActivity extends AppCompatActivity {
             });
         }
 
+
 //        TODO: either implement image decoding or add methods to Item and User classes to get the images as a Bitmap
 //        updateUserAvatar(item.getOwner());
 //        for (Bitmap image : item.getImages()) {
@@ -77,12 +78,8 @@ public class ItemViewActivity extends AppCompatActivity {
 
     protected void backToHome() {
         // This method is called when the back button is pressed
+        finish();
 
-
-        // If the caller is not the MainActivity, it clears the back stack and starts the MainActivity
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
     }
 
     protected void updateItemDescription(String desc) {

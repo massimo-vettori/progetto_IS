@@ -81,17 +81,18 @@
             android:id="@+id/board_item_list"
             android:layout_width="match_parent"
             android:paddingHorizontal="?attr/paddingMd"
+            android:paddingVertical="?attr/paddingMd"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <include layout="@layout/sample_list_item_view" />
-            <include layout="@layout/sample_list_item_view" />
-            <include layout="@layout/sample_list_item_view" />
-            <include layout="@layout/sample_list_item_view" />
-            <include layout="@layout/sample_list_item_view" />
-            <include layout="@layout/sample_list_item_view" />
-            <include layout="@layout/sample_list_item_view" />
-            <include layout="@layout/sample_list_item_view" />
+<!--            <include layout="@layout/sample_list_item_view" />-->
+<!--            <include layout="@layout/sample_list_item_view" />-->
+<!--            <include layout="@layout/sample_list_item_view" />-->
+<!--            <include layout="@layout/sample_list_item_view" />-->
+<!--            <include layout="@layout/sample_list_item_view" />-->
+<!--            <include layout="@layout/sample_list_item_view" />-->
+<!--            <include layout="@layout/sample_list_item_view" />-->
+<!--            <include layout="@layout/sample_list_item_view" />-->
 
         </LinearLayout>
     </ScrollView>

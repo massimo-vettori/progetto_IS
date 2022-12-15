@@ -54,18 +54,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        /*topText = findViewById(R.id.top_text);
-        bottomText = findViewById(R.id.bottom_text);
-        imageContainer = findViewById(R.id.image_container);
-
-//        topText = findViewById(R.id.top_text);
-//        bottomText = findViewById(R.id.bottom_text);
-//        imageContainer = findViewById(R.id.image_container);
-
-        insertNewItem = findViewById(R.id.insertNewItem);
-        delete = findViewById(R.id.deleteItem);*/
-
        /* //retrieving a previous activity value attached to the bundle
 
         this.addItem(Item.getSampleItem());
@@ -77,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Bundle b = getIntent().getExtras();
         //retrieving user's info if this Activity is started by the previous activity in its natural chain
         userBasicInfo = (b!= null)? b.getString(getString(R.string.Bundle_tag_user_basic_info)):"";
+
+        /*
         // TODO: To move
         insertNewItem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,8 +90,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 User.removeItemFromBoard(MainActivity.ACTIVITY_TAG_NAME, "mmNsy71Nf5e8ATR79b4LNk3uRSh1","217b8390-b454-45b5-ab5f-6e947a08c29e");
             }
         });
-
-        Objects.requireNonNull(getSupportActionBar()).hide();*/
+        */
 
 
         Toolbar toolbar = findViewById(R.id.toolbar); // define the toolbar because we removed the default ActionBar
@@ -133,6 +122,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         boolean enter = false;
+        Intent intent = null;
+
         if (item != null) {
             switch (item.getItemId()) {
                 case R.id.nav_object:
@@ -148,6 +139,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     enter = true;
                     break;
 
+                case R.id.nav_profile:
+                    intent = new Intent(MainActivity.this, ProfileActivity.class);
+                    intent.putExtra("caller", ACTIVITY_TAG_NAME);
+                    startActivity(intent);
+                    break;
+
+                case R.id.nav_dashboard:
+                    intent = new Intent(MainActivity.this, MyBoardActivity.class);
+                    intent.putExtra("caller", ACTIVITY_TAG_NAME);
+                    startActivity(intent);
+                    break;
+
                 /*case R.id.nav_chat:
                     Intent intent = new Intent(MainActivity.this, ItemViewActivity.class);
                     startActivity(intent);
@@ -155,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     break;*/
                 case R.id.nav_logout:
                     mAuth.signOut();
-                    Intent intent = new Intent(MainActivity.this, SignActivity.class);
+                    intent = new Intent(MainActivity.this, SignActivity.class);
                     startActivity(intent);
                     finish();
                     break;
