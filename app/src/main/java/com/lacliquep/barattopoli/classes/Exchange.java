@@ -178,7 +178,7 @@ public class Exchange {
      * @return the User who choose an Item from a proposer's board and, therefore, created this Exchange
      */
     /*public User getApplicant() {
-        return this.applicant = BarattopolyUtil.retrieveUserById(this.idApplicant);
+        return this.applicant = BarattopoliUtil.retrieveUserById(this.idApplicant);
     }*/
 
     /**
@@ -186,7 +186,7 @@ public class Exchange {
      * @return the User whose Item has been chosen from their board by an applicant for this Exchange
      */
     /*public User getProposer() {
-        return this.proposer = BarattopolyUtil.retrieveUserById(this.idProposer);
+        return this.proposer = BarattopoliUtil.retrieveUserById(this.idProposer);
     }
 
     /**

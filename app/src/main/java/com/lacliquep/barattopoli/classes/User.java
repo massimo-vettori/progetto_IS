@@ -1,6 +1,5 @@
 package com.lacliquep.barattopoli.classes;
 
-import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -11,7 +10,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.database.core.SyncTree;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -130,15 +128,15 @@ public class User {
                     }
                     ArrayList<String> UserData = new ArrayList<>();
                     for (int i = 0; i < 7; ++i) UserData.add("");
-                    BarattopolyUtil.retrieveHelper(map, User.USERNAME_DB, UserData,0);
-                    BarattopolyUtil.retrieveHelper(map, User.NAME_DB, UserData,1);
-                    BarattopolyUtil.retrieveHelper(map, User.SURNAME_DB, UserData,2);
-                    //BarattopolyUtil.retrieveHelper(map, User.LOCATION_DB, UserData,3);
-                    BarattopolyUtil.retrieveHelper(map, User.RANK_DB, UserData,4);
-                    BarattopolyUtil.retrieveHelper(map, User.IMAGE_DB, UserData,5);
+                    BarattopoliUtil.retrieveHelper(map, User.USERNAME_DB, UserData,0);
+                    BarattopoliUtil.retrieveHelper(map, User.NAME_DB, UserData,1);
+                    BarattopoliUtil.retrieveHelper(map, User.SURNAME_DB, UserData,2);
+                    //BarattopoliUtil.retrieveHelper(map, User.LOCATION_DB, UserData,3);
+                    BarattopoliUtil.retrieveHelper(map, User.RANK_DB, UserData,4);
+                    BarattopoliUtil.retrieveHelper(map, User.IMAGE_DB, UserData,5);
                     Integer rank = UserData.get(4).equals("")?0: Integer.valueOf(UserData.get(4));
                     //since location is a nested data
-                    BarattopolyUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(id), User.LOCATION_DB, 1, new Consumer<Map<String, ArrayList<String>>>() {
+                    BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(id), User.LOCATION_DB, 1, new Consumer<Map<String, ArrayList<String>>>() {
                         @Override
                         public void accept(Map<String, ArrayList<String>> stringArrayListMap) {
                             ArrayList<String> location = new ArrayList<>();
@@ -172,10 +170,19 @@ public class User {
 
     /**
      * insert in the DataBase the basic User's info provided when setting them for the first time,
-     * ideally, after the registration
-     * @param user the user's basic info
+     * ideally, during the registration
+     * the rank will be set to the medium value between 1 and HIGHER_RANK
+     * @param idUser   the ID created via FirebaseAuth
+     * @param username the username of this User
+     * @param name the name of this User
+     * @param surname the surname of this User
+     * @param location the location of this User
+     * @param image the profile picture for this User
+     * @see com.google.firebase.auth.FirebaseAuth
+     * @see User#HIGHEST_RANK
      */
-    public static void insertUserInDataBase(User user) {
+    public static void insertUserInDataBase(String idUser, String username, String name, String surname, ArrayList<String> location, String image) {
+        User user = createUser(idUser,username,name,surname,location,image);
         DatabaseReference dbRefUser = dbRefUsers.child(user.idUser);
 
         dbRefUser.child(User.ID_USER_DB).setValue(user.idUser);
@@ -269,7 +276,7 @@ public class User {
      * @param consumer the way the fetched data are used
      */
     public static void  getReviews(String contextTag,String idUser, Consumer<Map<String, ArrayList<String>>> consumer) {
-        BarattopolyUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(idUser), User.ID_REVIEWS_DB, User.REVIEWS_INFO_LENGTH, consumer);
+        BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(idUser), User.ID_REVIEWS_DB, User.REVIEWS_INFO_LENGTH, consumer);
     }
 
     /**
@@ -296,10 +303,11 @@ public class User {
      * with their basic info in the database
      * @param contextTag the activity/fragment where this method is called
      * @param idUser the id of the provided user
-     * @param consumer the way the fetched data are used
+     * @param consumer the way the fetched data are used (provides a map with the items ids and a list with the basic info fields)
+     * @see Item#INFO_PARAM
      */
     public static void  getItemsOnBoard(String contextTag,String idUser, Consumer<Map<String, ArrayList<String>>> consumer) {
-        BarattopolyUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(idUser), User.ID_ITEMS_ON_BOARD_DB, User.ITEMS_ON_BOARD_INFO_LENGTH, consumer);
+        BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(idUser), User.ID_ITEMS_ON_BOARD_DB, User.ITEMS_ON_BOARD_INFO_LENGTH, consumer);
     }
 
     /**
@@ -333,7 +341,7 @@ public class User {
      * @param idUser the id of the user
      */
     public static void removeItemFromBoard(String contextTag, String idUser, String idItem) {
-        Item.retrieveItemById(contextTag, BarattopolyUtil.mDatabase, idItem, new Consumer<Item>() {
+        Item.retrieveItemById(contextTag, BarattopoliUtil.mDatabase, idItem, new Consumer<Item>() {
             @Override
             public void accept(Item item) {
                 Log.d(contextTag,item != null? "item exists": "item does not exist");
@@ -363,7 +371,7 @@ public class User {
      * @param consumer the way the fetched data are used
      */
     public static void getObservedItems(String contextTag, String idUser, Consumer<Map<String, ArrayList<String>>> consumer ) {
-        BarattopolyUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(idUser), User.ID_OBSERVED_ITEMS_DB, User.OBSERVED_ITEMS_INFO_LENGTH, consumer);
+        BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(idUser), User.ID_OBSERVED_ITEMS_DB, User.OBSERVED_ITEMS_INFO_LENGTH, consumer);
     }
 
     /**
@@ -391,7 +399,7 @@ public class User {
      * @param consumer the way the fetched data are used
      */
     public static void getExchanges(String contextTag, String idUser, Consumer<Map<String, ArrayList<String>>> consumer ) {
-        BarattopolyUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(idUser), User.ID_EXCHANGES_DB, User.EXCHANGES_INFO_LENGTH, consumer);
+        BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(idUser), User.ID_EXCHANGES_DB, User.EXCHANGES_INFO_LENGTH, consumer);
     }
 
     /**

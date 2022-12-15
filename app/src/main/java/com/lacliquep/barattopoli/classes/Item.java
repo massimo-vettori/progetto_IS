@@ -1,10 +1,11 @@
 package com.lacliquep.barattopoli.classes;
-import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -174,21 +175,21 @@ public class Item {
                     }
                     ArrayList<String> ItemData = new ArrayList<>();
                     for (int i = 0; i < 10; ++i) ItemData.add("");
-                    BarattopolyUtil.retrieveHelper(map, Item.TITLE_DB, ItemData,0);
-                    BarattopolyUtil.retrieveHelper(map, Item.DESCRIPTION_DB, ItemData,1);
-                    BarattopolyUtil.retrieveHelper(map, Item.ID_RANGE_DB, ItemData,2);
-                    BarattopolyUtil.retrieveHelper(map, Item.OWNER_DB, ItemData,3);
-                    //BarattopolyUtil.retrieveHelper(map, Item.LOCATION_DB, ItemData,4);
-                    BarattopolyUtil.retrieveHelper(map, Item.IS_CHARITY_DB, ItemData,5);
-                    BarattopolyUtil.retrieveHelper(map, Item.IS_EXCHANGEABLE_DB, ItemData,6);
-                    BarattopolyUtil.retrieveHelper(map, Item.IS_SERVICE_DB, ItemData,7);
-                    BarattopolyUtil.retrieveHelper(map, Item.ID_CATEGORIES_DB, ItemData,8);
-                    BarattopolyUtil.retrieveHelper(map, Item.IMAGES_DB, ItemData,9);
+                    BarattopoliUtil.retrieveHelper(map, Item.TITLE_DB, ItemData,0);
+                    BarattopoliUtil.retrieveHelper(map, Item.DESCRIPTION_DB, ItemData,1);
+                    BarattopoliUtil.retrieveHelper(map, Item.ID_RANGE_DB, ItemData,2);
+                    BarattopoliUtil.retrieveHelper(map, Item.OWNER_DB, ItemData,3);
+                    //BarattopoliUtil.retrieveHelper(map, Item.LOCATION_DB, ItemData,4);
+                    BarattopoliUtil.retrieveHelper(map, Item.IS_CHARITY_DB, ItemData,5);
+                    BarattopoliUtil.retrieveHelper(map, Item.IS_EXCHANGEABLE_DB, ItemData,6);
+                    BarattopoliUtil.retrieveHelper(map, Item.IS_SERVICE_DB, ItemData,7);
+                    BarattopoliUtil.retrieveHelper(map, Item.ID_CATEGORIES_DB, ItemData,8);
+                    BarattopoliUtil.retrieveHelper(map, Item.IMAGES_DB, ItemData,9);
                     ArrayList<String> own = new ArrayList<>(Arrays.asList(ItemData.get(3).split(",", User.INFO_LENGTH)));
                     ArrayList<String> cat = new ArrayList<>(Arrays.asList(ItemData.get(8).split(",", 0)));
                     ArrayList<String> img = new ArrayList<>(Arrays.asList(ItemData.get(9).split(",", 0)));
                     //since location is a nested data
-                    BarattopolyUtil.getMapWithIdAndInfo(contextTag, dbRefItems.child(id), User.LOCATION_DB, 1, new Consumer<Map<String, ArrayList<String>>>() {
+                    BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRefItems.child(id), User.LOCATION_DB, 1, new Consumer<Map<String, ArrayList<String>>>() {
                         @Override
                         public void accept(Map<String, ArrayList<String>> stringArrayListMap) {
                             ArrayList<String> location = new ArrayList<>();
@@ -308,6 +309,127 @@ public class Item {
     public String getItemBasicInfo() { return this.itemBasicInfo; }
 
     //EQUALS & HASHCODE
+
+    /**
+     * in consumer is provided a map with items ids and their correspondent maps with fields id and correspondent values
+     * @param showCharity if true, the items will be only those for Charity and with the same province
+     * @param showService if true, the items will be only those which are services, elsewhere those which are objects,
+     *                    if showCharity is true, showService will be ignored
+     * @param category    to be implemented
+     * @param showUserBoard if true, the items will be those on the idUser's Board and their fields will be according
+     *                      item basic info, whereas if false, the items will be those with the same province of the location,
+     *                      and which are Services/Objects or Charity according to the other boolean params
+     * @param idUser    the User's id of whom the items belong to if showUserBoard is true
+     * @param location  the location where the items should be(ideally the User's one)
+     * @param consumer  how the provided map will be used
+     */
+    public static void retrieveMapWithAllItems(boolean showCharity, boolean showService, String category, boolean showUserBoard, String idUser, ArrayList<String> location, Consumer<Map<String, Map<String, String>>> consumer) {
+        //sanity check
+        if (!showUserBoard || (showUserBoard && idUser != null)) {
+            if (showUserBoard) {
+                User.getItemsOnBoard("Item", idUser, new Consumer<Map<String, ArrayList<String>>>() {
+                    Map<String, Map<String, String>> items = new HashMap<>();
+                    @Override
+                    public void accept(Map<String, ArrayList<String>> stringArrayListMap) {
+                        for(String id: stringArrayListMap.keySet()) {
+                            items.put(id, new HashMap<>());
+                            for (int i = 0; i < Item.INFO_LENGTH; ++i) {
+                                //"category,range,image,is_charity,is_exchangeable,is_service,country,region,province,city,title"
+                                switch (i) {
+                                    case 0: items.get(id).put(Item.ID_CATEGORIES_DB, stringArrayListMap.get(id).get(i));break;
+                                    case 1: items.get(id).put(Item.ID_RANGE_DB, stringArrayListMap.get(id).get(i));break;
+                                    case 2: items.get(id).put(Item.IMAGES_DB, stringArrayListMap.get(id).get(i));break;
+                                    case 3: items.get(id).put(Item.IS_CHARITY_DB, stringArrayListMap.get(id).get(i));break;
+                                    case 4: items.get(id).put(Item.IS_EXCHANGEABLE_DB, stringArrayListMap.get(id).get(i));break;
+                                    case 5: items.get(id).put(Item.IS_SERVICE_DB, stringArrayListMap.get(id).get(i));break;
+                                    case 6: items.get(id).put("country", stringArrayListMap.get(id).get(i));break;
+                                    case 7: items.get(id).put("region", stringArrayListMap.get(id).get(i));break;
+                                    case 8: items.get(id).put("province", stringArrayListMap.get(id).get(i));break;
+                                    case 9: items.get(id).put("city", stringArrayListMap.get(id).get(i));break;
+                                    case 10: items.get(id).put(Item.TITLE_DB, stringArrayListMap.get(id).get(i));break;
+                                }
+                            }
+                        }
+                        consumer.accept(items);
+                    }
+                });
+            } else {
+                Item.dbRefItems.orderByChild(Item.LOCATION_DB + "/province").equalTo(location.get(2)).limitToFirst(5).addChildEventListener(new ChildEventListener() {
+                    Map<String, Map<String, String>> items = new HashMap<>();
+
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                        if (snapshot.exists()) {
+                            String idItem = snapshot.getKey();
+                            items.put(idItem, new HashMap<>());
+                            Item.dbRefItems.child(idItem).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (snapshot.exists() && snapshot.hasChildren()) {
+                                        for (DataSnapshot fi : snapshot.getChildren()) {
+                                            if (fi.exists()) {
+                                                String field = fi.getKey();
+                                                if (field != null && !(field.equals(Item.LOCATION_DB))) {
+                                                    String fieldValue = String.valueOf(fi.getValue());
+                                                    items.get(idItem).put(field, fieldValue);
+                                                    //Log.d("Item", field + ": " + fieldValue);
+                                                } else {
+                                                    if (field != null) {
+                                                        if (fi.hasChildren()) {
+                                                            for (DataSnapshot loc : fi.getChildren()) {
+                                                                String location = loc.getKey();
+                                                                String locValue = String.valueOf(loc.getValue());
+                                                                items.get(idItem).put(location, locValue);
+                                                            }
+                                                            //Log.d("Item", location + ": " + locValue);
+                                                            for (String s : items.keySet()) {
+                                                                boolean keep = true;
+                                                                if ((items.get(s).get(Item.IS_EXCHANGEABLE_DB)).equals("true")) {
+                                                                    if (!showCharity) {
+                                                                        String val = items.get(s).get(Item.IS_SERVICE_DB);
+                                                                        if ((showService) && ((val.equals("true"))) || ((!showService) && ((val.equals("false"))))) {
+                                                                        } else keep = false;
+                                                                    }
+                                                                } else keep = false;
+                                                                if (!keep) items.remove(s);
+                                                            }
+                                                            consumer.accept(items);
+                                                        }
+                                                    }
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+            }
+        }
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -442,7 +564,7 @@ public class Item {
         if (!isExchangeable) throw new NonModifiableException();
         if (Category.getCategories().contains(category)) {
             DatabaseReference dbRef = dbRefItem.child(Item.ID_CATEGORIES_DB);
-            BarattopolyUtil.readData(contextTag, dbRef, new Consumer<Object>() {
+            BarattopoliUtil.readData(contextTag, dbRef, new Consumer<Object>() {
                     @Override
                     public void accept(Object o) {
                         String newCategories = "";

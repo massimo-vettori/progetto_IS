@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/default_gradient_bg"
+    tools:context=".ProfileActivity">
+
+    <Button
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="52dp"
+        android:background="#00000000"
+        android:text=""
+        android:textAlignment="center"
+        app:icon="?attr/actionModeCloseDrawable"
+        app:iconPadding="0dp"
+        app:iconTint="@color/blue_50"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="?attr/paddingMd"
+        android:fontFamily="@font/inter_medium"
+        android:text="Il tuo profilo"
+        android:textColor="@color/zinc_50"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/back_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="?attr/paddingMd"
+        android:layout_marginStart="?attr/paddingMd"
+        android:layout_marginEnd="?attr/paddingMd"
+        android:background="@color/zinc_800"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/back_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/profile_pic"
+            android:adjustViewBounds="true"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/blank_profile_picture"
+            android:scaleType="centerCrop"
+            android:contentDescription="TODO" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:padding="?attr/paddingSm">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_medium"
+                android:textSize="11sp"
+                android:textColor="@color/zinc_400"
+                android:text="Nome e Cognome"/>
+
+            <TextView
+                android:id="@+id/name_and_surname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_medium"
+                android:textSize="15sp"
+                android:layout_marginBottom="?attr/paddingSm"
+                android:text="lorem tiny"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_medium"
+                android:textSize="11sp"
+                android:textColor="@color/zinc_400"
+                android:text="Nickname"/>
+
+            <TextView
+                android:id="@+id/nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_medium"
+                android:textSize="15sp"
+                android:layout_marginBottom="?attr/paddingSm"
+                android:text="lorem tiny"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="?attr/paddingMd"
+        android:layout_marginTop="?attr/paddingMd"
+        android:fontFamily="@font/inter_medium"
+        android:text="I tuoi dati personali"
+        android:textColor="@color/zinc_50"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginHorizontal="?attr/paddingMd"
+        android:layout_marginTop="?attr/paddingSm"
+        app:layout_constraintTop_toBottomOf="@+id/textView5">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:textSize="11sp"
+            android:textColor="@color/zinc_400"
+            android:text="Email"/>
+
+        <TextView
+            android:id="@+id/email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:textSize="15sp"
+            android:layout_marginBottom="?attr/paddingSm"
+            android:text="sample mail"/>
+
+        <TextView
+            android:id="@+id/location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:textSize="11sp"
+            android:textColor="@color/zinc_400"
+            android:text="Locazione fisica"/>
+
+        <TextView
+            android:id="@+id/phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:textSize="15sp"
+            android:layout_marginBottom="?attr/paddingSm"
+            android:text="@string/lorem_short"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="?attr/paddingMd"
+        android:layout_marginBottom="?attr/paddingMd"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:fontFamily="@font/inter_medium"
+        android:backgroundTint="@color/red_600"
+
+        android:textSize="15sp"
+        android:textAllCaps="false"
+        android:text="@string/Logout"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

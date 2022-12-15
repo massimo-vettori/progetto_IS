@@ -8,11 +8,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.lacliquep.barattopoli.classes.BarattopolyUtil;
+import com.lacliquep.barattopoli.classes.BarattopoliUtil;
+import com.lacliquep.barattopoli.fragments.sign.InsertNewUserFragment;
 
 public class MyCameraActivity extends Activity
 {
@@ -20,10 +22,10 @@ public class MyCameraActivity extends Activity
     private static final int CAMERA_REQUEST = 1888;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
     //string-encoded image to pass back to the activity bundled with this activity
-    private static String encodedImage;
+
     //tag name for the logcat
     private static final String ACTIVITY_TAG_NAME = "MyCameraActivity";
-
+    private static String con = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -31,6 +33,15 @@ public class MyCameraActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_camera);
         Button photoButton = (Button) this.findViewById(R.id.take_picture);
+        Button preferNotTo = (Button) this.findViewById(R.id.no);
+        Bundle c = getIntent().getExtras();
+        //fetching the previous activity class name
+
+        if (c != null) {
+            con = c.getString(getString(R.string.Bundle_tag_Previous_activity));
+            con = (con != null) ? con : "";
+            photoButton.setText(getString(R.string.take_profile_picture));
+        }
         photoButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -71,6 +82,7 @@ public class MyCameraActivity extends Activity
         }
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
@@ -78,17 +90,22 @@ public class MyCameraActivity extends Activity
         {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             //photo encoding as a string
-            encodedImage = BarattopolyUtil.encodeImageToBase64(photo);
+            String image = BarattopoliUtil.encodeImageToBase64(photo);
             //passing the encoded image back to the previous activity
             //create a bundle between the two activities
-            Bundle c = getIntent().getExtras();
-            //fetching the previous activity class name
-            String con = "";
-            Intent intent;
-            if (c != null) {
-                con = c.getString(getString(R.string.Bundle_tag_Previous_activity));
-                con = (con != null) ? con : "";
-            }
+            changeActivity(image);
+
+        }
+    }
+    private void changeActivity(String encodedImage) {
+        Intent intent;
+        if (con.equals("InsertNewUserFragment")) {
+            Bundle b = new Bundle();
+            b.putString(getString(R.string.Bundle_tag_encoded_image), encodedImage);
+            b.putInt("goToInsertNewUserFragment", 1);
+            intent = new Intent(MyCameraActivity.this, SignActivity.class);
+            intent.putExtras(b);
+        } else {
             try {
                 //get the class name of the previous activity
                 Class<?> cls = Class.forName(con);
@@ -106,8 +123,8 @@ public class MyCameraActivity extends Activity
                 //logcat when debugging
                 Log.d(MyCameraActivity.ACTIVITY_TAG_NAME, e.getMessage());
             }
-            startActivity(intent);
-            finish();
         }
+        startActivity(intent);
+        finish();
     }
 }

@@ -61,16 +61,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /*
+        TODO: delete
         topText = findViewById(R.id.top_text);
         bottomText = findViewById(R.id.bottom_text);
         imageContainer = findViewById(R.id.image_container);
         insertNewItem = findViewById(R.id.insertNewItem);
         delete = findViewById(R.id.deleteItem);
+        */
+
 
         //retrieving a previous activity value attached to the bundle
         Bundle b = getIntent().getExtras();
         //retrieving user's info if this Activity is started by the previous activity in its natural chain
         userBasicInfo = (b!= null)? b.getString(getString(R.string.Bundle_tag_user_basic_info)):"";
+
+        /*
         // TODO: To move
         insertNewItem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,8 +100,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 User.removeItemFromBoard(MainActivity.ACTIVITY_TAG_NAME, "mmNsy71Nf5e8ATR79b4LNk3uRSh1","217b8390-b454-45b5-ab5f-6e947a08c29e");
             }
         });
+        */
 
-        Objects.requireNonNull(getSupportActionBar()).hide();
+        //TODO: ho dovuto commentare questa riga perchè crashava
+        //Objects.requireNonNull(getSupportActionBar()).hide();
 
 
         Toolbar toolbar = findViewById(R.id.toolbar); // define the toolbar because we removed the default ActionBar
