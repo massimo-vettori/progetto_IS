@@ -2,6 +2,7 @@ package com.lacliquep.barattopoli;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -48,6 +49,7 @@ public class ProfileActivity extends AppCompatActivity {
             String userId = auth.getUid();
             String userEmail = auth.getCurrentUser().getEmail();
             User.retrieveCurrentUser(ACTIVITY_TAG_NAME, dbRef, new Consumer<User>() {
+                @SuppressLint("SetTextI18n")
                 @Override
                 public void accept(User user) {
                     ArrayList<String> loc = user.getLocation();

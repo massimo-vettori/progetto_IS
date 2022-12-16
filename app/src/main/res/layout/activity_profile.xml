@@ -77,8 +77,9 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_medium"
                 android:textSize="15sp"
-                android:layout_marginBottom="?attr/paddingSm"
+
                 android:text="lorem tiny"/>
+            <!--android:layout_marginBottom="?attr/paddingSm"</!-->
 
 
             <TextView
@@ -140,6 +141,14 @@
             android:text="sample mail"/>
 
         <TextView
+            android:id="@+id/COUNTRY"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:textSize="11sp"
+            android:textColor="@color/zinc_400"
+            android:text="@string/country"/>
+        <TextView
             android:id="@+id/country"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -147,6 +156,15 @@
             android:textSize="11sp"
             android:textColor="@color/zinc_400"
             android:text="Locazione fisica"/>
+
+        <TextView
+            android:id="@+id/REGION"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:textSize="11sp"
+            android:textColor="@color/zinc_400"
+            android:text="@string/region"/>
         <TextView
             android:id="@+id/region"
             android:layout_width="wrap_content"
@@ -155,6 +173,15 @@
             android:textSize="11sp"
             android:textColor="@color/zinc_400"
             android:text="Locazione fisica"/>
+
+        <TextView
+            android:id="@+id/PROVINCE"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:textSize="11sp"
+            android:textColor="@color/zinc_400"
+            android:text="@string/province"/>
         <TextView
             android:id="@+id/province"
             android:layout_width="wrap_content"
@@ -163,6 +190,15 @@
             android:textSize="11sp"
             android:textColor="@color/zinc_400"
             android:text="Locazione fisica"/>
+
+        <TextView
+            android:id="@+id/CITY"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:textSize="11sp"
+            android:textColor="@color/zinc_400"
+            android:text="@string/city"/>
         <TextView
             android:id="@+id/city"
             android:layout_width="wrap_content"

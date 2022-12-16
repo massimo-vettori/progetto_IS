@@ -153,8 +153,8 @@ public class InsertNewUserFragment extends Fragment {
             txtPassword = insertPassword.getText().toString();
             txtConfirmPassword = confirmPassword.getText().toString();
             txtUsername = insertUsername.getText().toString();
-            txtName = insertUsername.getText().toString();
-            txtSurname = insertUsername.getText().toString();
+            txtName = insertName.getText().toString();
+            txtSurname = insertSurname.getText().toString();
             txtCountry = insertCountry.getText().toString();
             txtRegion = insertRegion.getText().toString();
             txtProvince = insertProvince.getText().toString();
