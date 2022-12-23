@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * @author pares
  * @since 1.0
  */
-public class Item {
+public class Item implements Serializable {
     public final static String CLASS_ITEM_DB = "items";
     public static final String ID_ITEM_DB = "id_item";
     public static final String TITLE_DB = "title";
