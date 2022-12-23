@@ -4,9 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -17,6 +15,8 @@ import com.lacliquep.barattopoli.classes.Item;
 import com.lacliquep.barattopoli.classes.Ownership;
 import com.lacliquep.barattopoli.classes.Range;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
 
 public class ItemViewActivity extends AppCompatActivity {
@@ -39,8 +39,12 @@ public class ItemViewActivity extends AppCompatActivity {
         // Get the intent that started this activity
         Intent intent = getIntent();
         // Get the serialized item from the intent and deserialize it into an Item object
-        Item item       = Item.deserialize(intent.getCharSequenceArrayExtra("item"));
+//        (Failed attempt to serialize/deserialize the item)
+//        Item item       = Item.deserialize(intent.getCharSequenceArrayExtra("item"));
+        Item item = (Item) intent.getSerializableExtra("item");
+
         // Get the ownership of the item from the intent
+
         Ownership owner = Ownership.from(intent.getStringExtra("owner"));
         // Get the calling activity from the intent
         caller = intent.getStringExtra("caller");
@@ -58,11 +62,13 @@ public class ItemViewActivity extends AppCompatActivity {
         } catch (Range.noSuchRangeException e) {}
        return(getString(R.string.range, getString(R.string.From), from , getString(R.string.To) , to));
     }
+
     protected void setup(@NonNull Item item, @NonNull Ownership owner) {
         updateItemDescription(item.getDescription());
         updateItemTitle(item.getTitle());
-        //updateItemLocation(item.getLocation()); //TODO:convert string fetch in array fetch
+        updateItemLocation(item.getLocation()); //TODO:convert string fetch in array fetch
         updatePriceRange(rangeString(item));
+        updateOwner(item.getOwner());
         //updateUserName(item.getOwner().stream().reduce("", (a, b) -> a + " " + b));
 
         if (owner == Ownership.PERSONAL) {
@@ -100,9 +106,21 @@ public class ItemViewActivity extends AppCompatActivity {
         ((TextView) this.findViewById(R.id.item_title)).setText(title);
     }
 
-    protected void updateItemLocation(String location) {
+    protected void updateItemLocation(ArrayList<String> loc) {
         // Finds the TextView for the item location and updates its text
-        ((TextView) this.findViewById(R.id.location)).setText(location);
+
+        ((TextView) this.findViewById(R.id.location)).setText(
+                loc.toString()
+        );
+    }
+
+    protected void updateOwner(Collection<String> prop) {
+        ArrayList<String> user = new ArrayList<>(prop);
+        if (user.isEmpty() || user.size() < 3) return;
+
+        ((TextView) this.findViewById(R.id.user_name)).setText(
+                user.get(3)
+        );
     }
 
     protected void updateUserAvatar(Bitmap avatar) {

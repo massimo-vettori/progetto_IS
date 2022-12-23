@@ -26,9 +26,9 @@
         android:id="@+id/propose_btn"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginStart="@attr/paddingMd"
-        android:layout_marginEnd="@attr/paddingMd"
-        android:layout_marginBottom="@attr/paddingMd"
+        android:layout_marginStart="?attr/paddingMd"
+        android:layout_marginEnd="?attr/paddingMd"
+        android:layout_marginBottom="?attr/paddingMd"
         android:fontFamily="@font/inter_medium"
         android:text="@string/fai_la_tua_proposta"
         android:backgroundTint="@color/zinc_700"
@@ -106,7 +106,7 @@
                     android:layout_height="50dp"
                     android:contentDescription="@string/avatar_desc"
                     android:scaleType="centerCrop"
-                    tools:srcCompat="@tools:sample/avatars" />
+                    android:src="@drawable/blank_profile_picture"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
