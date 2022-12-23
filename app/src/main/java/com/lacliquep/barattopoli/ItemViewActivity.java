@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.lacliquep.barattopoli.classes.Item;
 import com.lacliquep.barattopoli.classes.Ownership;
+import com.lacliquep.barattopoli.classes.Range;
 
 import java.util.Objects;
 
@@ -49,13 +50,20 @@ public class ItemViewActivity extends AppCompatActivity {
         if (item != null) this.setup(item, owner);
     }
 
+    private String rangeString(@NonNull Item item) {
+        int to = 0, from = 0;
+        try {
+            from = Range.getFrom(item.getIdRange());
+            to = Range.getTo(item.getIdRange());
+        } catch (Range.noSuchRangeException e) {}
+       return(getString(R.string.range, getString(R.string.From), from , getString(R.string.To) , to));
+    }
     protected void setup(@NonNull Item item, @NonNull Ownership owner) {
         updateItemDescription(item.getDescription());
         updateItemTitle(item.getTitle());
         //updateItemLocation(item.getLocation()); //TODO:convert string fetch in array fetch
-
-        updatePriceRange(item.getIdRange());
-        updateUserName(item.getOwner().stream().reduce("", (a, b) -> a + " " + b));
+        updatePriceRange(rangeString(item));
+        //updateUserName(item.getOwner().stream().reduce("", (a, b) -> a + " " + b));
 
         if (owner == Ownership.PERSONAL) {
             Button delete = findViewById(R.id.propose_btn);
