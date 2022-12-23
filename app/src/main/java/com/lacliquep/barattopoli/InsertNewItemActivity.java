@@ -307,7 +307,6 @@ public class InsertNewItemActivity extends AppCompatActivity {
                                                     finish();
                                                 }
                                             });
-
                                         }
                                     })
                                     .setNegativeButton(getString(R.string.No), new DialogInterface.OnClickListener() {

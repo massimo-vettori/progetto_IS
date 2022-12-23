@@ -1,9 +1,19 @@
 package com.lacliquep.barattopoli.classes;
 
+import android.provider.ContactsContract;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * this class represents an exchange of Items between two Users.
@@ -38,50 +48,388 @@ public class Exchange {
      */
     public enum ExchangeStatus {IN_APPROVAL, ACCEPTED, ANNULLED, CLOSED, HAPPENED, REVIEWED_BY_APPLICANT, REVIEWED_BY_PROPOSER, REVIEWED_BY_BOTH, ILLEGAL, REFUSED}
 
-    public static final String ID_APPLICANT_DB = "id_applicant";
-    public static final String ID_PROPOSER_DB = "id_proposer";
-    public final String ID_EXCHANGE_DB = "id_exchange";
-    public static final String ID_PROPOSED_ITEMS_DB = "id_proposed_items";
-    public static final String ID_REQUIRED_ITEMS_DB = "id_required_items";
     public static final String CLASS_EXCHANGE_DB = "exchanges";
+    public static final String APPLICANT_DB = "applicant";
+    public static final String PROPOSER_DB = "proposer";
+    public static final String ID_EXCHANGE_DB = "id_exchange";
+    public static final String PROPOSER_ITEMS_DB = "proposer_items";
+    public static final String APPLICANT_ITEMS_DB = "applicant_items";
+    public static final String EXCHANGE_STAUS_DB = "exchange_status";
+    public static final String DATE_DB = "date";
     public static final int EXCHANGE_INFO_LENGTH = 5;
+    public static final String INFO_PARAM = "exchange_status,date,id_applicant,id_proposer,first_applicant_item,first_proposer_item";
 
-    /* TODO: da rivedere completamente tutta la classe
     private ExchangeStatus exchangeStatus;
+    private final Date date;
     private final String idApplicant;
-    private User applicant;
+    private final User applicant;
     private final String idProposer;
-    private User proposer;
+    private final User proposer;
+    private final String idExchange; //= UUID.randomUUID().toString();
+    private final ArrayList<Item> proposerItems = new ArrayList<>();
+    private final ArrayList<Item> applicantItems = new ArrayList<>();
+    private final String exchangeBasicInfo;
 
-    private final String idExchange = UUID.randomUUID().toString();
+    public static final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(Exchange.CLASS_EXCHANGE_DB);
 
-    private final Set<String> idProposedItems = new HashSet<>();
-    private final Set<Item> proposedItems = new HashSet<>();
 
-    private final Set<String> idRequiredItems = new HashSet<>();
-    private final Set<Item> requiredItems = new HashSet<>();
-    */
-    /*
+
+
     /**
-     * constructor of an exchange (to be called to recreate the existing Exchanges of a User in the DB in DataBaseable.retrieveExchange)
+     * constructor of an exchange (to be called from other methods which check the arguments sanity)
      * @param exchangeStatus the status of the exchange
-     * @param idApplicant the id of the User who wants the proposed Object (they create the exchange)
-     * @param idProposer the id of the User whose Item has been chosen for this Exchange.
-     * @param idProposedItem the id of the the first or the only Item the applicant offers in exchange for the Item they choose from the proposer's board
-     * @param idRequiredItem the id of the the first or the only Item which has been chosen for the exchange, from the proposer's board, by the applicant
-     * @param idOtherProposedItems optional Set of id of the Items the applicant offers in exchange for the Item/s they choose from the proposer's board
-     * @param idOtherRequiredItems optional Set of id of the Items which have been chosen for the exchange, from the proposer's board, by the applicant
+     * @param applicant the User who wants the proposed Object (they create the exchange)
+     * @param proposer the User whose Item has been chosen for this Exchange.
+     * @param applicantItems the Items the applicant offers in exchange for the Item/s they choose from the proposer's board.
+     * @param proposerItems the Items which have been chosen for the exchange, from the proposer's board, by the applicant
      * @see ExchangeStatus
      */
-    /*
-    private Exchange(ExchangeStatus exchangeStatus, @NonNull String idApplicant, @NonNull String idProposer, @Nullable String idProposedItem, @NonNull String idRequiredItem, @Nullable Set<String> idOtherProposedItems, @Nullable Set<String> idOtherRequiredItems)  {
-        this.idApplicant = idApplicant;
-        this.idProposer = idProposer;
-        if (idProposedItem != null) this.idProposedItems.add(idProposedItem);
-        if (idOtherProposedItems != null) this.idProposedItems.addAll(idOtherProposedItems);
-        if (idOtherRequiredItems!= null) this.idRequiredItems.addAll(idOtherRequiredItems);
+
+    private Exchange(String idExchange, Date date, ExchangeStatus exchangeStatus, User applicant, User proposer, ArrayList<Item> applicantItems, ArrayList<Item> proposerItems) {
+        this.idExchange = idExchange;
+        this.date = date;
+        this.proposer = proposer;
+        this.idProposer = proposer.getIdUser();
+        this.applicant = applicant;
+        this.idApplicant = applicant.getIdUser();
+        this.proposerItems.addAll(proposerItems);
+        this.applicantItems.addAll(applicantItems);
         this.exchangeStatus = exchangeStatus;
-    }*/
+        this.exchangeBasicInfo = getExchangeBasicInfo(date, exchangeStatus, applicant, proposer, applicantItems, proposerItems);
+    }
+
+
+    /**
+     * used when a sample is needed or in case of errors
+     * @return a sample of an ILLEGAL exchange (it won't be shown)
+     */
+    public static Exchange getSampleExchange() {
+        return new Exchange("basicExchange", new Date(System.currentTimeMillis()), ExchangeStatus.ILLEGAL, User.getSampleUser(), User.getSampleUser(), new ArrayList<>(Collections.singletonList(Item.getSampleItem())), new ArrayList<>(Collections.singletonList(Item.getSampleItem())));
+    }
+
+
+
+    /**
+     * convert the string value of an exchange status in the correct enum value (when retrieving its value from the database)
+     * @param exchangeStatus the string value to be converted
+     * @return the enum correspondent value to the provided exchange status string
+     */
+    public static ExchangeStatus exchangeStatusValueOf(@Nullable String exchangeStatus) {
+        ExchangeStatus res = ExchangeStatus.ILLEGAL;
+        if (exchangeStatus != null) {
+            switch (exchangeStatus) {
+                //IN_APPROVAL, ACCEPTED, ANNULLED, CLOSED, HAPPENED, REVIEWED_BY_APPLICANT, REVIEWED_BY_PROPOSER, REVIEWED_BY_BOTH, ILLEGAL, REFUSED}
+                case "in_approval":
+                    res = ExchangeStatus.IN_APPROVAL;
+                    break;
+                case "accepted":
+                    res = ExchangeStatus.ACCEPTED;
+                    break;
+                case "annulled":
+                    res = ExchangeStatus.ANNULLED;
+                    break;
+                case "closed":
+                    res = ExchangeStatus.CLOSED;
+                    break;
+                case "happened":
+                    res = ExchangeStatus.HAPPENED;
+                    break;
+                case "REVIEWED_BY_APPLICANT":
+                    res = ExchangeStatus.REVIEWED_BY_APPLICANT;
+                    break;
+                case "REVIEWED_BY_PROPOSER":
+                    res = ExchangeStatus.REVIEWED_BY_PROPOSER;
+                    break;
+                case "REVIEWED_BY_BOTH":
+                    res = ExchangeStatus.REVIEWED_BY_BOTH;
+                    break;
+                case "illegal":
+                    res = ExchangeStatus.ILLEGAL;
+                    break;
+                case "refused":
+                    res = ExchangeStatus.REFUSED;
+                    break;
+            }
+        }
+        return res;
+    }
+
+    /**
+     * convert the enum exchange status in a string (to store its value in the database)
+     * @param exchangeStatus the enum value to be converted
+     * @return the String correspondent value to the provided exchange status enum
+     */
+    public static String StringValueOfExchangeStatus(ExchangeStatus exchangeStatus) {
+        String res = "illegal";
+        switch (exchangeStatus) {
+            //IN_APPROVAL, ACCEPTED, ANNULLED, CLOSED, HAPPENED, REVIEWED_BY_APPLICANT, REVIEWED_BY_PROPOSER, REVIEWED_BY_BOTH, ILLEGAL, REFUSED}
+            case IN_APPROVAL: res = "in_approval"; break;
+            case ACCEPTED: res = "accepted"; break;
+            case ANNULLED: res = "annulled"; break;
+            case CLOSED: res = "closed"; break;
+            case HAPPENED: res = "happened"; break;
+            case REVIEWED_BY_APPLICANT: res = "REVIEWED_BY_APPLICANT"; break;
+            case REVIEWED_BY_PROPOSER: res = "REVIEWED_BY_PROPOSER"; break;
+            case REVIEWED_BY_BOTH: res = "REVIEWED_BY_BOTH"; break;
+            case ILLEGAL: res = "illegal"; break;
+            case REFUSED: res = "refused"; break;
+        }
+        return res;
+    }
+    /**
+     * read from the database all the values regarding the User with the provided id <p>
+     * Don't try taking out data from the consumer: it is not going to work
+     * @param contextTag the string representing the activity/fragment where this method is called
+     * @param id the id of the Exchange to retrieve
+     * @param consumer the way the fetched data are being used
+     */
+    public static void retrieveExchangeById(String contextTag, String id, Consumer<Exchange> consumer) {
+        Exchange.dbRef.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    //map with field=value
+                    Map<String, String> map = new HashMap<>();
+                    ArrayList<Map<String, ArrayList<String>>> items = new ArrayList<>();
+                    //proposer items
+                    items.add(new HashMap<>());
+                    //applicant items
+                    items.add(new HashMap<>());
+                    Date date = new Date();
+                    for (DataSnapshot child: snapshot.getChildren()) {
+                        String field = child.getKey();
+                        if (field != null) {
+                            if (field.equals(Exchange.APPLICANT_ITEMS_DB) || field.equals(Exchange.PROPOSER_ITEMS_DB)) {
+                                int index = 0;
+                                if (field.equals(Exchange.APPLICANT_ITEMS_DB)) index = 1;
+                                for (DataSnapshot it : child.getChildren()) {
+                                    String idItem = it.getKey();
+                                    String itemBasicInfo = Objects.requireNonNull(it.getValue()).toString();
+                                    items.get(index).put(idItem, new ArrayList<>(Arrays.asList(itemBasicInfo.split(",", Item.INFO_LENGTH))));
+                                }
+                            } else {
+                                if (field.equals(Exchange.DATE_DB)) {
+                                    date = new Date(Long.parseLong(Objects.requireNonNull(child.getValue()).toString()));
+                                } else map.put(child.getKey(), Objects.requireNonNull(child.getValue()).toString());
+                            }
+                        }
+                    }
+
+                    User applicant = User.createUserFromBasicInfo((map.get(Exchange.APPLICANT_DB)), null);
+                    User proposer = User.createUserFromBasicInfo((map.get(Exchange.PROPOSER_DB)), null);
+                    ArrayList<Item> proposerItems = new ArrayList<>();
+                    ArrayList<Item> applicantItems = new ArrayList<>();
+                    ArrayList<ArrayList<String>> usersBasicInfo = new ArrayList<>();
+
+
+
+                    for (int i = 0; i < 2; ++i) {
+                        //if i = 0: proposer, i = 1: applicant
+                        for (String idItem : items.get(i).keySet()) {
+                            ArrayList<String> itemData = items.get(i).get(idItem);
+                            if (itemData != null) {
+                                //data for each item
+                                //"category,range,image,is_charity,is_exchangeable,is_service,country,region,province,city,title"
+                                ArrayList<String> location = new ArrayList<>(Arrays.asList(itemData.get(6), itemData.get(7), itemData.get(8), itemData.get(9)));
+                                ArrayList<String> categories = new ArrayList<>(Collections.singletonList(itemData.get(0)));
+                                ArrayList<String> images = new ArrayList<>(Collections.singletonList(itemData.get(2)));
+                                Item newItem = new Item(idItem, itemData.get(10), "", itemData.get(1), usersBasicInfo.get(i), location, Boolean.parseBoolean(itemData.get(3)), Boolean.parseBoolean(itemData.get(4)), Boolean.parseBoolean(itemData.get(5)), categories, images);
+                                if (i == 0) proposerItems.add(newItem);
+                                else applicantItems.add(newItem);
+                            }
+                        }
+                    }
+                    consumer.accept(new Exchange(map.get(Exchange.ID_EXCHANGE_DB), date, Exchange.exchangeStatusValueOf(map.get(Exchange.EXCHANGE_STAUS_DB)), applicant, proposer, applicantItems, proposerItems));
+
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w(contextTag, "load:onCancelled", error.toException());
+            }
+        });
+    }
+
+    private static boolean argSanityCheck(User applicant, User proposer, ArrayList<Item> applicantItems, ArrayList<Item> proposerItems) {
+        //TODO:
+        //everything not null
+        //applicant different from proposer
+        //proposed items not empty and all with same owner
+        //applicant items empty iff all proposed items for charity and all with same owner
+        return true;
+    }
+
+    public static void insertExchangeInDatabase(String contextTag, String firstProposerItemId, String firstApplicantItemId) {
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
+        Item.retrieveItemsByIds(contextTag, dbRef, new ArrayList<>(Arrays.asList(firstProposerItemId, firstApplicantItemId)), new Consumer<ArrayList<Item>>() {
+            @Override
+            public void accept(ArrayList<Item> items) {
+                User applicant = User.createUserFromBasicInfo("", new ArrayList<String>(items.get(0).getOwner()));
+                User proposer = User.createUserFromBasicInfo("", new ArrayList<String>(items.get(1).getOwner()));
+                ArrayList<Item> applicantItems = new ArrayList<>();
+                ArrayList<Item> proposerItems = new ArrayList<>();
+                proposerItems.add(items.get(0));
+                applicantItems.add(items.get(1));
+                insertExchangeInDatabaseAux(applicant, proposer, applicantItems,proposerItems);
+            }
+        });
+    }
+
+    private static void insertExchangeInDatabaseAux(User applicant, User proposer, ArrayList<Item> applicantItems, ArrayList<Item> proposerItems) {
+        if (argSanityCheck(applicant, proposer, applicantItems, proposerItems)) {
+            Date date = new Date();
+            String idExchange = UUID.randomUUID().toString();
+            setIdExchangeDb(idExchange);
+            setDateDb(idExchange, date);
+            setExchangeStatusDb(idExchange, ExchangeStatus.IN_APPROVAL);
+            setApplicantDb(idExchange, applicant);
+            setProposerDb(idExchange, proposer);
+            setApplicantItemsDb(idExchange, applicantItems);
+            setProposerItemsDb(idExchange, proposerItems);
+            //insert in applicant's list of exchanges
+            User.dbRefUsers.child(applicant.getIdUser()).child(User.ID_EXCHANGES_DB).child(idExchange).setValue(Exchange.getExchangeBasicInfo(date,ExchangeStatus.IN_APPROVAL,applicant,proposer,applicantItems,proposerItems));
+            //insert in proposer's list of exchanges
+            User.dbRefUsers.child(proposer.getIdUser()).child(User.ID_EXCHANGES_DB).child(idExchange).setValue(Exchange.getExchangeBasicInfo(date,ExchangeStatus.IN_APPROVAL,applicant,proposer,applicantItems,proposerItems));
+        }
+    }
+    /**
+     *
+     * @param exchange the Exchange where to change the status
+     * @param newExchangeStatus the new exchange status of the specified Exchange
+     */
+    public static void changeExchangeStatusDb(Exchange exchange, ExchangeStatus newExchangeStatus) {
+        //TODO: add controls on legal statuses transitions
+        setExchangeStatusDb(exchange.getIdExchange(), newExchangeStatus);
+        //TODO:
+        //for each item involved in the exchange:
+        // set not exchangeable if transition is: in approval->accepted
+        //set exchangeable if transition is: in approval->refused, or anystatus(except for happened and all the reviewed)->annulled
+        //delete the exchange (from exchanges and from the user's list of exchanges), and all the involved items (use remove item from board)
+        //if newExchangeStatus is: reviewed by both
+    }
+    private static void setExchangeStatusDb(String idExchange, ExchangeStatus exchangeStatus) {
+        Exchange.dbRef.child(idExchange).child(Exchange.EXCHANGE_STAUS_DB).setValue(Exchange.StringValueOfExchangeStatus(exchangeStatus));
+    }
+    private static void setDateDb(String idExchange, Date date) {
+        Exchange.dbRef.child(idExchange).child(Exchange.DATE_DB).setValue(String.valueOf(date));
+    }
+    private static void setUserDb(String idExchange, User user, String dataBaseChild) {
+        Exchange.dbRef.child(idExchange).child(dataBaseChild).setValue(user.getIdUser() + "," + user.getImage() + "," + user.getRank() + "," + user.getUsername());
+    }
+
+    private static void setApplicantDb(String idExchange, User applicant) {
+        setUserDb(idExchange, applicant, Exchange.APPLICANT_DB);
+    }
+
+    private static void setProposerDb(String idExchange, User proposer) {
+        setUserDb(idExchange, proposer, Exchange.PROPOSER_DB);
+    }
+
+    private static void setItemsDb(String idExchange, ArrayList<Item> items, String dataBaseChild) {
+        for (Item item: items) {
+            Exchange.dbRef.child(idExchange).child(dataBaseChild).child(item.getIdItem()).setValue(item.getItemBasicInfo());
+        }
+    }
+
+    private static void setApplicantItemsDb(String idExchange, ArrayList<Item> applicantItems) {
+        setItemsDb(idExchange, applicantItems, Exchange.APPLICANT_ITEMS_DB);
+    }
+
+    private static void setProposerItemsDb(String idExchange, ArrayList<Item> proposerItems) {
+        setItemsDb(idExchange, proposerItems, Exchange.PROPOSER_DB);
+    }
+
+    private static void setIdExchangeDb(String idExchange) {
+        Exchange.dbRef.child(idExchange).child(Exchange.ID_EXCHANGE_DB).setValue(idExchange);
+    }
+
+    /**
+     *
+     * @return a string in CSV format representing the basic info of this Exchange
+     * @see Exchange#INFO_PARAM
+     */
+    public static String getExchangeBasicInfo(Date date, ExchangeStatus exchangeStatus, User applicant, User proposer, ArrayList<Item> applicantItems, ArrayList<Item> proposerItems) {
+        String applicantFirstItem = "";
+        if (!applicantItems.isEmpty()) applicantFirstItem = (applicantItems.get(0).getIdItem());
+        return StringValueOfExchangeStatus(exchangeStatus) + "," + date + "," + applicant.getIdUser() + "," + proposer.getIdUser() + "," + applicantFirstItem + "," + proposerItems.get(0).getIdItem();
+    }
+    /**
+     *
+     * @return the current status of this Exchange
+     * @see ExchangeStatus
+     */
+    public ExchangeStatus getExchangeStatus() {
+        return this.exchangeStatus;
+    }
+
+    /**
+     *
+     * @return the User who choose an Item from a proposer's board and, therefore, created this Exchange
+     */
+    public User getApplicant() {
+        return this.applicant;
+    }
+
+    /**
+     *
+     * @return the User whose Item has been chosen from their board by an applicant for this Exchange
+     */
+    public User getProposer() {
+        return this.proposer;
+    }
+
+    /**
+     *
+     * @return the id of this Exchange
+     */
+    public String getIdExchange() {
+        return this.idExchange;
+    }
+
+    /**
+     *
+     * @return all the Items which have been proposed by the applicant for this Exchange
+     * It can be empty, since the required Items could be for charity
+     */
+    public ArrayList<Item> getProposerItems() {
+        return this.proposerItems;
+    }
+
+    /**
+     *
+     * @return all the Items which have been choose by the applicant from the proposer's board for this Exchange
+     */
+    public ArrayList<Item> getApplicantItems() {
+        return this.applicantItems;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null  || !(o instanceof Exchange)) return false;
+        Exchange exchange = (Exchange) o;
+        return exchangeStatus == exchange.getExchangeStatus() && applicant.equals(exchange.getApplicant()) && proposer.equals(exchange.getProposer()) && idExchange.equals(exchange.getIdExchange()) && proposerItems.equals(exchange.getProposerItems()) && applicantItems.equals(exchange.getApplicantItems());
+    }
+
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + this.idExchange.hashCode();
+        result = prime * result + this.applicant.hashCode();
+        result = prime * result + this.exchangeStatus.hashCode();
+        result = prime * result + this.proposerItems.hashCode();
+        result = prime * result + this.applicantItems.hashCode();
+        result = prime * result + this.proposer.hashCode();
+        return result;
+    }
+
+    //TODO: fetch, insert and update  to database, (with all the related side-effects)
+
+
+
 
     /* TODO da rivedere completamente
     /**
@@ -89,7 +437,8 @@ public class Exchange {
      * The proposed Item, together with the otherProposedItems,
      * can be Null only if all the required Items(required Item and otherRequiredItems),
      * are for charity. <p>
-     * It checks whether the applicant and the proposer are the same User and if the Items
+     * It checks whether the applicant and the proposer are the same User and if the ItemsNonNull String idRequiredItem, @Nullable Set<String> idOtherProposedItems, @Nullable Set<String> idOtherRequiredItems)  {
+        this.idApplicant = idApplicant;
      * involved in the exchange belong to the correct User. <p>
      * otherProposedItems and otherRequiredItems are optional, since usually an exchange involves just one or two Items. <p>
      * if all the conditions are guaranteed, a New Exchange will be created and its status will be set to "IN_APPROVAL"
@@ -163,79 +512,4 @@ public class Exchange {
         if (go) return new Exchange(ExchangeStatus.IN_APPROVAL, applicant.getIdUser(), proposer.getIdUser(), idProposedItem, requiredItem.getIdItem(), idOtherProposedItems, idOtherRequiredItems);
         else throw new Exception(feedback);
     }*/
-
-    /**
-     *
-     * @return the current status of this Exchange
-     * @see ExchangeStatus
-     */
-    /*public ExchangeStatus getExchangeStatus() {
-        return this.exchangeStatus;
-    }*/
-
-    /**
-     *
-     * @return the User who choose an Item from a proposer's board and, therefore, created this Exchange
-     */
-    /*public User getApplicant() {
-        return this.applicant = BarattopoliUtil.retrieveUserById(this.idApplicant);
-    }*/
-
-    /**
-     *
-     * @return the User whose Item has been chosen from their board by an applicant for this Exchange
-     */
-    /*public User getProposer() {
-        return this.proposer = BarattopoliUtil.retrieveUserById(this.idProposer);
-    }
-
-    /**
-     *
-     * @return the id of this Exchange
-     */
-    /*public String getIdExchange() {
-        return this.idExchange;
-    }*/
-
-    /**
-     *
-     * @return all the Items which have been proposed by the applicant for this Exchange
-     * It can be empty, since the required Items could be for charity
-     */
-    /*public Set<Item> getProposedItems() {
-        return this.proposedItems;
-    }*/
-
-    /**
-     *
-     * @return all the Items which have been choose by the applicant from the proposer's board for this Exchange
-     */
-    /*public Set<Item> getRequiredItems() {
-        return this.requiredItems;
-    }*/
-
-    /*
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null  || !(o instanceof Exchange)) return false;
-        Exchange exchange = (Exchange) o;
-        return getExchangeStatus() == exchange.getExchangeStatus() && getApplicant().equals(exchange.getApplicant()) && getProposer().equals(exchange.getProposer()) && getIdExchange().equals(exchange.getIdExchange()) && getProposedItems().equals(exchange.getProposedItems()) && getRequiredItems().equals(exchange.getRequiredItems());
-    }*/
-
-    /*
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + this.idExchange.hashCode();
-        result = prime * result + this.applicant.hashCode();
-        result = prime * result + this.exchangeStatus.hashCode();
-        result = prime * result + this.proposedItems.hashCode();
-        result = prime * result + this.requiredItems.hashCode();
-        result = prime * result + this.proposer.hashCode();
-        return result;
-    }*/
-
-    //TODO: fetch, insert and update  to database, (with all the related side-effects)
 }

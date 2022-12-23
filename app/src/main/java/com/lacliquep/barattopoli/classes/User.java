@@ -3,6 +3,7 @@ package com.lacliquep.barattopoli.classes;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -66,6 +67,8 @@ public class User {
 
 
 
+
+
     /**
      * constructor of a User, after a fetch from the database
      *
@@ -90,6 +93,17 @@ public class User {
         //the basic info when a User is stored in an Item
         this.userBasicInfo = this.idUser + "," + this.image + "," + this.rank + "," + this.username;
     }
+
+    public static User createUserFromBasicInfo(String userBasicInfo,@Nullable ArrayList<String> basicInfo) {
+        if (basicInfo == null) basicInfo = new ArrayList<>(Arrays.asList(userBasicInfo.split(",", User.INFO_LENGTH)));
+        User res = new User(basicInfo.get(0), basicInfo.get(3), "", "", new ArrayList<>(Arrays.asList("","","","","")), Integer.valueOf(basicInfo.get(2)), basicInfo.get(1));
+        return res;
+    }
+    /**
+     * used when creating other samples and in case of errors
+     * @return a sample of a User who does not exist
+     */
+    public static User getSampleUser() { return new User("basicUser", "basicUser", "", "", new ArrayList<>(Arrays.asList("Italia", "Veneto", "Venezia", "Venezia")), User.getMediumRank(), "");}
     /**
      * creator of a User, to be called when creating a new User to store in the DB
      * the rank will be set to the medium value between 1 and HIGHER_RANK
@@ -165,7 +179,7 @@ public class User {
      * @param consumer the way the fetched data are being used
      */
     public static void retrieveCurrentUser(String contextTag, DatabaseReference dbRef, Consumer<User> consumer){
-        User.retrieveUserById(contextTag, dbRef, mAuth.getUid(), consumer);
+        User.retrieveUserById(contextTag, dbRef, FirebaseAuth.getInstance().getUid(), consumer);
     }
 
     /**
@@ -329,7 +343,7 @@ public class User {
         Item newItem = Item.createItem(itemTitle,itemDescription,itemIdRange,currentUserBasicInfo,itemLocation,itemIsCharity,itemIsService,itemCategories,itemImages);
         String userId = currentUserBasicInfo.get(0);
         Log.d("TAG", userId + "  " + "mmNsy71Nf5e8ATR79b4LNk3uRSh1");
-        dbRefUsers.child("mmNsy71Nf5e8ATR79b4LNk3uRSh1").child(User.ID_ITEMS_ON_BOARD_DB).child(newItem.getIdItem()).setValue(newItem.getItemBasicInfo());
+        dbRefUsers.child(currentUserBasicInfo.get(0)).child(User.ID_ITEMS_ON_BOARD_DB).child(newItem.getIdItem()).setValue(newItem.getItemBasicInfo());
         Item.insertItemInDataBase(contextTag, newItem);
     }
 

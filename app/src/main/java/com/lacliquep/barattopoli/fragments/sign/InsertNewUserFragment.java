@@ -205,7 +205,6 @@ public class InsertNewUserFragment extends Fragment {
                                                 if (Location.checkLocation(getActivity(), txtCountry, txtRegion, txtProvince, txtCity)) {
                                                     ArrayList<String> location = new ArrayList<>(Arrays.asList(txtCountry, txtRegion, txtProvince, txtCity));
                                                     registration(txtEmail, txtPassword, location);
-                                                    //TODO: insert data in database
                                                 }
                                             }
                                         }
@@ -216,23 +215,6 @@ public class InsertNewUserFragment extends Fragment {
                     }
                 }
             }
-
-       /*
-
-                        //registration(txtEmail, txtPassword);
-                        //TODO: insert data in database
-                        String userId = auth.getUid();
-                        if (userId != null) {
-                            User.insertUserInDataBase(userId,txtUsername,txtName,txtSurname,location,basicImage);
-                            //TODO: show profile
-                        } else {
-                            Log.d(ACTIVITY_TAG_NAME,"something went wrong while logging-in the user after the registration");
-                            //TODO:back to signInUpFragment
-                        }
-                    }
-                }
-            }
-        }*/
             Log.d("User", "0");
         }
     }

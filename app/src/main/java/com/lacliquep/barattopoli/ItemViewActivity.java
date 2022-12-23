@@ -54,7 +54,7 @@ public class ItemViewActivity extends AppCompatActivity {
         if (item != null) this.setup(item, owner);
     }
 
-    private String rangeString(@NonNull Item item) {
+    public String rangeString(@NonNull Item item) {
         int to = 0, from = 0;
         try {
             from = Range.getFrom(item.getIdRange());

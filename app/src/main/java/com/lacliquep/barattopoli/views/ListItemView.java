@@ -20,13 +20,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.lacliquep.barattopoli.ItemViewActivity;
+import com.lacliquep.barattopoli.MainActivity;
 import com.lacliquep.barattopoli.R;
 import com.lacliquep.barattopoli.classes.BarattopoliUtil;
 import com.lacliquep.barattopoli.classes.Item;
 import com.lacliquep.barattopoli.classes.Ownership;
+import com.lacliquep.barattopoli.classes.Range;
 
 /**
  * TODO: document your custom view class.
@@ -51,6 +54,7 @@ public class ListItemView extends LinearLayout {
         Bitmap thumbnail=null;
 
         title.setText(item.getTitle());
+        //TODO: fix the view with the getString. At the moment is not possible!!!!
         range.setText(item.getIdRange());
 
         if (thumbnail != null) {
@@ -71,6 +75,7 @@ public class ListItemView extends LinearLayout {
 
         return itemView;
     }
+
 
     public ListItemView(Context context, AttributeSet attrs) {
         super(context, attrs);

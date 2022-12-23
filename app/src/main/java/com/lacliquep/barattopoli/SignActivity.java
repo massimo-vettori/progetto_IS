@@ -42,11 +42,9 @@ public class SignActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign);
         Bundle c = getIntent().getExtras();
-        if (c != null) {
-            if (c.containsKey("goToInsertNewUserFragment")) {
+        if ((c != null) && c.containsKey("goToInsertNewUserFragment")) {
                 int i = c.getInt("goToInsertNewUserFragment");
                 if (i == 1) loadFragment(new InsertNewUserFragment());
-            }
         } else {
             if (user != null) {
 

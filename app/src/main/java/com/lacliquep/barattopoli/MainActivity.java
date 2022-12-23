@@ -151,11 +151,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     startActivity(intent);
                     break;
 
-                /*case R.id.nav_chat:
-                    Intent intent = new Intent(MainActivity.this, ItemViewActivity.class);
+                case R.id.add_item:
+                    intent = new Intent(MainActivity.this, InsertNewItemActivity.class);
                     startActivity(intent);
                     // finish();
-                    break;*/
+                    break;
                 case R.id.nav_logout:
                     mAuth.signOut();
                     intent = new Intent(MainActivity.this, SignActivity.class);
