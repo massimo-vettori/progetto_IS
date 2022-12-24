@@ -12,6 +12,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -21,7 +22,7 @@ import java.util.function.Consumer;
  * @author pares
  * @since 1.0
  */
-public class Exchange {
+public class Exchange implements Serializable {
 
     //in_approval: proposed object still exchangeable
     //accepted: items become not-exchangeable, waiting for the conclusion

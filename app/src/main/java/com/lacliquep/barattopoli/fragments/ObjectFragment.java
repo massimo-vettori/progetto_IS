@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.lacliquep.barattopoli.R;
 import com.lacliquep.barattopoli.classes.Item;
 import com.lacliquep.barattopoli.classes.User;
@@ -45,7 +46,14 @@ public class ObjectFragment extends Fragment {
         //this.addItem(Item.getSampleItem());
         //this.addItem(Item.getSampleItem());
 
-        retrieveItems(false,false);
+        String filter = "";
+        Bundle b = getArguments();
+        if (b != null) filter = b.getString("filter");
+        if (filter.equals("Object")) retrieveItems(false,false, null);
+        else if (filter.equals("Service")) retrieveItems(false, true, null);
+        else if (filter.equals("Charity")) retrieveItems(true, false, null);
+        else retrieveItems(false, false, null);
+        //TODO:add filters
         return v;
     }
 
@@ -54,8 +62,8 @@ public class ObjectFragment extends Fragment {
         container.addView(view);
     }
 
-    protected void retrieveItems(boolean charity, boolean service) {
-        Item.retrieveMapWithAllItems(true,true, "School", false, "mmNsy71Nf5e8ATR79b4LNk3uRSh1", new ArrayList<String>(Arrays.asList("Italia", "Veneto", "Venezia", "Venezia")), new Consumer<Map<String, Item>>() {
+    protected void retrieveItems(boolean charity, boolean service, String category) {
+        Item.retrieveMapWithAllItems(charity,service, category, false, FirebaseAuth.getInstance().getUid(), new ArrayList<String>(Arrays.asList("Italia", "Veneto", "Venezia", "Venezia")), new Consumer<Map<String, Item>>() {
             @Override
             public void accept(Map<String, Item> stringMapMap) {
                 Log.d("61ObjectFragment", stringMapMap.toString());
@@ -65,6 +73,8 @@ public class ObjectFragment extends Fragment {
                     Log.d("63", stringMapMap.get(idItem).getDescription());
                     Log.d("63", stringMapMap.get(idItem).getItemBasicInfo());
                     Log.d("63", stringMapMap.get(idItem).getTitle());
+                    Log.d("63", "charity: "+String.valueOf(stringMapMap.get(idItem).isCharity()));
+                    Log.d("63", "setvice: " + String.valueOf(stringMapMap.get(idItem).isCharity()));
                     Log.d("63", stringMapMap.get(idItem).getCategories().toString());
                     Log.d("63", stringMapMap.get(idItem).getImages().toString());
                     Log.d("63", stringMapMap.get(idItem).getLocation().toString());

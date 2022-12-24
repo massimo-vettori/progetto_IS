@@ -3,6 +3,7 @@ package com.lacliquep.barattopoli.views;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -53,9 +54,11 @@ public class ItemView extends ConstraintLayout {
         TextView title    = view.findViewById(R.id.item_title);
         TextView price    = view.findViewById(R.id.item_price_range);
 
-        userName.setText(item.getOwner().toString());
+        userName.setText(item.getOwnerUsername());
         title.setText(item.getTitle());
-        price.setText(item.getIdRange());
+        price.setText(ItemViewActivity.rangeString(item, ctx));
+        avatar.setImageBitmap(item.getOwnerImage());
+        image.setImageBitmap(item.getFirstImage());
 
         return view;
     }

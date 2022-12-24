@@ -55,7 +55,7 @@ public class ListItemView extends LinearLayout {
 
         title.setText(item.getTitle());
         //TODO: fix the view with the getString. At the moment is not possible!!!!
-        range.setText(item.getIdRange());
+        range.setText(ItemViewActivity.rangeString(item, ctx));
 
         if (thumbnail != null) {
             image.setImageBitmap(thumbnail);

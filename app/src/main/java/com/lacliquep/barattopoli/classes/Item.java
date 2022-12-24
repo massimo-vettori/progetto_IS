@@ -61,7 +61,7 @@ public class Item implements Serializable {
     private boolean isExchangeable;
     private boolean isService;
     private final Set<String> categories = new HashSet<>();
-    private final Collection<String> images = new ArrayList<>();
+    private final ArrayList<String> images = new ArrayList<>();
     private final ArrayList<String> owner = new ArrayList<>();
     private final String itemBasicInfo;
 
@@ -303,12 +303,30 @@ public class Item implements Serializable {
         return this.idRange;
     }
 
+    //"id,image,rank,username"
+    public String getOwnerUsername() {
+        return (owner.size() >= 4)? owner.get(3): "";
+    }
+
+    public String getOwnerId() {
+        return (owner.size() >= 1)? owner.get(0): "";
+    }
+
+    public int getOwnerRank() {
+        return (owner.size() >= 3)? Integer.parseInt(owner.get(2)): -1;
+    }
+
+    public Bitmap getOwnerImage() {
+        Bitmap b = null;
+        if (owner.size() >= 2) b = BarattopoliUtil.decodeFileFromBase64(owner.get(1));
+        return b;
+    }
 
     /**
      * @return this Item owner's basic info
      * @see User#INFO_PARAM
      */
-    public Collection<String> getOwner() {
+    public ArrayList<String> getOwner() {
         return this.owner;
     }
 
@@ -341,7 +359,7 @@ public class Item implements Serializable {
      *
      * @return true if this Item is a service, false if it is a good
      */
-    private boolean isService() {
+    public boolean isService() {
         return this.isService;
     }
 
@@ -475,24 +493,40 @@ public class Item implements Serializable {
                                         categoriesArray.addAll(Arrays.asList(categories.split(",")));
                                         imagesArray.addAll(Arrays.asList(images.split(",")));
                                         ownerArray.addAll(Arrays.asList(owner.split(",", User.INFO_LENGTH)));
-                                        Log.d("422", "qui");
-                                        items.put(idItem, new Item(idItem, title, description, id_range, ownerArray, location, is_charity, is_exchangeable, is_service, categoriesArray, imagesArray));
-                                        Log.d("425",items.toString());
-                                        /*for (String key : items.keySet()) {
-                                            boolean keep = true;
-                                            if (items.get(key).isCharity()) {
-                                                if (!showCharity) {
-                                                    boolean val = items.get(key).isService;
-                                                    if ((showService) && ((val)) || ((!showService) && ((!val)))) {
-                                                    } else keep = false;
+                                        Item newItem =  new Item(idItem, title, description, id_range, ownerArray, location, is_charity, is_exchangeable, is_service, categoriesArray, imagesArray);
+                                        //do not show to logged user their own objects/services and only the exchangeable ones
+                                        if (newItem.isExchangeable() && (!(newItem.getOwnerId().equals(mAuth.getUid())))) {
+                                            if (category != null) {
+                                                if (Category.getCategories().contains(category)) {
+                                                    if (newItem.getCategories().contains(category)) {
+                                                        //charity filter
+                                                        if ((newItem.isCharity() && showCharity)) {
+                                                            items.put(idItem, newItem);
+                                                        } else {
+                                                            //service or object filter
+                                                            if ((newItem.isService() && showService) || (!(newItem.isService()) && !showService))
+                                                                items.put(idItem, newItem);
+                                                        }
+                                                    }
                                                 }
-                                            } else keep = false;
-                                            if (!keep) items.remove(key);
-                                        }*/
+                                            } else {
+                                                //charity filter
+                                                if ((newItem.isCharity() && showCharity)) {
+                                                    items.put(idItem, newItem);
+                                                } else {
+                                                    if (!showCharity) {
+                                                        //service or object filter
+                                                        if ((newItem.isService() && showService) || (!(newItem.isService()) && !showService))
+                                                            items.put(idItem, newItem);
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
 
 
                         }
+                        Log.d("63", items.toString());
                         consumer.accept(items);
 
                     }
@@ -680,6 +714,10 @@ public class Item implements Serializable {
     public static void removeCategory(boolean isExchangeable, String category, String idItem, DatabaseReference dbRefItem) throws NonModifiableException {
         if (!isExchangeable) throw new NonModifiableException();
         //TODO: se addcategory funziona, fare cose simili
+    }
+
+    public Bitmap getFirstImage() {
+        return (this.images.size() >= 1)? BarattopoliUtil.decodeFileFromBase64(images.get(0)): null;
     }
 
     /**

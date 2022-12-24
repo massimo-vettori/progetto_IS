@@ -12,6 +12,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -21,7 +22,7 @@ import java.util.function.Consumer;
  * @author pares
  * @since 1.0
  */
-public class User {
+public class User implements Serializable {
 
     private static final String CLASS_TAG_NAME = "User";
     public static final Integer HIGHEST_RANK = 100;

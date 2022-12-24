@@ -17,6 +17,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -108,7 +109,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if(savedInstanceState == null)
         {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ObjectFragment()).commit(); // this start for the first when you open this activity
+            ObjectFragment fragment = new ObjectFragment();
+            Bundle args = new Bundle();
+            args.putString("filter","Object");
+            fragment.setArguments(args);
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit(); // this start for the first when you open this activity
             navigationView.setCheckedItem(R.id.nav_object);
         }
 
@@ -185,8 +190,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void changeItem(ObjectFragment fragment, String filter){
         Bundle args = new Bundle();
         args.putString("filter",filter);
-        fragment.setArguments(args);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+        ObjectFragment fragment1 = new ObjectFragment();
+        fragment1.setArguments(args);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment1).commit();
     }
 
 /*
