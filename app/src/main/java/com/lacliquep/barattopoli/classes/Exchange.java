@@ -13,6 +13,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -61,7 +62,7 @@ public class Exchange implements Serializable {
     public static final String INFO_PARAM = "exchange_status,date,id_applicant,id_proposer,first_applicant_item,first_proposer_item";
 
     private ExchangeStatus exchangeStatus;
-    private final Date date;
+    private final String date;
     private final String idApplicant;
     private final User applicant;
     private final String idProposer;
@@ -86,7 +87,7 @@ public class Exchange implements Serializable {
      * @see ExchangeStatus
      */
 
-    private Exchange(String idExchange, Date date, ExchangeStatus exchangeStatus, User applicant, User proposer, ArrayList<Item> applicantItems, ArrayList<Item> proposerItems) {
+    private Exchange(String idExchange, String date, ExchangeStatus exchangeStatus, User applicant, User proposer, ArrayList<Item> applicantItems, ArrayList<Item> proposerItems) {
         this.idExchange = idExchange;
         this.date = date;
         this.proposer = proposer;
@@ -105,7 +106,7 @@ public class Exchange implements Serializable {
      * @return a sample of an ILLEGAL exchange (it won't be shown)
      */
     public static Exchange getSampleExchange() {
-        return new Exchange("basicExchange", new Date(System.currentTimeMillis()), ExchangeStatus.ILLEGAL, User.getSampleUser(), User.getSampleUser(), new ArrayList<>(Collections.singletonList(Item.getSampleItem())), new ArrayList<>(Collections.singletonList(Item.getSampleItem())));
+        return new Exchange("basicExchange", (new Date(System.currentTimeMillis())).toString(), ExchangeStatus.ILLEGAL, User.getSampleUser(), User.getSampleUser(), new ArrayList<>(Collections.singletonList(Item.getSampleItem())), new ArrayList<>(Collections.singletonList(Item.getSampleItem())));
     }
 
 
@@ -196,7 +197,7 @@ public class Exchange implements Serializable {
                     items.add(new HashMap<>());
                     //applicant items
                     items.add(new HashMap<>());
-                    Date date = new Date();
+                    String date = "";
                     for (DataSnapshot child: snapshot.getChildren()) {
                         String field = child.getKey();
                         if (field != null) {
@@ -210,7 +211,7 @@ public class Exchange implements Serializable {
                                 }
                             } else {
                                 if (field.equals(Exchange.DATE_DB)) {
-                                    date = new Date(Long.parseLong(Objects.requireNonNull(child.getValue()).toString()));
+                                    date = child.getValue().toString();
                                 } else map.put(child.getKey(), Objects.requireNonNull(child.getValue()).toString());
                             }
                         }
@@ -221,8 +222,8 @@ public class Exchange implements Serializable {
                     ArrayList<Item> proposerItems = new ArrayList<>();
                     ArrayList<Item> applicantItems = new ArrayList<>();
                     ArrayList<ArrayList<String>> usersBasicInfo = new ArrayList<>();
-
-
+                    usersBasicInfo.add(new ArrayList<>(Arrays.asList(proposer.getIdUser(), proposer.getImage(), proposer.getRank().toString(), proposer.getUsername())));
+                    usersBasicInfo.add(new ArrayList<>(Arrays.asList(applicant.getIdUser(), applicant.getImage(), applicant.getRank().toString(), applicant.getUsername())));
 
                     for (int i = 0; i < 2; ++i) {
                         //if i = 0: proposer, i = 1: applicant
@@ -265,8 +266,8 @@ public class Exchange implements Serializable {
         Item.retrieveItemsByIds(contextTag, dbRef, new ArrayList<>(Arrays.asList(firstProposerItemId, firstApplicantItemId)), new Consumer<ArrayList<Item>>() {
             @Override
             public void accept(ArrayList<Item> items) {
-                User applicant = User.createUserFromBasicInfo("", new ArrayList<String>(items.get(0).getOwner()));
-                User proposer = User.createUserFromBasicInfo("", new ArrayList<String>(items.get(1).getOwner()));
+                User proposer = User.createUserFromBasicInfo("", new ArrayList<String>(items.get(0).getOwner()));
+                User applicant = User.createUserFromBasicInfo("", new ArrayList<String>(items.get(1).getOwner()));
                 ArrayList<Item> applicantItems = new ArrayList<>();
                 ArrayList<Item> proposerItems = new ArrayList<>();
                 proposerItems.add(items.get(0));
@@ -278,7 +279,7 @@ public class Exchange implements Serializable {
 
     private static void insertExchangeInDatabaseAux(User applicant, User proposer, ArrayList<Item> applicantItems, ArrayList<Item> proposerItems) {
         if (argSanityCheck(applicant, proposer, applicantItems, proposerItems)) {
-            Date date = new Date();
+            String date = (new Date()).toString();
             String idExchange = UUID.randomUUID().toString();
             setIdExchangeDb(idExchange);
             setDateDb(idExchange, date);
@@ -311,11 +312,11 @@ public class Exchange implements Serializable {
     private static void setExchangeStatusDb(String idExchange, ExchangeStatus exchangeStatus) {
         Exchange.dbRef.child(idExchange).child(Exchange.EXCHANGE_STAUS_DB).setValue(Exchange.StringValueOfExchangeStatus(exchangeStatus));
     }
-    private static void setDateDb(String idExchange, Date date) {
-        Exchange.dbRef.child(idExchange).child(Exchange.DATE_DB).setValue(String.valueOf(date));
+    private static void setDateDb(String idExchange, String date) {
+        Exchange.dbRef.child(idExchange).child(Exchange.DATE_DB).setValue(date);
     }
     private static void setUserDb(String idExchange, User user, String dataBaseChild) {
-        Exchange.dbRef.child(idExchange).child(dataBaseChild).setValue(user.getIdUser() + "," + user.getImage() + "," + user.getRank() + "," + user.getUsername());
+        Exchange.dbRef.child(idExchange).child(dataBaseChild).setValue(user.getUserBasicInfo());
     }
 
     private static void setApplicantDb(String idExchange, User applicant) {
@@ -337,7 +338,7 @@ public class Exchange implements Serializable {
     }
 
     private static void setProposerItemsDb(String idExchange, ArrayList<Item> proposerItems) {
-        setItemsDb(idExchange, proposerItems, Exchange.PROPOSER_DB);
+        setItemsDb(idExchange, proposerItems, Exchange.PROPOSER_ITEMS_DB);
     }
 
     private static void setIdExchangeDb(String idExchange) {
@@ -349,7 +350,7 @@ public class Exchange implements Serializable {
      * @return a string in CSV format representing the basic info of this Exchange
      * @see Exchange#INFO_PARAM
      */
-    public static String getExchangeBasicInfo(Date date, ExchangeStatus exchangeStatus, User applicant, User proposer, ArrayList<Item> applicantItems, ArrayList<Item> proposerItems) {
+    public static String getExchangeBasicInfo(String date, ExchangeStatus exchangeStatus, User applicant, User proposer, ArrayList<Item> applicantItems, ArrayList<Item> proposerItems) {
         String applicantFirstItem = "";
         if (!applicantItems.isEmpty()) applicantFirstItem = (applicantItems.get(0).getIdItem());
         return StringValueOfExchangeStatus(exchangeStatus) + "," + date + "," + applicant.getIdUser() + "," + proposer.getIdUser() + "," + applicantFirstItem + "," + proposerItems.get(0).getIdItem();
@@ -403,6 +404,8 @@ public class Exchange implements Serializable {
     public ArrayList<Item> getApplicantItems() {
         return this.applicantItems;
     }
+
+    public String getDate() {return this.date;}
 
 
     @Override

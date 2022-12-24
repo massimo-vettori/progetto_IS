@@ -227,8 +227,8 @@ public class Item implements Serializable {
                     for(String id: ids) {
                         if (snapshot.hasChild(id)) {
                             Map<String, Object> map = new HashMap<>();
-                            for (DataSnapshot child : snapshot.child(id).getChildren()) {
-                                map.put(child.getKey(), child.getValue());
+                            for (DataSnapshot ch : (snapshot.child(id)).getChildren()) {
+                                map.put(ch.getKey(), ch.getValue());
                             }
                             ArrayList<String> ItemData = new ArrayList<>();
                             for (int i = 0; i < 10; ++i) ItemData.add("");
@@ -246,7 +246,16 @@ public class Item implements Serializable {
                             ArrayList<String> cat = new ArrayList<>(Arrays.asList(ItemData.get(8).split(",", 0)));
                             ArrayList<String> img = new ArrayList<>(Arrays.asList(ItemData.get(9).split(",", 0)));
                             //since location is a nested data
-                            BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRefItems.child(id), User.LOCATION_DB, 1, new Consumer<Map<String, ArrayList<String>>>() {
+                            ArrayList<String> location = new ArrayList<>();
+                            for (DataSnapshot s: snapshot.child(id).child(Item.LOCATION_DB).getChildren()) {
+                                if (s.getKey().equals("country")) location.add(s.getValue().toString());
+                                if (s.getKey().equals("region")) location.add(s.getValue().toString());
+                                if (s.getKey().equals("province")) location.add(s.getValue().toString());
+                                if (s.getKey().equals("city")) location.add(s.getValue().toString());
+                            }
+                            Item newItem = new Item(id, ItemData.get(0), ItemData.get(1), ItemData.get(2), own, location, Boolean.getBoolean(ItemData.get(5)), Boolean.getBoolean(ItemData.get(6)), Boolean.getBoolean(ItemData.get(7)), cat, img);
+                            arr.add(newItem);
+                            /*BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRefItems.child(id), User.LOCATION_DB, 1, new Consumer<Map<String, ArrayList<String>>>() {
                                 @Override
                                 public void accept(Map<String, ArrayList<String>> stringArrayListMap) {
                                     ArrayList<String> location = new ArrayList<>();
@@ -256,7 +265,7 @@ public class Item implements Serializable {
                                     location.add(stringArrayListMap.get("city").get(0));
                                     arr.add(new Item(id, ItemData.get(0), ItemData.get(1), ItemData.get(2), own, location, Boolean.getBoolean(ItemData.get(5)), Boolean.getBoolean(ItemData.get(6)), Boolean.getBoolean(ItemData.get(7)), cat, img));
                                 }
-                            });
+                            });*/
                         }
                     }
                     consumer.accept(arr);

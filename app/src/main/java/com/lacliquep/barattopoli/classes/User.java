@@ -63,7 +63,7 @@ public class User implements Serializable {
     private final ArrayList<String> location;
     private final String image;
     private final Integer rank;
-    private final String userBasicInfo;
+
 
 
 
@@ -92,12 +92,16 @@ public class User implements Serializable {
         this.rank = rank;
         this.image = image;
         //the basic info when a User is stored in an Item
-        this.userBasicInfo = this.idUser + "," + this.image + "," + this.rank + "," + this.username;
+    }
+
+    public String getUserBasicInfo() {
+        return this.idUser + "," + this.image + "," + this.rank + "," + this.username;
     }
 
     public static User createUserFromBasicInfo(String userBasicInfo,@Nullable ArrayList<String> basicInfo) {
         if (basicInfo == null) basicInfo = new ArrayList<>(Arrays.asList(userBasicInfo.split(",", User.INFO_LENGTH)));
-        User res = new User(basicInfo.get(0), basicInfo.get(3), "", "", new ArrayList<>(Arrays.asList("","","","","")), Integer.valueOf(basicInfo.get(2)), basicInfo.get(1));
+        Log.d("66", basicInfo.toString());
+        User res = new User(basicInfo.get(0), basicInfo.get(3), "", "", new ArrayList<>(Arrays.asList("","","","","")), Integer.parseInt(basicInfo.get(2)), basicInfo.get(1));
         return res;
     }
     /**
@@ -482,12 +486,6 @@ public class User implements Serializable {
         long cnt = this.sumOfStarsAndCntOfReviews().get(1) + 1;
         return (int)((((float)sts/(float)cnt) * HIGHEST_RANK)/5);
     }
-
-    /**
-     *
-     * @return A CSV string with the basic information of this user when saved in an Item
-     */
-    public String getUserBasicInfo() { return this.userBasicInfo; }
 
     @Override
     public boolean equals(Object o) {

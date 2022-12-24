@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.lacliquep.barattopoli.R;
+import com.lacliquep.barattopoli.classes.Exchange;
 import com.lacliquep.barattopoli.classes.Item;
 import com.lacliquep.barattopoli.classes.User;
 import com.lacliquep.barattopoli.views.ItemView;
@@ -35,6 +36,22 @@ public class ObjectFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_object, container, false);
         this.container = v.findViewById(R.id.main_scroller);
+
+        //test on exchange
+        //Exchange.insertExchangeInDatabase("ObjectFragment", "a6744f72-50ae-4aa0-b220-ff9acfb8b292", "0cc03c4a-2d8d-4fa9-8e44-5d60ccf631b9");
+        Exchange.retrieveExchangeById("ObjectFragment", "fd79b61e-b045-4d18-8a77-b9d822fbfa36", new Consumer<Exchange>() {
+            @Override
+            public void accept(Exchange exchange) {
+                Log.d("72", "id: " + exchange.getIdExchange());
+                Log.d("72", "proposer: " + exchange.getProposer().getUserBasicInfo());
+                Log.d("72", "applicant: " + exchange.getApplicant().getUserBasicInfo());
+                Log.d("72", "firstProposedItem: " + exchange.getProposerItems().get(0).getItemBasicInfo());
+                Log.d("72", "firstApplicantItem: " + exchange.getApplicantItems().get(0).getItemBasicInfo());
+                Log.d("72", "exchangeStatus: " + exchange.getExchangeStatus().toString());
+                Log.d("72", "date: " + exchange.getDate());
+            }
+        });
+
         /*
         For bottom bar
         ImageButton home = (ImageButton) v.findViewById(R.id.bottom_navigator_home);
