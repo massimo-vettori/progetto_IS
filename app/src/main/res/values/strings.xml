@@ -107,4 +107,5 @@
     <string name="Bundle_tag_encoded_image">encoded image</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="age_confirm">Conferma di essere maggiorenne</string>
 </resources>

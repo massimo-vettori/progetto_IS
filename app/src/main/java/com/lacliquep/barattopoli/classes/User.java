@@ -347,7 +347,6 @@ public class User implements Serializable {
     public static void addNewItemOnBoard(String contextTag, String itemTitle, String itemDescription, String itemIdRange, ArrayList<String> currentUserBasicInfo, ArrayList<String> itemLocation, boolean itemIsCharity, boolean itemIsService, @NonNull ArrayList<String> itemCategories ,@NonNull ArrayList<String> itemImages) {
         Item newItem = Item.createItem(itemTitle,itemDescription,itemIdRange,currentUserBasicInfo,itemLocation,itemIsCharity,itemIsService,itemCategories,itemImages);
         String userId = currentUserBasicInfo.get(0);
-        Log.d("TAG", userId + "  " + "mmNsy71Nf5e8ATR79b4LNk3uRSh1");
         dbRefUsers.child(currentUserBasicInfo.get(0)).child(User.ID_ITEMS_ON_BOARD_DB).child(newItem.getIdItem()).setValue(newItem.getItemBasicInfo());
         Item.insertItemInDataBase(contextTag, newItem);
     }

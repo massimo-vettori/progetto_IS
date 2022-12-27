@@ -1,13 +1,20 @@
 package com.lacliquep.barattopoli.fragments;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +25,7 @@ import com.lacliquep.barattopoli.R;
 import com.lacliquep.barattopoli.classes.Exchange;
 import com.lacliquep.barattopoli.classes.Item;
 import com.lacliquep.barattopoli.classes.User;
+import com.lacliquep.barattopoli.fragments.sign.InsertNewUserFragment;
 import com.lacliquep.barattopoli.views.ItemView;
 
 import java.util.ArrayList;
@@ -25,17 +33,23 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class ObjectFragment extends Fragment {
 
     protected LinearLayout container;
+    protected ProgressBar progressBar;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_object, container, false);
         this.container = v.findViewById(R.id.main_scroller);
+        this.progressBar = v.findViewById(R.id.progressBar);
+        this.progressBar.setVisibility(View.INVISIBLE);
+
 
         //test on exchange
         //Exchange.insertExchangeInDatabase("ObjectFragment", "a6744f72-50ae-4aa0-b220-ff9acfb8b292", "0cc03c4a-2d8d-4fa9-8e44-5d60ccf631b9");
@@ -63,6 +77,12 @@ public class ObjectFragment extends Fragment {
         //this.addItem(Item.getSampleItem());
         //this.addItem(Item.getSampleItem());
 
+        asyncShow();
+        return v;
+    }
+
+    public void showItems() {
+        //TODO:add filters
         String filter = "";
         Bundle b = getArguments();
         if (b != null) filter = b.getString("filter");
@@ -70,8 +90,6 @@ public class ObjectFragment extends Fragment {
         else if (filter.equals("Service")) retrieveItems(false, true, null);
         else if (filter.equals("Charity")) retrieveItems(true, false, null);
         else retrieveItems(false, false, null);
-        //TODO:add filters
-        return v;
     }
 
     public void addItem(Item item) {
@@ -104,5 +122,50 @@ public class ObjectFragment extends Fragment {
                 }
             }
         });
+    }
+    /**
+     * check the SDK version in order to handle the itemView in background
+     */
+    void asyncShow() {
+        // TODO find out which is the eldest SDK version accepting concurrent
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+            // Do something for R and above versions
+            //using concurrent executors
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            Handler handler = new Handler(Looper.getMainLooper());
+
+            executor.execute(() -> {
+                //Background work here
+                showItems();
+                handler.post(() -> {
+                    //UI Thread work here
+                    // TODO change the string
+                    progressBar.setVisibility(View.VISIBLE);
+                });
+            });
+
+        } else {
+            new ObjectFragment.AsyncRegister().execute();
+        }
+    }
+    /**
+     * class to handle registration in asynchronous way before SDK R
+     */
+    @SuppressLint("StaticFieldLeak")
+    private class AsyncRegister extends AsyncTask<String, Integer, Void> {
+        @Override
+        protected Void doInBackground(String... strings) {
+            showItems();
+            //TODO delete or improve publishProgress
+            for (int i = 0; i < 100; ++i) publishProgress(i);
+            return null;
+        }
+        // TODO: add a progression bar or sth? delete or improve onProgressUpdate
+        protected void onProgressUpdate(Integer... integers) {
+            //Toast.makeText(getActivity(), getString(R.string.in_progress), Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setProgress(integers[0]);
+        }
+
     }
 }

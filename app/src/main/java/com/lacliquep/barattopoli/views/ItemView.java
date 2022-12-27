@@ -57,7 +57,7 @@ public class ItemView extends ConstraintLayout {
         userName.setText(item.getOwnerUsername());
         title.setText(item.getTitle());
         price.setText(ItemViewActivity.rangeString(item, ctx));
-        avatar.setImageBitmap(item.getOwnerImage());
+        avatar.setImageBitmap(item.getOwnerImage()); //substitute with OwnerImage
         image.setImageBitmap(item.getFirstImage());
 
         return view;

@@ -77,7 +77,6 @@ public class InsertNewItemActivity extends AppCompatActivity {
         if(encodedImage[0].equals(basicImage)) takePicture();
         //set the image
 
-
         /*recreating an array to create the item
         owner = new ArrayList<>(Arrays.asList(userBasicInfo.split(",", User.INFO_LENGTH)));
         Log.d("TAG", owner.toString());*/
@@ -138,53 +137,6 @@ public class InsertNewItemActivity extends AppCompatActivity {
                 insertButton(encodedImage[0]);
         }});
 
-
-
-        /*
-        sample to fetch the current user's first item on board
-        TODO: move it in board activity/fragment
-
-        User.retrieveCurrentUser(InsertNewItemActivity.this, dbRef, new Consumer<User>() {
-            @Override
-            public void accept(User user) {
-                User.getItemsOnBoard(InsertNewItemActivity.this, user.getIdUser(), new Consumer<Map<String, ArrayList<String>>>() {
-                    @Override
-                    public void accept(Map<String, ArrayList<String>> stringArrayListMap) {
-                        if (!(stringArrayListMap.isEmpty())) {
-                            //retrieve the id of the first item on board
-                            String firstItemId = BarattopoliUtil.listOfIdFromMap(stringArrayListMap).get(0);
-                            //retrieve its basic Info
-                            ArrayList<String> firstItemInfo = stringArrayListMap.get(firstItemId);
-                            if (firstItemInfo != null && firstItemInfo.size() >= Item.INFO_LENGTH) {
-                                topText.setText(firstItemInfo.get(7));
-                                bottomText.setText(firstItemInfo.get(0));
-                                Bitmap bm = BarattopoliUtil.decodeFileFromBase64(firstItemInfo.get(2));
-                                if (bm != null)
-                                    imageContainer.setImageBitmap(BarattopoliUtil.decodeFileFromBase64(firstItemInfo.get(2)));
-                            }
-                        } else {
-                            Log.d("TAG", "emptyMap"); //TODO: substitute with sth like "no loaded items" instead of view
-                            //load the basic image
-                            imageContainer.setImageBitmap(BarattopoliUtil.decodeFileFromBase64(encodedImage[0]));
-                        }
-
-                    }
-                });
-            }
-        });
-        */
-
-
-
-        /* sample of how to use the BarattopoliUtil methods: do not try taking out the values from the consumer
-            DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(User.CLASS_USER_DB);
-            BarattopoliUtil.retrieveUserById(MainActivity.this, dbRef, "mmNsy71Nf5e8ATR79b4LNk3uRSh1", new Consumer<User>() {
-                @Override
-                public void accept(User u) {
-                    Toast.makeText(MainActivity.this, u.getUsername(), Toast.LENGTH_LONG).show();
-                }
-            });
-         */
 
         takePicture.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -54,11 +54,10 @@ public class ProfileActivity extends AppCompatActivity {
                 public void accept(User user) {
                     ArrayList<String> loc = user.getLocation();
 
-                    country.setText(getString(R.string.country) + ": " + loc.get(0));
-                    region.setText(getString(R.string.region) + ": " + loc.get(1));
-                    province.setText(getString(R.string.province) + ": " + loc.get(2));
-                    city.setText(getString(R.string.city) + ": " + loc.get(3));
-
+                    country.setText(loc.get(0));
+                    region.setText(loc.get(1));
+                    province.setText(loc.get(2));
+                    city.setText(loc.get(3));
                     email.setText(userEmail);
                     nickname.setText(user.getUsername());
                     nameAndSurname.setText(user.getName() + " " + user.getSurname());

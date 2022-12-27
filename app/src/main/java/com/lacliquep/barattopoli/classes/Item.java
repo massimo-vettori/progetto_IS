@@ -173,47 +173,10 @@ public class Item implements Serializable {
      * @param consumer the way the fetched data are being used
      */
     public static void retrieveItemById(String contextTag, DatabaseReference dbRef, String id, Consumer<Item> consumer) {
-        dbRef.child(Item.CLASS_ITEM_DB).child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+        retrieveItemsByIds(contextTag, dbRef, new ArrayList<>(Collections.singletonList(id)), new Consumer<ArrayList<Item>>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    Map<String, Object> map = new HashMap<>();
-                    for (DataSnapshot child: snapshot.getChildren()) {
-                        map.put(child.getKey(), child.getValue());
-                    }
-                    ArrayList<String> ItemData = new ArrayList<>();
-                    for (int i = 0; i < 10; ++i) ItemData.add("");
-                    BarattopoliUtil.retrieveHelper(map, Item.TITLE_DB, ItemData,0);
-                    BarattopoliUtil.retrieveHelper(map, Item.DESCRIPTION_DB, ItemData,1);
-                    BarattopoliUtil.retrieveHelper(map, Item.ID_RANGE_DB, ItemData,2);
-                    BarattopoliUtil.retrieveHelper(map, Item.OWNER_DB, ItemData,3);
-                    //BarattopoliUtil.retrieveHelper(map, Item.LOCATION_DB, ItemData,4);
-                    BarattopoliUtil.retrieveHelper(map, Item.IS_CHARITY_DB, ItemData,5);
-                    BarattopoliUtil.retrieveHelper(map, Item.IS_EXCHANGEABLE_DB, ItemData,6);
-                    BarattopoliUtil.retrieveHelper(map, Item.IS_SERVICE_DB, ItemData,7);
-                    BarattopoliUtil.retrieveHelper(map, Item.ID_CATEGORIES_DB, ItemData,8);
-                    BarattopoliUtil.retrieveHelper(map, Item.IMAGES_DB, ItemData,9);
-                    ArrayList<String> own = new ArrayList<>(Arrays.asList(ItemData.get(3).split(",", User.INFO_LENGTH)));
-                    ArrayList<String> cat = new ArrayList<>(Arrays.asList(ItemData.get(8).split(",", 0)));
-                    ArrayList<String> img = new ArrayList<>(Arrays.asList(ItemData.get(9).split(",", 0)));
-                    //since location is a nested data
-                    BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRefItems.child(id), User.LOCATION_DB, 1, new Consumer<Map<String, ArrayList<String>>>() {
-                        @Override
-                        public void accept(Map<String, ArrayList<String>> stringArrayListMap) {
-                            ArrayList<String> location = new ArrayList<>();
-                            location.add(stringArrayListMap.get("country").get(0));
-                            location.add(stringArrayListMap.get("region").get(0));
-                            location.add(stringArrayListMap.get("province").get(0));
-                            location.add(stringArrayListMap.get("city").get(0));
-                            consumer.accept(new Item(id, ItemData.get(0), ItemData.get(1),ItemData.get(2), own, location, Boolean.getBoolean(ItemData.get(5)), Boolean.getBoolean(ItemData.get(6)), Boolean.getBoolean(ItemData.get(7)), cat, img));
-                        }
-                    });
-
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.w(contextTag, "load:onCancelled", error.toException());
+            public void accept(ArrayList<Item> items) {
+                consumer.accept(items.get(0));
             }
         });
     }
@@ -255,17 +218,6 @@ public class Item implements Serializable {
                             }
                             Item newItem = new Item(id, ItemData.get(0), ItemData.get(1), ItemData.get(2), own, location, Boolean.getBoolean(ItemData.get(5)), Boolean.getBoolean(ItemData.get(6)), Boolean.getBoolean(ItemData.get(7)), cat, img);
                             arr.add(newItem);
-                            /*BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRefItems.child(id), User.LOCATION_DB, 1, new Consumer<Map<String, ArrayList<String>>>() {
-                                @Override
-                                public void accept(Map<String, ArrayList<String>> stringArrayListMap) {
-                                    ArrayList<String> location = new ArrayList<>();
-                                    location.add(stringArrayListMap.get("country").get(0));
-                                    location.add(stringArrayListMap.get("region").get(0));
-                                    location.add(stringArrayListMap.get("province").get(0));
-                                    location.add(stringArrayListMap.get("city").get(0));
-                                    arr.add(new Item(id, ItemData.get(0), ItemData.get(1), ItemData.get(2), own, location, Boolean.getBoolean(ItemData.get(5)), Boolean.getBoolean(ItemData.get(6)), Boolean.getBoolean(ItemData.get(7)), cat, img));
-                                }
-                            });*/
                         }
                     }
                     consumer.accept(arr);
