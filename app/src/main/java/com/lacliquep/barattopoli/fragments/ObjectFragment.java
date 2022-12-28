@@ -90,6 +90,7 @@ public class ObjectFragment extends Fragment {
         else if (filter.equals("Service")) retrieveItems(false, true, null);
         else if (filter.equals("Charity")) retrieveItems(true, false, null);
         else retrieveItems(false, false, null);
+
     }
 
     public void addItem(Item item) {

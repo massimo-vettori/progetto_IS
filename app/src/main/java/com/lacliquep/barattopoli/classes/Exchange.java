@@ -58,8 +58,8 @@ public class Exchange implements Serializable {
     public static final String APPLICANT_ITEMS_DB = "applicant_items";
     public static final String EXCHANGE_STAUS_DB = "exchange_status";
     public static final String DATE_DB = "date";
-    public static final int EXCHANGE_INFO_LENGTH = 5;
-    public static final String INFO_PARAM = "exchange_status,date,id_applicant,id_proposer,first_applicant_item,first_proposer_item";
+    public static final int EXCHANGE_INFO_LENGTH = 7;
+    public static final String INFO_PARAM = "id_exchange,exchange_status,date,id_applicant,id_proposer,first_applicant_item,first_proposer_item";
 
     private ExchangeStatus exchangeStatus;
     private final String date;
@@ -70,7 +70,6 @@ public class Exchange implements Serializable {
     private final String idExchange; //= UUID.randomUUID().toString();
     private final ArrayList<Item> proposerItems = new ArrayList<>();
     private final ArrayList<Item> applicantItems = new ArrayList<>();
-    private final String exchangeBasicInfo;
 
     public static final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(Exchange.CLASS_EXCHANGE_DB);
 
@@ -97,9 +96,50 @@ public class Exchange implements Serializable {
         this.proposerItems.addAll(proposerItems);
         this.applicantItems.addAll(applicantItems);
         this.exchangeStatus = exchangeStatus;
-        this.exchangeBasicInfo = getExchangeBasicInfo(date, exchangeStatus, applicant, proposer, applicantItems, proposerItems);
     }
 
+    public static void getExchangeFromBasicInfo(String exchangeBasicInfo, Consumer<Exchange> consumer) {
+        //StringValueOfExchangeStatus(exchangeStatus) + "," + date + "," + applicant.getIdUser() + "," + proposer.getIdUser() + "," + applicantFirstItem + "," + proposerItems.get(0).getIdItem();
+        ArrayList<String> values = new ArrayList<>(Arrays.asList(exchangeBasicInfo.split(",", Exchange.EXCHANGE_INFO_LENGTH)));
+        Item.retrieveItemsByIds("Exchange", FirebaseDatabase.getInstance().getReference(), new ArrayList<>(Arrays.asList(values.get(5), values.get(6))), new Consumer<ArrayList<Item>>() {
+            @Override
+            public void accept(ArrayList<Item> items) {
+                consumer.accept(new Exchange(values.get(0), values.get(2), Exchange.exchangeStatusValueOf(values.get(1)), User.getSampleUser(), User.getSampleUser(), new ArrayList<>(Collections.singletonList(items.get(0))), new ArrayList<>(Collections.singletonList(items.get(1)))));
+            }
+        });
+    }
+
+    public static void getUserExchanges(String idUser, boolean applicant, boolean both, Consumer<Exchange> consumer) {
+        FirebaseDatabase.getInstance().getReference().child(User.CLASS_USER_DB).child(idUser).child(Exchange.CLASS_EXCHANGE_DB).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists() && snapshot.hasChildren()) {
+                    ArrayList<Exchange> listOfExchanges = new ArrayList<>();
+                    for (DataSnapshot exch: snapshot.getChildren()) {
+                        getExchangeFromBasicInfo(exch.getValue().toString(), new Consumer<Exchange>() {
+                            @Override
+                            public void accept(Exchange exchange) {
+                                if (both) consumer.accept(exchange);
+                                else {
+                                    if (applicant) {
+                                        if (exchange.getApplicant().getIdUser().equals(idUser)) consumer.accept(exchange);
+                                    } else {
+                                        if (exchange.getProposer().getIdUser().equals(idUser)) consumer.accept(exchange);
+                                    }
+                                }
+
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 
     /**
      * used when a sample is needed or in case of errors
@@ -289,9 +329,9 @@ public class Exchange implements Serializable {
             setApplicantItemsDb(idExchange, applicantItems);
             setProposerItemsDb(idExchange, proposerItems);
             //insert in applicant's list of exchanges
-            User.dbRefUsers.child(applicant.getIdUser()).child(User.ID_EXCHANGES_DB).child(idExchange).setValue(Exchange.getExchangeBasicInfo(date,ExchangeStatus.IN_APPROVAL,applicant,proposer,applicantItems,proposerItems));
+            User.dbRefUsers.child(applicant.getIdUser()).child(User.ID_EXCHANGES_DB).child(idExchange).setValue(Exchange.getExchangeBasicInfo(idExchange,date,ExchangeStatus.IN_APPROVAL,applicant,proposer,applicantItems,proposerItems));
             //insert in proposer's list of exchanges
-            User.dbRefUsers.child(proposer.getIdUser()).child(User.ID_EXCHANGES_DB).child(idExchange).setValue(Exchange.getExchangeBasicInfo(date,ExchangeStatus.IN_APPROVAL,applicant,proposer,applicantItems,proposerItems));
+            User.dbRefUsers.child(proposer.getIdUser()).child(User.ID_EXCHANGES_DB).child(idExchange).setValue(Exchange.getExchangeBasicInfo(idExchange, date,ExchangeStatus.IN_APPROVAL,applicant,proposer,applicantItems,proposerItems));
         }
     }
     /**
@@ -350,10 +390,10 @@ public class Exchange implements Serializable {
      * @return a string in CSV format representing the basic info of this Exchange
      * @see Exchange#INFO_PARAM
      */
-    public static String getExchangeBasicInfo(String date, ExchangeStatus exchangeStatus, User applicant, User proposer, ArrayList<Item> applicantItems, ArrayList<Item> proposerItems) {
+    public static String getExchangeBasicInfo(String idExchange, String date, ExchangeStatus exchangeStatus, User applicant, User proposer, ArrayList<Item> applicantItems, ArrayList<Item> proposerItems) {
         String applicantFirstItem = "";
         if (!applicantItems.isEmpty()) applicantFirstItem = (applicantItems.get(0).getIdItem());
-        return StringValueOfExchangeStatus(exchangeStatus) + "," + date + "," + applicant.getIdUser() + "," + proposer.getIdUser() + "," + applicantFirstItem + "," + proposerItems.get(0).getIdItem();
+        return idExchange + "," + StringValueOfExchangeStatus(exchangeStatus) + "," + date + "," + applicant.getIdUser() + "," + proposer.getIdUser() + "," + applicantFirstItem + "," + proposerItems.get(0).getIdItem();
     }
     /**
      *
