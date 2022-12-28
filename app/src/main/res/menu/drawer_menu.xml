@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-<!--    here we put all the menu files that we want to show in navigation drawer-->
+    <!--    here we put all the menu files that we want to show in navigation drawer-->
     <group android:checkableBehavior="single">
 
         <item android:id="@+id/nav_object"
@@ -37,6 +37,20 @@
             </menu>
 
         </item>
+
+        <item android:title="Azioni">
+            <menu>
+
+
+                <item android:id="@+id/add_item"
+                    android:icon="@drawable/ic_baseline_add_obect_24"
+                    android:title="@string/insert" />
+
+
+            </menu>
+
+        </item>
+
         <item android:title="">
             <menu>
                 <item android:id="@+id/nav_logout"
@@ -46,7 +60,5 @@
             </menu>
         </item>
     </group>
-
-
 
 </menu>

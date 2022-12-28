@@ -3,6 +3,7 @@ package com.lacliquep.barattopoli;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -54,21 +55,25 @@ public class ItemViewActivity extends AppCompatActivity {
         if (item != null) this.setup(item, owner);
     }
 
-    private String rangeString(@NonNull Item item) {
+    public static String rangeString(@NonNull Item item, Context c) {
         int to = 0, from = 0;
         try {
             from = Range.getFrom(item.getIdRange());
             to = Range.getTo(item.getIdRange());
         } catch (Range.noSuchRangeException e) {}
-       return(getString(R.string.range, getString(R.string.From), from , getString(R.string.To) , to));
+       return(c.getString(R.string.range, c.getString(R.string.From), from , c.getString(R.string.To) , to));
     }
 
     protected void setup(@NonNull Item item, @NonNull Ownership owner) {
         updateItemDescription(item.getDescription());
         updateItemTitle(item.getTitle());
         updateItemLocation(item.getLocation()); //TODO:convert string fetch in array fetch
-        updatePriceRange(rangeString(item));
+        updatePriceRange(rangeString(item, this));
         updateOwner(item.getOwner());
+        //added
+        updateUserAvatar(item.getOwnerImage());
+        ImageView imageView1 = findViewById(R.id.imageView1);
+        imageView1.setImageBitmap(item.getFirstImage());
         //updateUserName(item.getOwner().stream().reduce("", (a, b) -> a + " " + b));
 
         if (owner == Ownership.PERSONAL) {

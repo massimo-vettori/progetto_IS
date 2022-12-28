@@ -50,10 +50,10 @@
         <ImageView
             android:id="@+id/profile_pic"
             android:adjustViewBounds="true"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:src="@drawable/blank_profile_picture"
-            android:scaleType="centerCrop"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/surface"
+            android:scaleType="center"
             android:contentDescription="TODO" />
 
         <LinearLayout
@@ -77,9 +77,9 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_medium"
                 android:textSize="15sp"
-
+                android:layout_marginBottom="?attr/paddingSm"
                 android:text="lorem tiny"/>
-            <!--android:layout_marginBottom="?attr/paddingSm"</!-->
+
 
 
             <TextView
@@ -144,9 +144,7 @@
             android:id="@+id/COUNTRY"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/inter_medium"
-            android:textSize="11sp"
-            android:textColor="@color/zinc_400"
+            android:textSize="12sp"
             android:text="@string/country"/>
         <TextView
             android:id="@+id/country"
@@ -161,9 +159,7 @@
             android:id="@+id/REGION"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/inter_medium"
-            android:textSize="11sp"
-            android:textColor="@color/zinc_400"
+            android:textSize="12sp"
             android:text="@string/region"/>
         <TextView
             android:id="@+id/region"
@@ -178,9 +174,7 @@
             android:id="@+id/PROVINCE"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/inter_medium"
-            android:textSize="11sp"
-            android:textColor="@color/zinc_400"
+            android:textSize="12sp"
             android:text="@string/province"/>
         <TextView
             android:id="@+id/province"
@@ -195,9 +189,7 @@
             android:id="@+id/CITY"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/inter_medium"
-            android:textSize="11sp"
-            android:textColor="@color/zinc_400"
+            android:textSize="12sp"
             android:text="@string/city"/>
         <TextView
             android:id="@+id/city"

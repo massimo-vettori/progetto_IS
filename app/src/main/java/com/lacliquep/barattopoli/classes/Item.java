@@ -61,7 +61,7 @@ public class Item implements Serializable {
     private boolean isExchangeable;
     private boolean isService;
     private final Set<String> categories = new HashSet<>();
-    private final Collection<String> images = new ArrayList<>();
+    private final ArrayList<String> images = new ArrayList<>();
     private final ArrayList<String> owner = new ArrayList<>();
     private final String itemBasicInfo;
 
@@ -173,42 +173,54 @@ public class Item implements Serializable {
      * @param consumer the way the fetched data are being used
      */
     public static void retrieveItemById(String contextTag, DatabaseReference dbRef, String id, Consumer<Item> consumer) {
-        dbRef.child(Item.CLASS_ITEM_DB).child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+        retrieveItemsByIds(contextTag, dbRef, new ArrayList<>(Collections.singletonList(id)), new Consumer<ArrayList<Item>>() {
+            @Override
+            public void accept(ArrayList<Item> items) {
+                consumer.accept(items.get(0));
+            }
+        });
+    }
+
+    public static void retrieveItemsByIds(String contextTag, DatabaseReference dbRef, ArrayList<String> ids, Consumer<ArrayList<Item>> consumer) {
+        dbRef.child(Item.CLASS_ITEM_DB).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    Map<String, Object> map = new HashMap<>();
-                    for (DataSnapshot child: snapshot.getChildren()) {
-                        map.put(child.getKey(), child.getValue());
-                    }
-                    ArrayList<String> ItemData = new ArrayList<>();
-                    for (int i = 0; i < 10; ++i) ItemData.add("");
-                    BarattopoliUtil.retrieveHelper(map, Item.TITLE_DB, ItemData,0);
-                    BarattopoliUtil.retrieveHelper(map, Item.DESCRIPTION_DB, ItemData,1);
-                    BarattopoliUtil.retrieveHelper(map, Item.ID_RANGE_DB, ItemData,2);
-                    BarattopoliUtil.retrieveHelper(map, Item.OWNER_DB, ItemData,3);
-                    //BarattopoliUtil.retrieveHelper(map, Item.LOCATION_DB, ItemData,4);
-                    BarattopoliUtil.retrieveHelper(map, Item.IS_CHARITY_DB, ItemData,5);
-                    BarattopoliUtil.retrieveHelper(map, Item.IS_EXCHANGEABLE_DB, ItemData,6);
-                    BarattopoliUtil.retrieveHelper(map, Item.IS_SERVICE_DB, ItemData,7);
-                    BarattopoliUtil.retrieveHelper(map, Item.ID_CATEGORIES_DB, ItemData,8);
-                    BarattopoliUtil.retrieveHelper(map, Item.IMAGES_DB, ItemData,9);
-                    ArrayList<String> own = new ArrayList<>(Arrays.asList(ItemData.get(3).split(",", User.INFO_LENGTH)));
-                    ArrayList<String> cat = new ArrayList<>(Arrays.asList(ItemData.get(8).split(",", 0)));
-                    ArrayList<String> img = new ArrayList<>(Arrays.asList(ItemData.get(9).split(",", 0)));
-                    //since location is a nested data
-                    BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRefItems.child(id), User.LOCATION_DB, 1, new Consumer<Map<String, ArrayList<String>>>() {
-                        @Override
-                        public void accept(Map<String, ArrayList<String>> stringArrayListMap) {
+                    ArrayList<Item> arr = new ArrayList<>();
+                    for(String id: ids) {
+                        if (snapshot.hasChild(id)) {
+                            Map<String, Object> map = new HashMap<>();
+                            for (DataSnapshot ch : (snapshot.child(id)).getChildren()) {
+                                map.put(ch.getKey(), ch.getValue());
+                            }
+                            ArrayList<String> ItemData = new ArrayList<>();
+                            for (int i = 0; i < 10; ++i) ItemData.add("");
+                            BarattopoliUtil.retrieveHelper(map, Item.TITLE_DB, ItemData, 0);
+                            BarattopoliUtil.retrieveHelper(map, Item.DESCRIPTION_DB, ItemData, 1);
+                            BarattopoliUtil.retrieveHelper(map, Item.ID_RANGE_DB, ItemData, 2);
+                            BarattopoliUtil.retrieveHelper(map, Item.OWNER_DB, ItemData, 3);
+                            //BarattopoliUtil.retrieveHelper(map, Item.LOCATION_DB, ItemData,4);
+                            BarattopoliUtil.retrieveHelper(map, Item.IS_CHARITY_DB, ItemData, 5);
+                            BarattopoliUtil.retrieveHelper(map, Item.IS_EXCHANGEABLE_DB, ItemData, 6);
+                            BarattopoliUtil.retrieveHelper(map, Item.IS_SERVICE_DB, ItemData, 7);
+                            BarattopoliUtil.retrieveHelper(map, Item.ID_CATEGORIES_DB, ItemData, 8);
+                            BarattopoliUtil.retrieveHelper(map, Item.IMAGES_DB, ItemData, 9);
+                            ArrayList<String> own = new ArrayList<>(Arrays.asList(ItemData.get(3).split(",", User.INFO_LENGTH)));
+                            ArrayList<String> cat = new ArrayList<>(Arrays.asList(ItemData.get(8).split(",", 0)));
+                            ArrayList<String> img = new ArrayList<>(Arrays.asList(ItemData.get(9).split(",", 0)));
+                            //since location is a nested data
                             ArrayList<String> location = new ArrayList<>();
-                            location.add(stringArrayListMap.get("country").get(0));
-                            location.add(stringArrayListMap.get("region").get(0));
-                            location.add(stringArrayListMap.get("province").get(0));
-                            location.add(stringArrayListMap.get("city").get(0));
-                            consumer.accept(new Item(id, ItemData.get(0), ItemData.get(1),ItemData.get(2), own, location, Boolean.getBoolean(ItemData.get(5)), Boolean.getBoolean(ItemData.get(6)), Boolean.getBoolean(ItemData.get(7)), cat, img));
+                            for (DataSnapshot s: snapshot.child(id).child(Item.LOCATION_DB).getChildren()) {
+                                if (s.getKey().equals("country")) location.add(s.getValue().toString());
+                                if (s.getKey().equals("region")) location.add(s.getValue().toString());
+                                if (s.getKey().equals("province")) location.add(s.getValue().toString());
+                                if (s.getKey().equals("city")) location.add(s.getValue().toString());
+                            }
+                            Item newItem = new Item(id, ItemData.get(0), ItemData.get(1), ItemData.get(2), own, location, Boolean.getBoolean(ItemData.get(5)), Boolean.getBoolean(ItemData.get(6)), Boolean.getBoolean(ItemData.get(7)), cat, img);
+                            arr.add(newItem);
                         }
-                    });
-
+                    }
+                    consumer.accept(arr);
                 }
             }
             @Override
@@ -252,12 +264,30 @@ public class Item implements Serializable {
         return this.idRange;
     }
 
+    //"id,image,rank,username"
+    public String getOwnerUsername() {
+        return (owner.size() >= 4)? owner.get(3): "";
+    }
+
+    public String getOwnerId() {
+        return (owner.size() >= 1)? owner.get(0): "";
+    }
+
+    public int getOwnerRank() {
+        return (owner.size() >= 3)? Integer.parseInt(owner.get(2)): -1;
+    }
+
+    public Bitmap getOwnerImage() {
+        Bitmap b = null;
+        if (owner.size() >= 2) b = BarattopoliUtil.decodeFileFromBase64(owner.get(1));
+        return b;
+    }
 
     /**
      * @return this Item owner's basic info
      * @see User#INFO_PARAM
      */
-    public Collection<String> getOwner() {
+    public ArrayList<String> getOwner() {
         return this.owner;
     }
 
@@ -290,7 +320,7 @@ public class Item implements Serializable {
      *
      * @return true if this Item is a service, false if it is a good
      */
-    private boolean isService() {
+    public boolean isService() {
         return this.isService;
     }
 
@@ -316,7 +346,7 @@ public class Item implements Serializable {
      */
     public String getItemBasicInfo() { return this.itemBasicInfo; }
 
-    //EQUALS & HASHCODE
+
 
     private static void retrieveItemsUserBoard(boolean showCharity, boolean showService, String category, boolean showUserBoard, String idUser, ArrayList<String> location, Consumer<Map<String, Item>> consumer) {
 
@@ -361,11 +391,12 @@ public class Item implements Serializable {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                         //for each item
+                        items.clear();
                         if (snapshot.exists()) {
                             String idItem = snapshot.getKey();
-                            Item.dbRefItems.child(idItem).addListenerForSingleValueEvent(new ValueEventListener() {
+                            /*Item.dbRefItems.child(idItem).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {*/
                                     if (snapshot.exists() && snapshot.hasChildren()) {
                                         boolean is_charity = false, is_service = false, is_exchangeable = false;
                                         String country = "", region = "", province = "", city = "", owner = "",
@@ -423,30 +454,42 @@ public class Item implements Serializable {
                                         categoriesArray.addAll(Arrays.asList(categories.split(",")));
                                         imagesArray.addAll(Arrays.asList(images.split(",")));
                                         ownerArray.addAll(Arrays.asList(owner.split(",", User.INFO_LENGTH)));
-                                        Log.d("422", "qui");
-                                        items.put(idItem, new Item(idItem, title, description, id_range, ownerArray, location, is_charity, is_exchangeable, is_service, categoriesArray, imagesArray));
-                                        Log.d("425",items.toString());
-                                        /*for (String key : items.keySet()) {
-                                            boolean keep = true;
-                                            if (items.get(key).isCharity()) {
-                                                if (!showCharity) {
-                                                    boolean val = items.get(key).isService;
-                                                    if ((showService) && ((val)) || ((!showService) && ((!val)))) {
-                                                    } else keep = false;
+                                        Item newItem =  new Item(idItem, title, description, id_range, ownerArray, location, is_charity, is_exchangeable, is_service, categoriesArray, imagesArray);
+                                        //do not show to logged user their own objects/services and only the exchangeable ones
+                                        if (newItem.isExchangeable() && (!(newItem.getOwnerId().equals(mAuth.getUid())))) {
+                                            if (category != null) {
+                                                if (Category.getCategories().contains(category)) {
+                                                    if (newItem.getCategories().contains(category)) {
+                                                        //charity filter
+                                                        if ((newItem.isCharity() && showCharity)) {
+                                                            items.put(idItem, newItem);
+                                                        } else {
+                                                            //service or object filter
+                                                            if ((newItem.isService() && showService) || (!(newItem.isService()) && !showService))
+                                                                items.put(idItem, newItem);
+                                                        }
+                                                    }
                                                 }
-                                            } else keep = false;
-                                            if (!keep) items.remove(key);
-                                        }*/
-                                        consumer.accept(items);
+                                            } else {
+                                                //charity filter
+                                                if ((newItem.isCharity() && showCharity)) {
+                                                    items.put(idItem, newItem);
+                                                } else {
+                                                    if (!showCharity) {
+                                                        //service or object filter
+                                                        if ((newItem.isService() && showService) || (!(newItem.isService()) && !showService))
+                                                            items.put(idItem, newItem);
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
-                                }
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
 
-                                }
-                            });
                         }
+                        Log.d("63", items.toString());
+                        consumer.accept(items);
+
                     }
 
                     @Override
@@ -469,6 +512,7 @@ public class Item implements Serializable {
         }
     }
 
+    //EQUALS & HASHCODE
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -631,6 +675,10 @@ public class Item implements Serializable {
     public static void removeCategory(boolean isExchangeable, String category, String idItem, DatabaseReference dbRefItem) throws NonModifiableException {
         if (!isExchangeable) throw new NonModifiableException();
         //TODO: se addcategory funziona, fare cose simili
+    }
+
+    public Bitmap getFirstImage() {
+        return (this.images.size() >= 1)? BarattopoliUtil.decodeFileFromBase64(images.get(0)): null;
     }
 
     /**
