@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.lacliquep.barattopoli.classes.Exchange;
 import com.lacliquep.barattopoli.classes.Item;
 import com.lacliquep.barattopoli.views.ListItemView;
 
@@ -48,10 +50,18 @@ public class MyBoardActivity extends AppCompatActivity {
     }
 
     protected void retrieveItems() {
-        Item.retrieveMapWithAllItems(true,true,null, true, "mmNsy71Nf5e8ATR79b4LNk3uRSh1", new ArrayList<String>(Arrays.asList("Italia", "Veneto", "Venezia", "Venezia")), stringMapMap -> {
+        Item.retrieveMapWithAllItems(true,true,null, true, FirebaseAuth.getInstance().getUid(), new ArrayList<String>(Arrays.asList("Italia", "Veneto", "Venezia", "Venezia")), stringMapMap -> {
             stringMapMap.forEach((key, value) -> {
                 addItem(value);
             });
+        });
+        //prova
+        Exchange.getUserExchanges(FirebaseAuth.getInstance().getUid(), true, true, new Consumer<Exchange>() {
+            @Override
+            public void accept(Exchange exchange) {
+                Log.d("36", exchange.toString());
+                //it prints all of them without the support of an arraylist
+            }
         });
     }
 }

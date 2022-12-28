@@ -27,6 +27,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -60,7 +61,8 @@ public class InsertNewUserFragment extends Fragment {
     private Button takePictureUser, register;
     private EditText insertUsername, insertName, insertSurname, insertCountry, insertRegion, insertProvince, insertCity;
     private EditText insertEmail, insertPassword, confirmPassword;
-    private CheckBox checkBox;
+    private CheckBox checkBox, checkBoxAge;
+    private ProgressBar progressBar;
 
     private String txtEmail = "", txtPassword = "", txtConfirmPassword = "", txtUsername = "", txtName = "", txtSurname = "", txtCountry = "", txtRegion = "", txtProvince = "", txtCity = "";
 
@@ -70,7 +72,7 @@ public class InsertNewUserFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_insert_new_user, container, false);
-        //retrieving a previous activity value attached to the bundle
+
         Bundle b = requireActivity().getIntent().getExtras();
         //array to enable its content be used from an inner class
         String[] encodedImage = new String[1];
@@ -86,10 +88,8 @@ public class InsertNewUserFragment extends Fragment {
         }
         //first things first: force the user to take a picture before any other choice
         //reason: otherwise, when coming back to this activity, all the preferences will be deleted
-
-        if(encodedImage[0].equals(basicImage)) {
-            takePicture();
-        }
+        if(encodedImage[0].equals(basicImage)) takePicture();
+        //set the image
 
         //image
         imageContainer = view.findViewById(R.id.image_container);
@@ -112,40 +112,11 @@ public class InsertNewUserFragment extends Fragment {
         //checkBox
         // TODO add privacy form
         checkBox = view.findViewById(R.id.check_box);
-        //TODO: all the sanity-check on the inserted country, region, province and city with pop up which display the available ones
-        //TODO: do the same thing for Items or set automatically the item location with the user's location (most likely)
-        // called whenever the button register is clicked
-        // it checks:
-        // if the text inserted in email or password is empty
-        // if the password length is less than 6 characters
-        // if the confirm password is equal to the password
-        // if the checkbox has been checked
-        // eventually activates the registration
+        checkBoxAge = view.findViewById(R.id.check_box_age);
+        progressBar = view.findViewById(R.id.progressBar);
+        progressBar.setIndeterminate(true);
+        progressBar.setVisibility(View.INVISIBLE);
 
-        //to retrieve fields which were previously set by the user when coming back from cameraActivity
-        /*if (savedInstanceState != null) {
-            String username = savedInstanceState.getString("username");
-            String name = savedInstanceState.getString("name");
-            String surname = savedInstanceState.getString("surname");
-            String email = savedInstanceState.getString("email");
-            String password = savedInstanceState.getString("password");
-            String confirmPwd = savedInstanceState.getString("confirmPwd");
-            String country = savedInstanceState.getString("country");
-            String region = savedInstanceState.getString("region");
-            String province = savedInstanceState.getString("province");
-            String city = savedInstanceState.getString("city");
-
-            if (username != null && !(username.isEmpty())) insertUsername.setText(username);
-            if (name != null && !(name.isEmpty())) insertName.setText(name);
-            if (surname != null && !(surname.isEmpty())) insertSurname.setText(surname);
-            if (email != null && !(email.isEmpty())) insertEmail.setText(email);
-            if (password != null && !(password.isEmpty())) insertPassword.setText(password);
-            if (confirmPwd != null && !(confirmPwd.isEmpty())) confirmPassword.setText(confirmPwd);
-            if (country != null && !(country.isEmpty())) insertCountry.setText(country);
-            if (region != null && !(region.isEmpty())) insertRegion.setText(region);
-            if (province != null && !(province.isEmpty())) insertProvince.setText(province);
-            if (city != null && !(city.isEmpty())) insertCity.setText(city);
-        }*/
 
         register.setOnClickListener(v -> {
             //fetch text inserted in the fields
@@ -153,16 +124,17 @@ public class InsertNewUserFragment extends Fragment {
             txtPassword = insertPassword.getText().toString();
             txtConfirmPassword = confirmPassword.getText().toString();
             txtUsername = insertUsername.getText().toString();
-            txtName = insertUsername.getText().toString();
-            txtSurname = insertUsername.getText().toString();
+            txtName = insertName.getText().toString();
+            txtSurname = insertSurname.getText().toString();
             txtCountry = insertCountry.getText().toString();
             txtRegion = insertRegion.getText().toString();
             txtProvince = insertProvince.getText().toString();
             txtCity = insertCity.getText().toString();
 
-            boolean checked = checkBox.isChecked();
+            boolean checkedPrivacy = checkBox.isChecked();
+            boolean checkedAge = checkBoxAge.isChecked();
 
-            reg(checked);
+            reg(checkedPrivacy, checkedAge, encodedImage[0]);
         });
 
         takePictureUser.setOnClickListener(v -> {
@@ -171,23 +143,8 @@ public class InsertNewUserFragment extends Fragment {
 
         return view;
     }
-     //save the already set fields when starting the cameraActivity
-    /*@Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        if(!(txtEmail.equals(""))) outState.putString("email", txtEmail);
-        if(!(txtPassword.equals(""))) outState.putString("password", txtPassword );
-        if(!(txtConfirmPassword.equals(""))) outState.putString("confirmPwd", txtConfirmPassword);
-        if(!(txtUsername.equals(""))) outState.putString("username", txtUsername);
-        if(!(txtName.equals(""))) outState.putString("name", txtName);
-        if(!(txtSurname.equals(""))) outState.putString("surname", txtSurname );
-        if(!(txtCountry.equals(""))) outState.putString("country", txtCountry);
-        if(!(txtRegion.equals(""))) outState.putString("region", txtRegion);
-        if(!(txtProvince.equals(""))) outState.putString("province", txtProvince);
-        if(!(txtCity.equals(""))) outState.putString("city", txtCity);
-        super.onSaveInstanceState(outState);
-    }*/
 
-    void reg(boolean checked) {
+    void reg(boolean checkedPrivacy, boolean checkedAge, String image) {
         String empty = getString(R.string.empty_text);
         if (BarattopoliUtil.checkMandatoryTextIsNotEmpty(getActivity(), txtEmail, getString(R.string.email) + empty)) {
             if (BarattopoliUtil.checkMandatoryTextIsNotEmpty(getActivity(), txtPassword, getString(R.string.password) + empty)) {
@@ -200,12 +157,14 @@ public class InsertNewUserFragment extends Fragment {
                                     else {
                                         if (!(txtPassword.equals(txtConfirmPassword))) Toast.makeText(getActivity(), getString(R.string.password) + ", " + getString(R.string.password_confirm) + getString(R.string.match_error), Toast.LENGTH_SHORT).show();
                                         else {
-                                            if (!checked) Toast.makeText(getActivity(), getString(R.string.select_error) + getString(R.string.accept_privacy), Toast.LENGTH_LONG).show();
+                                            if (!checkedPrivacy) Toast.makeText(getActivity(), getString(R.string.select_error) + getString(R.string.accept_privacy), Toast.LENGTH_LONG).show();
                                             else {
-                                                if (Location.checkLocation(getActivity(), txtCountry, txtRegion, txtProvince, txtCity)) {
-                                                    ArrayList<String> location = new ArrayList<>(Arrays.asList(txtCountry, txtRegion, txtProvince, txtCity));
-                                                    registration(txtEmail, txtPassword, location);
-                                                    //TODO: insert data in database
+                                                if (!checkedAge) Toast.makeText(getActivity(), getString(R.string.select_error) + getString(R.string.age_confirm), Toast.LENGTH_LONG).show();
+                                                else {
+                                                    if (Location.checkLocation(getActivity(), txtCountry, txtRegion, txtProvince, txtCity)) {
+                                                        ArrayList<String> location = new ArrayList<>(Arrays.asList(txtCountry, txtRegion, txtProvince, txtCity));
+                                                        registration(txtEmail, txtPassword, location, image);
+                                                    }
                                                 }
                                             }
                                         }
@@ -216,23 +175,6 @@ public class InsertNewUserFragment extends Fragment {
                     }
                 }
             }
-
-       /*
-
-                        //registration(txtEmail, txtPassword);
-                        //TODO: insert data in database
-                        String userId = auth.getUid();
-                        if (userId != null) {
-                            User.insertUserInDataBase(userId,txtUsername,txtName,txtSurname,location,basicImage);
-                            //TODO: show profile
-                        } else {
-                            Log.d(ACTIVITY_TAG_NAME,"something went wrong while logging-in the user after the registration");
-                            //TODO:back to signInUpFragment
-                        }
-                    }
-                }
-            }
-        }*/
             Log.d("User", "0");
         }
     }
@@ -242,7 +184,7 @@ public class InsertNewUserFragment extends Fragment {
      * @param email the provided email from the user
      * @param password the provided password from the user
      */
-    void registration(String email, String password, ArrayList<String> location) {
+    void registration(String email, String password, ArrayList<String> location, String image) {
         // TODO find out which is the eldest SDK version accepting concurrent
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
             // Do something for R and above versions
@@ -252,17 +194,16 @@ public class InsertNewUserFragment extends Fragment {
 
             executor.execute(() -> {
                 //Background work here
-                registerUser(email, password, location);
+                registerUser(email, password, location, image);
                 handler.post(() -> {
                     //UI Thread work here
-                    // TODO change the string
-                    Toast.makeText(getActivity(), "using concurrent executors", Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.VISIBLE);
                 });
             });
 
         } else {
             // do something for phones running an SDK before R
-            String[] values = new String[6];
+            String[] values = new String[7];
             values[0] = email;
             values[1] = password;
             int i = 2;
@@ -270,6 +211,7 @@ public class InsertNewUserFragment extends Fragment {
                 values[i] = s;
                 i++;
             }
+            values[6] = image;
             new AsyncRegister().execute(values);
         }
     }
@@ -277,19 +219,22 @@ public class InsertNewUserFragment extends Fragment {
     /**
      * class to handle registration in asynchronous way before SDK R
      */
+
     @SuppressLint("StaticFieldLeak")
     private class AsyncRegister extends AsyncTask<String, Integer, Void> {
         @Override
         protected Void doInBackground(String... strings) {
             ArrayList<String> location = new ArrayList<>(Arrays.asList(strings[2], strings[3], strings[4], strings[5]));
-            registerUser(strings[0], strings[1], location);
+            registerUser(strings[0], strings[1], location, strings[6]);
             //TODO delete or improve publishProgress
-            publishProgress(0);
+            for (int i = 0; i < 100; ++i) publishProgress(i);
             return null;
         }
         // TODO: add a progression bar or sth? delete or improve onProgressUpdate
         protected void onProgressUpdate(Integer... integers) {
-            Toast.makeText(getActivity(), getString(R.string.in_progress) + integers[0], Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(), getString(R.string.in_progress), Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setProgress(integers[0]);
         }
 
     }
@@ -298,7 +243,7 @@ public class InsertNewUserFragment extends Fragment {
      * @param email the provided email
      * @param password the provided password
      */
-    void registerUser(String email, String password, ArrayList<String> location) {
+    void registerUser(String email, String password, ArrayList<String> location, String image) {
         //addOnCompleteListener is added to display a Toast for confirmation of the registration
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), task -> {
             if (task.isSuccessful()) {
@@ -307,7 +252,7 @@ public class InsertNewUserFragment extends Fragment {
                 //login of user
                 loginUser(email, password);
                 String userId = auth.getUid();
-                if (userId != null) User.insertUserInDataBase(userId,txtUsername,txtName,txtSurname,location,basicImage);
+                if (userId != null) User.insertUserInDataBase(userId,txtUsername,txtName,txtSurname,location,image);
             } else {
                 String error = (Objects.requireNonNull(task.getException()).getMessage());
                 //negative feedback

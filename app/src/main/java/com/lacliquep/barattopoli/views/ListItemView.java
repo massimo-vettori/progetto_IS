@@ -20,13 +20,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.lacliquep.barattopoli.ItemViewActivity;
+import com.lacliquep.barattopoli.MainActivity;
 import com.lacliquep.barattopoli.R;
 import com.lacliquep.barattopoli.classes.BarattopoliUtil;
 import com.lacliquep.barattopoli.classes.Item;
 import com.lacliquep.barattopoli.classes.Ownership;
+import com.lacliquep.barattopoli.classes.Range;
 
 /**
  * TODO: document your custom view class.
@@ -51,7 +54,8 @@ public class ListItemView extends LinearLayout {
         Bitmap thumbnail=null;
 
         title.setText(item.getTitle());
-        range.setText(item.getIdRange());
+        //TODO: fix the view with the getString. At the moment is not possible!!!!
+        range.setText(ItemViewActivity.rangeString(item, ctx));
 
         if (thumbnail != null) {
             image.setImageBitmap(thumbnail);
@@ -62,13 +66,16 @@ public class ListItemView extends LinearLayout {
             Bundle bundle = new Bundle();
             bundle.putString("ownership", Ownership.PERSONAL.toString());
             bundle.putString("caller", TAG);
-            bundle.putCharSequenceArray("item", Item.serialize(Item.getSampleItem()));
+//          (Failed attempt to serialize/deserialize the item)
+//          bundle.putCharSequenceArray("item", Item.serialize(Item.getSampleItem()));
+            bundle.putSerializable("item", item);
             intent.putExtras(bundle);
             view.getContext().startActivity(intent);
         });
 
         return itemView;
     }
+
 
     public ListItemView(Context context, AttributeSet attrs) {
         super(context, attrs);

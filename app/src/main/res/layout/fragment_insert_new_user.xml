@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.sign.InsertNewUserFragment">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -35,16 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/take_picture_user"/>
-            <Button
-                android:id="@+id/register"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/register"  />
-            <Button
-                android:id="@+id/sign_in_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/login" />
+
             <TextView
                 android:id="@+id/not_mandatory_fields"
                 android:layout_width="match_parent"
@@ -65,6 +57,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="@string/insert_surname" />
+
+            <Button
+                android:id="@+id/register"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/register"  />
+
 
 
         </LinearLayout>
@@ -142,9 +141,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/accept_privacy" />
-
-
-
+            <CheckBox
+                android:id="@+id/check_box_age"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/age_confirm" />
         </LinearLayout>
+
     </LinearLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:indeterminate="false"
+        android:max="100"
+        android:minHeight="100dp"
+        android:progress="1" />
+
 </FrameLayout>

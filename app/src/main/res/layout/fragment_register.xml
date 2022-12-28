@@ -25,19 +25,22 @@
             android:id="@+id/sign_up_password_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPassword"
             android:autofillHints=""
-            android:hint="@string/password"/>
+            android:ems="10"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:minHeight="48dp" />
 
         <EditText
             android:id="@+id/sign_up_password_confirm_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPassword"
             android:autofillHints=""
-            android:hint="@string/password_confirm"/>
+            android:ems="10"
+            android:hint="@string/password_confirm"
+            android:inputType="textPassword"
+            android:minHeight="48dp"
+            android:textColorHint="#757575" />
 
         <CheckBox
             android:id="@+id/check_box"
@@ -49,7 +52,8 @@
             android:id="@+id/sign_up_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/register" />
+            android:text="@string/register"
+            android:textColor="#000000" />
 
     </LinearLayout>
 

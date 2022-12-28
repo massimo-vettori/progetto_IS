@@ -8,16 +8,22 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.lacliquep.barattopoli.classes.Category;
+import com.lacliquep.barattopoli.classes.Item;
 import com.lacliquep.barattopoli.classes.User;
 import com.lacliquep.barattopoli.fragments.sign.InsertNewUserFragment;
 import com.lacliquep.barattopoli.fragments.sign.SignInUpFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class SignActivity extends AppCompatActivity {
@@ -36,11 +42,9 @@ public class SignActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign);
         Bundle c = getIntent().getExtras();
-        if (c != null) {
-            if (c.containsKey("goToInsertNewUserFragment")) {
+        if ((c != null) && c.containsKey("goToInsertNewUserFragment")) {
                 int i = c.getInt("goToInsertNewUserFragment");
                 if (i == 1) loadFragment(new InsertNewUserFragment());
-            }
         } else {
             if (user != null) {
 
@@ -74,6 +78,8 @@ public class SignActivity extends AppCompatActivity {
                         finish();
                     }
                 });*/
+
+
 
                 // Change activity
                 /*Intent intent = new Intent(SignActivity.this, MainActivity.class);
