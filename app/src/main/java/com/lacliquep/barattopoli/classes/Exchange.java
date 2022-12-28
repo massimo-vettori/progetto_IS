@@ -36,6 +36,7 @@ public class Exchange implements Serializable {
     //illegal: creation prevented, ex: same id_item, same id_user
     //refused: delete exchange
 
+    // TODO: Replace this enum and its methods with the one in ExchangeState.java
     /**
      * IN_APPROVAL: proposed object still exchangeable, <p>
      * ACCEPTED: items become not-exchangeable, waiting for the conclusion, <p>
