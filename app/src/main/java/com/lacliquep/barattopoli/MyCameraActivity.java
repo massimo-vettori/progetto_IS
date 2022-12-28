@@ -43,7 +43,7 @@ public class MyCameraActivity extends Activity
         if (c != null) {
             con = c.getString(getString(R.string.Bundle_tag_Previous_activity));
             con = (con != null) ? con : "";
-            photoButton.setText(getString(R.string.take_profile_picture));
+            if (con.equals("InsertNewUserFragment")) photoButton.setText(getString(R.string.take_profile_picture));
         }
     }
 

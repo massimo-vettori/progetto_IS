@@ -3,6 +3,7 @@ package com.lacliquep.barattopoli.classes;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -11,6 +12,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -20,7 +22,7 @@ import java.util.function.Consumer;
  * @author pares
  * @since 1.0
  */
-public class User {
+public class User implements Serializable {
 
     private static final String CLASS_TAG_NAME = "User";
     public static final Integer HIGHEST_RANK = 100;
@@ -61,7 +63,9 @@ public class User {
     private final ArrayList<String> location;
     private final String image;
     private final Integer rank;
-    private final String userBasicInfo;
+
+
+
 
 
 
@@ -88,8 +92,23 @@ public class User {
         this.rank = rank;
         this.image = image;
         //the basic info when a User is stored in an Item
-        this.userBasicInfo = this.idUser + "," + this.image + "," + this.rank + "," + this.username;
     }
+
+    public String getUserBasicInfo() {
+        return this.idUser + "," + this.image + "," + this.rank + "," + this.username;
+    }
+
+    public static User createUserFromBasicInfo(String userBasicInfo,@Nullable ArrayList<String> basicInfo) {
+        if (basicInfo == null) basicInfo = new ArrayList<>(Arrays.asList(userBasicInfo.split(",", User.INFO_LENGTH)));
+        Log.d("66", basicInfo.toString());
+        User res = new User(basicInfo.get(0), basicInfo.get(3), "", "", new ArrayList<>(Arrays.asList("","","","","")), Integer.parseInt(basicInfo.get(2)), basicInfo.get(1));
+        return res;
+    }
+    /**
+     * used when creating other samples and in case of errors
+     * @return a sample of a User who does not exist
+     */
+    public static User getSampleUser() { return new User("basicUser", "basicUser", "", "", new ArrayList<>(Arrays.asList("Italia", "Veneto", "Venezia", "Venezia")), User.getMediumRank(), "");}
     /**
      * creator of a User, to be called when creating a new User to store in the DB
      * the rank will be set to the medium value between 1 and HIGHER_RANK
@@ -165,7 +184,7 @@ public class User {
      * @param consumer the way the fetched data are being used
      */
     public static void retrieveCurrentUser(String contextTag, DatabaseReference dbRef, Consumer<User> consumer){
-        User.retrieveUserById(contextTag, dbRef, mAuth.getUid(), consumer);
+        User.retrieveUserById(contextTag, dbRef, FirebaseAuth.getInstance().getUid(), consumer);
     }
 
     /**
@@ -328,8 +347,7 @@ public class User {
     public static void addNewItemOnBoard(String contextTag, String itemTitle, String itemDescription, String itemIdRange, ArrayList<String> currentUserBasicInfo, ArrayList<String> itemLocation, boolean itemIsCharity, boolean itemIsService, @NonNull ArrayList<String> itemCategories ,@NonNull ArrayList<String> itemImages) {
         Item newItem = Item.createItem(itemTitle,itemDescription,itemIdRange,currentUserBasicInfo,itemLocation,itemIsCharity,itemIsService,itemCategories,itemImages);
         String userId = currentUserBasicInfo.get(0);
-        Log.d("TAG", userId + "  " + "mmNsy71Nf5e8ATR79b4LNk3uRSh1");
-        dbRefUsers.child("mmNsy71Nf5e8ATR79b4LNk3uRSh1").child(User.ID_ITEMS_ON_BOARD_DB).child(newItem.getIdItem()).setValue(newItem.getItemBasicInfo());
+        dbRefUsers.child(currentUserBasicInfo.get(0)).child(User.ID_ITEMS_ON_BOARD_DB).child(newItem.getIdItem()).setValue(newItem.getItemBasicInfo());
         Item.insertItemInDataBase(contextTag, newItem);
     }
 
@@ -467,12 +485,6 @@ public class User {
         long cnt = this.sumOfStarsAndCntOfReviews().get(1) + 1;
         return (int)((((float)sts/(float)cnt) * HIGHEST_RANK)/5);
     }
-
-    /**
-     *
-     * @return A CSV string with the basic information of this user when saved in an Item
-     */
-    public String getUserBasicInfo() { return this.userBasicInfo; }
 
     @Override
     public boolean equals(Object o) {

@@ -3,6 +3,8 @@ package com.lacliquep.barattopoli.views;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.lacliquep.barattopoli.ItemViewActivity;
+import com.lacliquep.barattopoli.MainActivity;
 import com.lacliquep.barattopoli.R;
 import com.lacliquep.barattopoli.classes.BarattopoliUtil;
 import com.lacliquep.barattopoli.classes.Item;
@@ -35,7 +38,13 @@ public class ItemView extends ConstraintLayout {
 
         view.setOnClickListener(v -> {
             Intent intent = new Intent(ctx, ItemViewActivity.class);
-            intent.putExtra("item", Item.serialize(item));
+            Bundle bundle = new Bundle();
+            bundle.putString("ownership", Ownership.OTHER.toString());
+            bundle.putString("caller", MainActivity.ACTIVITY_TAG_NAME);
+//          (Failed attempt to serialize/deserialize the item)
+//          bundle.putCharSequenceArray("item", Item.serialize(Item.getSampleItem()));
+            bundle.putSerializable("item", item);
+            intent.putExtras(bundle);
             ctx.startActivity(intent);
         });
 
@@ -45,9 +54,11 @@ public class ItemView extends ConstraintLayout {
         TextView title    = view.findViewById(R.id.item_title);
         TextView price    = view.findViewById(R.id.item_price_range);
 
-        userName.setText(item.getOwner().toString());
+        userName.setText(item.getOwnerUsername());
         title.setText(item.getTitle());
-        price.setText(item.getIdRange());
+        price.setText(ItemViewActivity.rangeString(item, ctx));
+        avatar.setImageBitmap(item.getOwnerImage()); //substitute with OwnerImage
+        image.setImageBitmap(item.getFirstImage());
 
         return view;
     }

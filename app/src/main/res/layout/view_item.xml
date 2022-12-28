@@ -2,45 +2,47 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:focusable="true"
     android:clickable="true"
-    android:layout_marginHorizontal="?attr/paddingMd"
-    android:layout_marginTop="?attr/paddingMd"
-    android:background="@drawable/round_outline">
+    android:layout_marginHorizontal="20dp"
+    android:layout_marginTop="20dp">
+    <!--android:background="@drawable/round_outline"</!-->
 <!--    android:clipToOutline="true"> TODO: Duplicate the design file to allow the rounded corners to appear on later version of android -->
 
     <ImageView
         android:id="@+id/image_container"
         android:layout_width="match_parent"
         android:layout_height="500dp"
-        android:scaleType="centerCrop"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/owner_bar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:src="@drawable/surface" />
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:id="@+id/owner_bar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingVertical="?attr/paddingSm"
-        android:paddingHorizontal="?attr/paddingSm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:background="@color/blue_900"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingVertical="10dp"
+        android:paddingHorizontal="10dp">
+
 
         <ImageView
             android:id="@+id/user_avatar"
             android:src="@drawable/surface"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             android:layout_width="50dp"
-            android:layout_marginEnd="?attr/paddingSm"
-            android:layout_height="50dp"/>
 
+            android:layout_height="50dp"
+            android:layout_marginEnd="10dp"/>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/zinc_50"
                 android:textSize="15sp"
-                android:fontFamily="@font/inter_bold"
+                android:fontFamily="@font/inter_medium"
                 android:text="@string/lorem_short" />
             <TextView
                 android:layout_width="wrap_content"
@@ -61,6 +63,7 @@
                 android:textSize="12sp"
                 android:textColor="@color/blue_200"
                 android:text="@string/proposal_text" />
+
         </LinearLayout>
     </LinearLayout>
 
@@ -68,12 +71,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingVertical="?attr/paddingMd"
-        android:paddingHorizontal="?attr/paddingMd"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:background="@color/blue_900"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingVertical="20dp"
+        android:paddingHorizontal="20dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -86,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/zinc_50"
                 android:textSize="18sp"
-                android:fontFamily="@font/inter_bold"
+                android:fontFamily="@font/inter_medium"
                 android:text="@string/lorem_short" />
             <TextView
                 android:id="@+id/item_price_range"
