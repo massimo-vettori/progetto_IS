@@ -758,7 +758,7 @@ public class Item implements Serializable {
     }
 
 
-    // TODO: remove this method
+    // TODO: create a method to return a basic empty charity item
     public static Item getSampleItem() {
         ArrayList<String> owner = new ArrayList<>();
         owner.add("owner");

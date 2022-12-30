@@ -108,4 +108,10 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="age_confirm">Conferma di essere maggiorenne</string>
     <string name="status">Stato</string>
+    <string name="your_requests">Le tue richieste</string>
+    <string name="others_requests">Le richieste degli altri</string>
+    <string name="your_proposal">La tua proposta</string>
+    <string name="object_service">Oggetto/Servizio</string>
+    <string name="your_object_service">Il tuo oggetto/servizio</string>
+    <string name="others_proposal">La proposta</string>
 </resources>

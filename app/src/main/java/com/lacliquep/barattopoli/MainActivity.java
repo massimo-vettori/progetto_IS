@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.lacliquep.barattopoli.classes.Exchange;
 import com.lacliquep.barattopoli.fragments.ObjectFragment;
 
 import android.annotation.SuppressLint;
@@ -153,6 +154,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 case R.id.nav_dashboard:
                     intent = new Intent(MainActivity.this, MyBoardActivity.class);
                     intent.putExtra("caller", ACTIVITY_TAG_NAME);
+                    startActivity(intent);
+                    break;
+
+                case R.id.nav_exchanges:
+                    // Sets the "proposer" extra to PERSONAL, in order to show only the exchanges the user has proposed
+                    intent = new Intent(MainActivity.this, ExchangeViewActivity.class);
+                    intent.putExtra("proposer", Ownership.PERSONAL.toString());
+                    startActivity(intent);
+                    break;
+
+                case R.id.nav_other_exchanges:
+                    // Sets the "proposer" extra to OTHER, in order to show only the exchanges that other users have proposed to the user
+                    intent = new Intent(MainActivity.this, ExchangeViewActivity.class);
+                    intent.putExtra("proposer", Ownership.OTHER.toString());
                     startActivity(intent);
                     break;
 
