@@ -775,6 +775,22 @@ public class Item implements Serializable {
         return new Item("id", "title", "description", "idRange", owner, location, false, true, false, categories, images);
     }
 
+    public static Item getEmptyItem() {
+        ArrayList<String> owner = new ArrayList<>();
+        ArrayList<String> categories = new ArrayList<>();
+        ArrayList<String> images = new ArrayList<>();
+        ArrayList<String> location = new ArrayList<>();
+
+        owner.add("");
+        categories.add("");
+        images.add(null);
+        location.add("");
+        location.add("");
+        location.add("");
+        location.add("");
+        return new Item("", "", "", "", owner, location, false, true, false, categories, images);
+    }
+
     public static void deleteItem(String itemID) {
 //        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(Item.CLASS_ITEM_DB).child(itemID);
 //        dbRef.removeValue();

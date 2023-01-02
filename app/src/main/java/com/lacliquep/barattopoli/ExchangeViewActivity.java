@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -12,6 +13,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.lacliquep.barattopoli.classes.Exchange;
 import com.lacliquep.barattopoli.classes.Ownership;
 import com.lacliquep.barattopoli.views.ExchangeItemView;
+
+import java.util.Objects;
 
 public class ExchangeViewActivity extends AppCompatActivity {
 
@@ -32,6 +35,8 @@ public class ExchangeViewActivity extends AppCompatActivity {
         scroller = findViewById(R.id.board_item_list);
         title    = findViewById(R.id.title);
 
+        // Removes the title bar
+        Objects.requireNonNull(getSupportActionBar()).hide();
         init(ownership);
     }
 
@@ -53,6 +58,7 @@ public class ExchangeViewActivity extends AppCompatActivity {
     protected void addItems(Ownership o) {
         String user = FirebaseAuth.getInstance().getUid();
         Exchange.getUserExchanges(user, o.equals(Ownership.PERSONAL), false, exchange -> {
+            Log.d("ExchangeViewActivity", "Got an exchange: " + exchange.getIdExchange());
             scroller.addView(ExchangeItemView.createAndInflate(this, exchange, o, scroller));
         });
     }

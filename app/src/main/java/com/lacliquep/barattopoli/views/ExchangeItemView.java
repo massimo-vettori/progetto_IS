@@ -42,7 +42,6 @@ public class ExchangeItemView extends View {
             case OTHER:
                 desc_sx.setText(R.string.your_object_service);
                 desc_dx.setText(R.string.others_proposal);
-                status.setClickable(true);
                 status.setOnClickListener(v -> {
                     // Creates a modal dialog to accept or reject the exchange
                     AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
@@ -58,8 +57,19 @@ public class ExchangeItemView extends View {
                 desc_sx.setText(R.string.object_service);
                 desc_dx.setText(R.string.your_proposal);
 
+                status.setOnClickListener(v -> {
+                    // Creates a modal dialog to accept or reject the exchange
+                    AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+                    builder.setMessage("Vuoi annullare lo scambio?")
+                            .setPositiveButton("Si, annulla", (dialog, id)   -> {/* TODO: Implement */})
+                            .setNegativeButton("No", (dialog, id) -> dialog.cancel())
+                            .show();
+                });
+
                 break;
         }
+
+        status.setClickable(true);
 
         image_dx.setClickable(true);
         image_sx.setClickable(true);

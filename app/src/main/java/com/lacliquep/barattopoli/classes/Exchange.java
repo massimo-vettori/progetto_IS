@@ -105,7 +105,37 @@ public class Exchange implements Serializable {
         Item.retrieveItemsByIds("Exchange", FirebaseDatabase.getInstance().getReference(), new ArrayList<>(Arrays.asList(values.get(5), values.get(6))), new Consumer<ArrayList<Item>>() {
             @Override
             public void accept(ArrayList<Item> items) {
-                consumer.accept(new Exchange(values.get(0), values.get(2), Exchange.exchangeStatusValueOf(values.get(1)), User.getSampleUser(), User.getSampleUser(), new ArrayList<>(Collections.singletonList(items.get(0))), new ArrayList<>(Collections.singletonList(items.get(1)))));
+                Item proposer_item  = items.get(0);
+                Item applicant_item = items.get(1);
+
+                User proposer = new User(
+                        proposer_item.getOwnerId(),
+                        proposer_item.getOwnerUsername(),
+                        "",
+                        "",
+                        proposer_item.getLocation(),
+                        proposer_item.getOwnerRank(),
+                        BarattopoliUtil.encodeImageToBase64(proposer_item.getOwnerImage())
+                );
+
+                User applicant;
+
+                if (applicant_item == null) {
+                    applicant_item = Item.getEmptyItem();
+                    applicant = User.getEmptyUser();
+                } else {
+                    applicant = new User(
+                            applicant_item.getOwnerId(),
+                            applicant_item.getOwnerUsername(),
+                            "",
+                            "",
+                            applicant_item.getLocation(),
+                            applicant_item.getOwnerRank(),
+                            BarattopoliUtil.encodeImageToBase64(applicant_item.getOwnerImage())
+                    );
+                }
+
+                consumer.accept(new Exchange(values.get(0), values.get(2), Exchange.exchangeStatusValueOf(values.get(1)), applicant, proposer, new ArrayList<>(Collections.singletonList(applicant_item)), new ArrayList<>(Collections.singletonList(proposer_item))));
             }
         });
     }
