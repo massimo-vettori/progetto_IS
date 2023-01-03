@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,11 +23,23 @@ public class ProposeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_propose);
-        scroller   = findViewById(R.id.board_item_list);
+
         othersItem = findViewById(R.id.others_item);
 
         Item item = (Item) getIntent().getSerializableExtra("item");
+        Button back = findViewById(R.id.back_button);
+        back.setOnClickListener(view -> {
+            finish();
+        });
         this.init(item);
+    }
+    public void addItem(Item item) {
+        LinearLayout container = findViewById(R.id.board_item_list);
+        View view = ListItemView.createAndInflate(this, item, container);
+        container.addView(view);
+        Button chooseItem = view.findViewById(R.id.choose_item);
+        chooseItem.setVisibility(View.VISIBLE);
+        view.setClickable(false);
     }
 
     protected void init(Item item) {
@@ -36,8 +49,7 @@ public class ProposeActivity extends AppCompatActivity {
 
         Item.retrieveMapWithAllItems(true,true,null, true, FirebaseAuth.getInstance().getUid(), new ArrayList<String>(Arrays.asList("Italia", "Veneto", "Venezia", "Venezia")), stringMapMap -> {
             stringMapMap.forEach((key, value) -> {
-                View view = ListItemView.createAndInflate(this, item, scroller);
-                scroller.addView(view);
+                addItem(value);
             });
         });
     }

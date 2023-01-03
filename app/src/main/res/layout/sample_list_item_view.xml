@@ -37,6 +37,12 @@
                 android:textSize="15sp"
                 android:textColor="@color/sky_200"
                 android:text="@string/RANGE" />
+        <Button
+            android:id="@+id/choose_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_item"
+            android:visibility="invisible"/>
 
             <LinearLayout
                 android:id="@+id/list_item_tags"
@@ -46,6 +52,7 @@
                 android:layout_height="match_parent">
 
                 <TextView
+                    android:id="@+id/list_item_tag1"
                     android:layout_marginEnd="?attr/paddingSm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -56,6 +63,7 @@
                     android:text="@string/CATEGORIES"/>
 
                 <TextView
+                    android:id="@+id/list_item_tag2"
                     android:layout_marginEnd="?attr/paddingSm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
