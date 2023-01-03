@@ -30,7 +30,7 @@ public class ItemViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_item_view);
         Objects.requireNonNull(getSupportActionBar()).hide();
 
-        disableProposeButton(); // This disables the propose button to prevent barter proposals until they are properly implemented
+//        disableProposeButton(); // This disables the propose button to prevent barter proposals until they are properly implemented
 
         Button backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(view -> {
@@ -72,8 +72,8 @@ public class ItemViewActivity extends AppCompatActivity {
         updateOwner(item.getOwner());
         //added
         updateUserAvatar(item.getOwnerImage());
-        ImageView imageView1 = findViewById(R.id.imageView1);
-        imageView1.setImageBitmap(item.getFirstImage());
+        emptyImageList();
+        addImageToImageList(item.getFirstImage());
         //updateUserName(item.getOwner().stream().reduce("", (a, b) -> a + " " + b));
 
         if (owner == Ownership.PERSONAL) {
@@ -85,6 +85,15 @@ public class ItemViewActivity extends AppCompatActivity {
                 Item.deleteItem(item);
                 ItemViewActivity.this.backToHome();
             });
+        } else {
+            Button propose = findViewById(R.id.propose_btn);
+            propose.setOnClickListener(v -> {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("item", item);
+                Intent intent = new Intent(ItemViewActivity.this, ProposeActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            });
         }
 
 
@@ -93,6 +102,12 @@ public class ItemViewActivity extends AppCompatActivity {
 //        for (Bitmap image : item.getImages()) {
 //            addImageToImageList(image);
 //        }
+    }
+
+    private void emptyImageList() {
+        LinearLayout imageList = findViewById(R.id.scrollable_images);
+        // Adds the image to the imageList
+        imageList.removeAllViews();
     }
 
     protected void backToHome() {
@@ -181,6 +196,10 @@ public class ItemViewActivity extends AppCompatActivity {
     protected void addImageToImageList(Bitmap image) {
         // Creates a new ImageView object
         ImageView img = new ImageView(this);
+        img.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        img.setMinimumWidth(600);
+        img.setMinimumHeight(900);
+
         // Sets the image of the ImageView to the image passed as a parameter
         img.setImageBitmap(image);
         // The horizontal linear layout containing the images
