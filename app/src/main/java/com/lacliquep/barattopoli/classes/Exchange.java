@@ -354,7 +354,7 @@ public class Exchange implements Serializable {
             String idExchange = UUID.randomUUID().toString();
             setIdExchangeDb(idExchange);
             setDateDb(idExchange, date);
-            setExchangeStatusDb(idExchange, ExchangeStatus.IN_APPROVAL);
+            setExchangeStatusDb(idExchange, null,  ExchangeStatus.IN_APPROVAL);
             setApplicantDb(idExchange, applicant);
             setProposerDb(idExchange, proposer);
             setApplicantItemsDb(idExchange, applicantItems);
@@ -419,8 +419,7 @@ public class Exchange implements Serializable {
     public static void changeExchangeStatusDb(Exchange exchange, ExchangeStatus nextExchangeStatus) {
         ExchangeStatus currExchangeStatus = exchange.getExchangeStatus();
         if (exchange.legalExchangeTransition(currExchangeStatus, nextExchangeStatus)) {
-            setExchangeStatusDb(exchange.getIdExchange(), nextExchangeStatus);
-            setExchangeStatusDb(exchange.getIdExchange(), nextExchangeStatus);
+            setExchangeStatusDb(exchange.getIdExchange(), exchange, nextExchangeStatus);
             if (Exchange.StringValueOfExchangeStatus(currExchangeStatus).equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.IN_APPROVAL))) {
                //change from exchangeable to not exchangeable
                 for (Item item: exchange.getApplicantItems()) {
@@ -435,7 +434,7 @@ public class Exchange implements Serializable {
                     Exchange.StringValueOfExchangeStatus(nextExchangeStatus).equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.ILLEGAL))) {
                 //delete exchange
                 Exchange.deleteExchange(exchange);
-                //change from not exchangeable to exchangeable 
+                //change from not exchangeable to exchangeable
                 for (Item item: exchange.getApplicantItems()) {
                     Item.setExchangeable(true, FirebaseDatabase.getInstance().getReference().child(Item.CLASS_ITEM_DB).child(item.getIdItem()));
                 }
@@ -477,8 +476,15 @@ public class Exchange implements Serializable {
                 } else Log.d("Exchange", "Exchange " + exchange1.getIdExchange() + " does not exist anymore" );
             }});
     }
-    private static void setExchangeStatusDb(String idExchange, ExchangeStatus exchangeStatus) {
+    private static void setExchangeStatusDb(String idExchange, @Nullable  Exchange exchange, ExchangeStatus exchangeStatus) {
         Exchange.dbRef.child(idExchange).child(Exchange.EXCHANGE_STAUS_DB).setValue(Exchange.StringValueOfExchangeStatus(exchangeStatus));
+        if (exchange != null) Exchange.exchangeStatusInBasicInfo(exchange, exchangeStatus);
+    }
+    private static void exchangeStatusInBasicInfo(Exchange exchange, ExchangeStatus exchangeStatus) {
+        exchange.exchangeStatus = exchangeStatus;
+        String basicInfo = Exchange.getExchangeBasicInfo(exchange.getIdExchange(), exchange.getDate(), exchangeStatus, exchange.getApplicant(), exchange.getProposer(), exchange.getApplicantItems(), exchange.getProposerItems());
+        User.dbRefUsers.child(exchange.getApplicant().getIdUser()).child(Exchange.CLASS_EXCHANGE_DB).child(exchange.getIdExchange()).setValue(basicInfo);
+        User.dbRefUsers.child(exchange.getProposer().getIdUser()).child(Exchange.CLASS_EXCHANGE_DB).child(exchange.getIdExchange()).setValue(basicInfo);
     }
     private static void setDateDb(String idExchange, String date) {
         Exchange.dbRef.child(idExchange).child(Exchange.DATE_DB).setValue(date);
