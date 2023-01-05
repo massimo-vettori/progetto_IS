@@ -717,7 +717,7 @@ public class Item implements Serializable {
      * @param isExchangeable the status of the item
      * @throws NonModifiableException if this Item is not exchangeable
      */
-    public static void deleteItem(String idItem, boolean isExchangeable, DatabaseReference dbRefItem) throws NonModifiableException {
+    private static void deleteItem(String idItem, boolean isExchangeable, DatabaseReference dbRefItem) throws NonModifiableException {
         if (!isExchangeable) throw new NonModifiableException();
         //TODO;
     }

@@ -12,9 +12,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.lacliquep.barattopoli.classes.Item;
 import com.lacliquep.barattopoli.classes.Ownership;
 import com.lacliquep.barattopoli.classes.Range;
+import com.lacliquep.barattopoli.classes.User;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -82,7 +84,8 @@ public class ItemViewActivity extends AppCompatActivity {
             delete.setBackgroundColor(getResources().getColor(R.color.red_500, null));
             delete.setTextColor(getResources().getColor(R.color.zinc_50, null));
             delete.setOnClickListener(view -> {
-                Item.deleteItem(item);
+                //do not use Item.deleteItem
+                User.removeItemFromBoard("ItemViewActivity", FirebaseAuth.getInstance().getUid(), item.getIdItem());
                 ItemViewActivity.this.backToHome();
             });
         } else {
