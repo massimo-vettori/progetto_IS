@@ -50,24 +50,30 @@ public class ObjectFragment extends Fragment {
         this.progressBar = v.findViewById(R.id.progressBar);
         this.progressBar.setVisibility(View.INVISIBLE);
 
-
+//        Exchange.insertExchangeInDatabase("ObjectFragment", "e6f61add-9142-42ce-a1e4-b8005e4117c2", "cf7970bc-56a8-4a77-998f-e8ffcf6bed84");
         //test on exchange
-
-        //Exchange.insertExchangeInDatabase("ObjectFragment", "a6744f72-50ae-4aa0-b220-ff9acfb8b292", "0cc03c4a-2d8d-4fa9-8e44-5d60ccf631b9");
-        Exchange.retrieveExchangeById("ObjectFragment", "788381f7-68db-46d3-ad1d-559ade055b83", new Consumer<Exchange>() {
+        Exchange.retrieveAllExchanges(new Consumer<Exchange>() {
             @Override
-           public void accept(Exchange exchange) {
-            Exchange.changeExchangeStatusDb(exchange, Exchange.ExchangeStatus.ACCEPTED);
-                //Exchange.deleteExchange(exchange);
-                //Log.d("72", "id: " + exchange.getIdExchange());
-                //Log.d("72", "proposer: " + exchange.getProposer().getUserBasicInfo());
-                //Log.d("72", "applicant: " + exchange.getApplicant().getUserBasicInfo());
-                //Log.d("72", "firstProposedItem: " + exchange.getProposerItems().get(0).getItemBasicInfo());
-                //Log.d("72", "firstApplicantItem: " + exchange.getApplicantItems().get(0).getItemBasicInfo());
-                //Log.d("72", "exchangeStatus: " + exchange.getExchangeStatus().toString());
-                //Log.d("72", "date: " + exchange.getDate());
+            public void accept(Exchange exchange) {
+                Log.d("exchange", exchange.toString());
             }
         });
+//
+
+//        Exchange.retrieveExchangeById("ObjectFragment", "788381f7-68db-46d3-ad1d-559ade055b83", new Consumer<Exchange>() {
+//            @Override
+//           public void accept(Exchange exchange) {
+//            Exchange.changeExchangeStatusDb(exchange, Exchange.ExchangeStatus.ACCEPTED);
+//                //Exchange.deleteExchange(exchange);
+//                //Log.d("72", "id: " + exchange.getIdExchange());
+//                //Log.d("72", "proposer: " + exchange.getProposer().getUserBasicInfo());
+//                //Log.d("72", "applicant: " + exchange.getApplicant().getUserBasicInfo());
+//                //Log.d("72", "firstProposedItem: " + exchange.getProposerItems().get(0).getItemBasicInfo());
+//                //Log.d("72", "firstApplicantItem: " + exchange.getApplicantItems().get(0).getItemBasicInfo());
+//                //Log.d("72", "exchangeStatus: " + exchange.getExchangeStatus().toString());
+//                //Log.d("72", "date: " + exchange.getDate());
+//            }
+//        });
 
 //        Exchange.insertExchangeInDatabase("ObjectFragment", "0cc03c4a-2d8d-4fa9-8e44-5d60ccf631b9", "a6744f72-50ae-4aa0-b220-ff9acfb8b292");
 

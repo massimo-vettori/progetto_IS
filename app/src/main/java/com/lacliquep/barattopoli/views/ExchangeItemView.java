@@ -39,7 +39,7 @@ public class ExchangeItemView extends View {
         TextView status                   = view.findViewById(R.id.status_text);
 
         switch (o) {
-            case OTHER:
+            case PERSONAL:
                 desc_sx.setText(R.string.your_object_service);
                 desc_dx.setText(R.string.others_proposal);
                 status.setOnClickListener(v -> {
@@ -53,9 +53,9 @@ public class ExchangeItemView extends View {
                 });
 
                 break;
-            case PERSONAL:
+            case OTHER:
                 desc_sx.setText(R.string.object_service);
-                desc_dx.setText(R.string.your_proposal);
+                desc_dx.setText(R.string.your_object_service);
 
                 status.setOnClickListener(v -> {
                     // Creates a modal dialog to accept or reject the exchange

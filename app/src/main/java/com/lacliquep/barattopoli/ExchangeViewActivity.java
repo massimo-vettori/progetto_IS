@@ -57,7 +57,7 @@ public class ExchangeViewActivity extends AppCompatActivity {
 
     protected void addItems(Ownership o) {
         String user = FirebaseAuth.getInstance().getUid();
-        Exchange.getUserExchanges(user, o.equals(Ownership.PERSONAL), false, exchange -> {
+        Exchange.getUserExchanges(user, o.equals(Ownership.OTHER), false, exchange -> {
             Log.d("ExchangeViewActivity", "Got an exchange: " + exchange.getIdExchange());
             scroller.addView(ExchangeItemView.createAndInflate(this, exchange, o, scroller));
         });

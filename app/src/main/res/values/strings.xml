@@ -111,8 +111,8 @@
     <string name="your_requests">Le tue richieste</string>
     <string name="others_requests">Le richieste degli altri</string>
     <string name="your_proposal">La tua proposta</string>
-    <string name="object_service">Oggetto/Servizio</string>
+    <string name="object_service">Oggetto/Servizio del richiedente</string>
     <string name="your_object_service">Il tuo oggetto/servizio</string>
-    <string name="others_proposal">La proposta</string>
+    <string name="others_proposal">L\'oggetto/servizio richiesto</string>
     <string name="choose_item">scegli per lo scambio</string>
 </resources>

@@ -1,13 +1,16 @@
 package com.lacliquep.barattopoli;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.lacliquep.barattopoli.classes.Exchange;
 import com.lacliquep.barattopoli.classes.Item;
 import com.lacliquep.barattopoli.views.ListItemView;
 
@@ -18,6 +21,8 @@ public class ProposeActivity extends AppCompatActivity {
 
     LinearLayout scroller;
     LinearLayout othersItem;
+    Item proposerItem;
+    public static String TAG = "ProposeActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,23 +38,45 @@ public class ProposeActivity extends AppCompatActivity {
         });
         this.init(item);
     }
+
     public void addItem(Item item) {
         LinearLayout container = findViewById(R.id.board_item_list);
         View view = ListItemView.createAndInflate(this, item, container);
         container.addView(view);
-        Button chooseItem = view.findViewById(R.id.choose_item);
-        chooseItem.setVisibility(View.VISIBLE);
-        view.setClickable(false);
+//        Button chooseItem = view.findViewById(R.id.choose_item);
+//        chooseItem.setVisibility(View.VISIBLE);
+
+        view.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            builder.setMessage("Vuoi proporre questo scambio?")
+                    .setCancelable(false)
+                    .setPositiveButton(getString(R.string.Yes), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Exchange.insertExchangeInDatabase(ProposeActivity.TAG, proposerItem.getIdItem(), item.getIdItem());
+                        }
+                    })
+                    .setNegativeButton(getString(R.string.No), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            //return to setting the item details and don't take a new picture
+                            dialog.cancel();
+                        }
+                    }).show();
+        });
+
+        view.setClickable(true);
     }
 
     protected void init(Item item) {
         View oth_item = ListItemView.createAndInflate(this, item, othersItem);
         oth_item.setClickable(false);
         othersItem.addView(oth_item);
+        proposerItem = item;
 
         Item.retrieveMapWithAllItems(true,true,null, true, FirebaseAuth.getInstance().getUid(), new ArrayList<String>(Arrays.asList("Italia", "Veneto", "Venezia", "Venezia")), stringMapMap -> {
             stringMapMap.forEach((key, value) -> {
-                addItem(value);
+                if (value.isExchangeable())
+                    addItem(value);
             });
         });
     }

@@ -249,6 +249,68 @@ public class Exchange implements Serializable {
         }
         return res;
     }
+
+    public static void retrieveAllExchanges(Consumer<Exchange> consumer) {
+        FirebaseDatabase.getInstance().getReference().child(Exchange.CLASS_EXCHANGE_DB).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists() && snapshot.hasChildren()) {
+                    for (DataSnapshot exch: snapshot.getChildren()) {
+                        Exchange.retrieveExchangeById("Exchange", exch.getKey(), new Consumer<Exchange>() {
+                            @Override
+                            public void accept(Exchange exchange) {
+                                consumer.accept(exchange);
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public static void deleteUnapprovedExchanges(@NonNull Exchange approved) {
+        String exchangeId         = approved.getIdExchange();
+        ArrayList<String> itemIds = new ArrayList<>();
+
+        for (Item item: approved.getApplicantItems()) {
+            itemIds.add(item.getIdItem());
+        }
+
+        for (Item item: approved.getProposerItems()) {
+            itemIds.add(item.getIdItem());
+        }
+
+        retrieveAllExchanges(new Consumer<Exchange>() {
+            @Override
+            public void accept(Exchange exchange) {
+                if (exchange.exchangeStatus == ExchangeStatus.IN_APPROVAL && !exchange.getIdExchange().equals(exchangeId)) {
+                    boolean toDelete = true;
+
+                    for (Item item: exchange.getApplicantItems()) {
+                        if (!itemIds.contains(item.getIdItem())) {
+                            toDelete = false;
+                            break;
+                        }
+                    }
+
+                    for (Item item: exchange.getProposerItems()) {
+                        if (!itemIds.contains(item.getIdItem())) {
+                            toDelete = false;
+                            break;
+                        }
+                    }
+
+                    if (toDelete) Exchange.deleteExchange(exchange);
+                }
+            }
+        });
+    }
+
     /**
      * read from the database all the values regarding the User with the provided id <p>
      * Don't try taking out data from the consumer: it is not going to work
@@ -420,7 +482,7 @@ public class Exchange implements Serializable {
         ExchangeStatus currExchangeStatus = exchange.getExchangeStatus();
         if (exchange.legalExchangeTransition(currExchangeStatus, nextExchangeStatus)) {
             setExchangeStatusDb(exchange.getIdExchange(), exchange, nextExchangeStatus);
-            if (Exchange.StringValueOfExchangeStatus(currExchangeStatus).equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.IN_APPROVAL))) {
+            if (Exchange.StringValueOfExchangeStatus(nextExchangeStatus).equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.ACCEPTED))) {
                //change from exchangeable to not exchangeable
                 for (Item item: exchange.getApplicantItems()) {
                     Item.setExchangeable(false, FirebaseDatabase.getInstance().getReference().child(Item.CLASS_ITEM_DB).child(item.getIdItem()));
