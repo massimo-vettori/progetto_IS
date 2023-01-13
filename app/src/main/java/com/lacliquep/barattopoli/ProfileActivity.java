@@ -22,7 +22,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private static final String ACTIVITY_TAG_NAME = "ProfileActivity";
     Button backButton, button;
-    TextView phone, country, region, province, city, email, nickname, nameAndSurname;
+    TextView  country, region, province, city, email, nickname, nameAndSurname;
     ImageView profilePic;
 
     FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -35,7 +35,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         backButton = findViewById(R.id.back_button);
         button = findViewById(R.id.button);
-        phone = findViewById(R.id.phone);
         country = findViewById(R.id.country);
         region = findViewById(R.id.region);
         province = findViewById(R.id.province);

@@ -21,4 +21,5 @@
         <attr name="image" format="string"/>
     </declare-styleable>
 
+
 </resources>
