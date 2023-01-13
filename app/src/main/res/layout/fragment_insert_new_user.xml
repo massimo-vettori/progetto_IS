@@ -6,149 +6,156 @@
     android:layout_height="match_parent"
     tools:context=".fragments.sign.InsertNewUserFragment">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        tools:ignore="UselessParent">
-
-    <LinearLayout
-        android:layout_width="200dp"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:ignore="UselessParent">
-
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             tools:ignore="UselessParent">
 
-            <ImageView
-                android:id="@+id/image_container"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/blank_profile_picture"
-                />
-            <Button
-                android:id="@+id/take_picture_user"
+            <LinearLayout
+                android:layout_width="200dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                tools:ignore="UselessParent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    tools:ignore="UselessParent">
+
+                    <ImageView
+                        android:id="@+id/image_container"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/blank_profile_picture"
+                        />
+                    <Button
+                        android:id="@+id/take_picture_user"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/take_picture_user"/>
+
+                    <TextView
+                        android:id="@+id/not_mandatory_fields"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/colorPrimary"
+                        android:fontFamily="@font/inter_medium"
+                        android:paddingVertical="10dp"
+                        android:text="@string/non_mandatory_fields"
+                        android:textAlignment="center" />
+                    <EditText
+                        android:id="@+id/insert_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/insert_name" />
+
+                    <EditText
+                        android:id="@+id/insert_surname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/insert_surname" />
+
+                    <Button
+                        android:id="@+id/register"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/register"  />
+
+
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/take_picture_user"/>
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                tools:ignore="UselessParent">
+                <TextView
+                    android:id="@+id/mandatory_fields"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/colorPrimary"
+                    android:fontFamily="@font/inter_medium"
+                    android:paddingVertical="10dp"
+                    android:text="@string/mandatory_fields"
+                    android:textAlignment="center" />
+                <EditText
+                    android:id="@+id/insert_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/insert_username" />
 
-            <TextView
-                android:id="@+id/not_mandatory_fields"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/colorPrimary"
-                android:fontFamily="@font/inter_medium"
-                android:paddingVertical="10dp"
-                android:text="@string/non_mandatory_fields"
-                android:textAlignment="center" />
-            <EditText
-                android:id="@+id/insert_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="@string/insert_name" />
+                <EditText
+                    android:id="@+id/insert_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/insert_email" />
 
-            <EditText
-                android:id="@+id/insert_surname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="@string/insert_surname" />
+                <EditText
+                    android:id="@+id/insert_password"
+                    android:inputType="textPassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/insert_password" />
+                <EditText
+                    android:id="@+id/confirm_password"
+                    android:inputType="textPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/confirm_password" />
+                <EditText
+                    android:id="@+id/insert_country"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/insert_country" />
 
-            <Button
-                android:id="@+id/register"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/register"  />
+                <EditText
+                    android:id="@+id/insert_region"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/insert_region" />
+                <EditText
+                    android:id="@+id/insert_province"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/insert_province" />
 
-
+                <EditText
+                    android:id="@+id/insert_city"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/insert_city" />
+                <TextView
+                    android:id="@+id/privacy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/colorPrimary"
+                    android:fontFamily="@font/inter_medium"
+                    android:paddingVertical="10dp"
+                    android:text="privacy document"
+                    android:textAlignment="center" />
+                <CheckBox
+                    android:id="@+id/check_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/accept_privacy" />
+                <CheckBox
+                    android:id="@+id/check_box_age"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/age_confirm" />
+            </LinearLayout>
 
         </LinearLayout>
-    </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            tools:ignore="UselessParent">
-            <TextView
-                android:id="@+id/mandatory_fields"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/colorPrimary"
-                android:fontFamily="@font/inter_medium"
-                android:paddingVertical="10dp"
-                android:text="@string/mandatory_fields"
-                android:textAlignment="center" />
-            <EditText
-                android:id="@+id/insert_username"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/insert_username" />
-
-            <EditText
-                android:id="@+id/insert_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/insert_email" />
-
-            <EditText
-                android:id="@+id/insert_password"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="@string/insert_password" />
-            <EditText
-                android:id="@+id/confirm_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/confirm_password" />
-            <EditText
-                android:id="@+id/insert_country"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/insert_country" />
-
-            <EditText
-                android:id="@+id/insert_region"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/insert_region" />
-            <EditText
-                android:id="@+id/insert_province"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/insert_province" />
-
-            <EditText
-                android:id="@+id/insert_city"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/insert_city" />
-            <TextView
-                android:id="@+id/privacy"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/colorPrimary"
-                android:fontFamily="@font/inter_medium"
-                android:paddingVertical="10dp"
-                android:text="privacy document"
-                android:textAlignment="center" />
-            <CheckBox
-                android:id="@+id/check_box"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/accept_privacy" />
-            <CheckBox
-                android:id="@+id/check_box_age"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/age_confirm" />
-        </LinearLayout>
-
-    </LinearLayout>
+    </ScrollView>
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleHorizontal"

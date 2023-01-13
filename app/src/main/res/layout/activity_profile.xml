@@ -200,14 +200,6 @@
             android:textColor="@color/zinc_400"
             android:text="Locazione fisica"/>
 
-        <TextView
-            android:id="@+id/phone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/inter_medium"
-            android:textSize="15sp"
-            android:layout_marginBottom="10dp"
-            android:text="@string/lorem_short"/>
     </LinearLayout>
 
     <Button

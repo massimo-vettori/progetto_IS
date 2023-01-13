@@ -21,10 +21,5 @@
         <attr name="image" format="string"/>
     </declare-styleable>
 
-    <declare-styleable name="ItemCardView">
-        <attr name="top"    format="string"/>
-        <attr name="url"    format="string"/>
-        <attr name="bottom" format="string"/>
-    </declare-styleable>
 
 </resources>

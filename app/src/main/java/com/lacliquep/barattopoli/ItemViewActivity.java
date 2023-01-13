@@ -1,9 +1,11 @@
 package com.lacliquep.barattopoli;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.lacliquep.barattopoli.classes.Exchange;
 import com.lacliquep.barattopoli.classes.Item;
 import com.lacliquep.barattopoli.classes.Ownership;
 import com.lacliquep.barattopoli.classes.Range;
@@ -48,7 +51,7 @@ public class ItemViewActivity extends AppCompatActivity {
 
         // Get the ownership of the item from the intent
 
-        Ownership owner = Ownership.from(intent.getStringExtra("owner"));
+        Ownership owner = Ownership.from(intent.getStringExtra("ownership"));
         // Get the calling activity from the intent
         caller = intent.getStringExtra("caller");
 
@@ -84,9 +87,23 @@ public class ItemViewActivity extends AppCompatActivity {
             delete.setBackgroundColor(getResources().getColor(R.color.red_500, null));
             delete.setTextColor(getResources().getColor(R.color.zinc_50, null));
             delete.setOnClickListener(view -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                builder.setMessage("Sei sicuro di voler cancellare l'oggetto/servizio dalla tua bacheca?")
+                        .setCancelable(false)
+                        .setPositiveButton(getString(R.string.Yes), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                User.removeItemFromBoard("ItemViewActivity", FirebaseAuth.getInstance().getUid(), item.getIdItem());
+                                ItemViewActivity.this.backToHome();
+                            }
+                        })
+                        .setNegativeButton(getString(R.string.No), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                //return to setting the item details and don't take a new picture
+                                dialog.cancel();
+                            }
+                        }).show();
                 //do not use Item.deleteItem
-                User.removeItemFromBoard("ItemViewActivity", FirebaseAuth.getInstance().getUid(), item.getIdItem());
-                ItemViewActivity.this.backToHome();
             });
         } else {
             Button propose = findViewById(R.id.propose_btn);

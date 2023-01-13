@@ -26,11 +26,11 @@
                     android:title="@string/dashboard" />
 
                 <item android:id="@+id/nav_exchanges"
-                    android:icon="@drawable/ic_baseline_exchanges_24"
+                    android:icon="@drawable/ic_my_requests"
                     android:title="@string/your_requests" />
 
                 <item android:id="@+id/nav_other_exchanges"
-                    android:icon="@drawable/ic_baseline_exchanges_24"
+                    android:icon="@drawable/ic_others_requests"
                     android:title="@string/others_requests" />
 
                 <item android:id="@+id/nav_profile"
