@@ -717,7 +717,7 @@ public class Item implements Serializable {
      * @param isExchangeable the status of the item
      * @throws NonModifiableException if this Item is not exchangeable
      */
-    public static void deleteItem(String idItem, boolean isExchangeable, DatabaseReference dbRefItem) throws NonModifiableException {
+    private static void deleteItem(String idItem, boolean isExchangeable, DatabaseReference dbRefItem) throws NonModifiableException {
         if (!isExchangeable) throw new NonModifiableException();
         //TODO;
     }
@@ -758,7 +758,7 @@ public class Item implements Serializable {
     }
 
 
-    // TODO: remove this method
+    // TODO: create a method to return a basic empty charity item
     public static Item getSampleItem() {
         ArrayList<String> owner = new ArrayList<>();
         owner.add("owner");
@@ -773,6 +773,22 @@ public class Item implements Serializable {
         location.add("provincia");
         location.add("comune");
         return new Item("id", "title", "description", "idRange", owner, location, false, true, false, categories, images);
+    }
+
+    public static Item getEmptyItem() {
+        ArrayList<String> owner = new ArrayList<>();
+        ArrayList<String> categories = new ArrayList<>();
+        ArrayList<String> images = new ArrayList<>();
+        ArrayList<String> location = new ArrayList<>();
+
+        owner.add("");
+        categories.add("");
+        images.add(null);
+        location.add("");
+        location.add("");
+        location.add("");
+        location.add("");
+        return new Item("", "", "", "", owner, location, false, true, false, categories, images);
     }
 
     public static void deleteItem(String itemID) {

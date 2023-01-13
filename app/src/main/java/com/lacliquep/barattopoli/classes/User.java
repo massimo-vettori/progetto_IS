@@ -11,6 +11,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.lacliquep.barattopoli.R;
 
 import java.io.Serializable;
 import java.util.*;
@@ -109,6 +110,18 @@ public class User implements Serializable {
      * @return a sample of a User who does not exist
      */
     public static User getSampleUser() { return new User("basicUser", "basicUser", "", "", new ArrayList<>(Arrays.asList("Italia", "Veneto", "Venezia", "Venezia")), User.getMediumRank(), "");}
+
+    public static User getEmptyUser() {
+        return new User(
+            "",
+            "",
+            "",
+            "",
+            new ArrayList<>(Arrays.asList("", "", "", "")),
+            User.getMediumRank(), null
+        );
+    }
+
     /**
      * creator of a User, to be called when creating a new User to store in the DB
      * the rank will be set to the medium value between 1 and HIGHER_RANK
@@ -498,4 +511,5 @@ public class User implements Serializable {
     public int hashCode() {
         return this.idUser.hashCode();
     }
+
 }

@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -30,6 +31,8 @@ import com.lacliquep.barattopoli.classes.BarattopoliUtil;
 import com.lacliquep.barattopoli.classes.Item;
 import com.lacliquep.barattopoli.classes.Ownership;
 import com.lacliquep.barattopoli.classes.Range;
+
+import java.util.ArrayList;
 
 /**
  * TODO: document your custom view class.
@@ -46,17 +49,28 @@ public class ListItemView extends LinearLayout {
     public static View createAndInflate(Context ctx, Item item, ViewGroup container) {
         View itemView = LayoutInflater.from(ctx).inflate(R.layout.sample_list_item_view, container, false);
 
-        TextView title  = itemView.findViewById(R.id.list_item_title);
-        TextView range  = itemView.findViewById(R.id.list_item_range);
-        ImageView image = itemView.findViewById(R.id.list_item_image);
+        TextView title        = itemView.findViewById(R.id.list_item_title);
+        TextView range        = itemView.findViewById(R.id.list_item_range);
+        ImageView image       = itemView.findViewById(R.id.list_item_image);
+        TextView listItemTag1 = itemView.findViewById(R.id.list_item_tag1);
+        TextView listItemTag2 = itemView.findViewById(R.id.list_item_tag2);
+        Button chooseItem     = itemView.findViewById(R.id.choose_item);
 
         String thstring=null;
-        Bitmap thumbnail=null;
+        Bitmap thumbnail  = item.getFirstImage();
+        ArrayList<String> categories = new ArrayList<>(item.getCategories());
 
         title.setText(item.getTitle());
         //TODO: fix the view with the getString. At the moment is not possible!!!!
         range.setText(ItemViewActivity.rangeString(item, ctx));
-
+        if (!categories.isEmpty()) {
+            listItemTag1.setText(categories.get(0));
+            if (categories.size() > 1) listItemTag2.setText(categories.get(1));
+            else listItemTag2.setVisibility(View.INVISIBLE);
+        } else {
+            listItemTag1.setVisibility(View.INVISIBLE);
+            listItemTag2.setVisibility(View.INVISIBLE);
+        }
         if (thumbnail != null) {
             image.setImageBitmap(thumbnail);
         }
@@ -71,6 +85,10 @@ public class ListItemView extends LinearLayout {
             bundle.putSerializable("item", item);
             intent.putExtras(bundle);
             view.getContext().startActivity(intent);
+        });
+
+        chooseItem.setOnClickListener(view -> {
+            //TODO
         });
 
         return itemView;

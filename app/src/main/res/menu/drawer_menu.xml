@@ -21,19 +21,21 @@
         <!--  separate section -->
         <item android:title="I tuoi dati">
             <menu>
-
                 <item android:id="@+id/nav_dashboard"
                     android:icon="@drawable/ic_baseline_dashboard_24"
                     android:title="@string/dashboard" />
 
                 <item android:id="@+id/nav_exchanges"
                     android:icon="@drawable/ic_baseline_exchanges_24"
-                    android:title="@string/exchanges" />
+                    android:title="@string/your_requests" />
+
+                <item android:id="@+id/nav_other_exchanges"
+                    android:icon="@drawable/ic_baseline_exchanges_24"
+                    android:title="@string/others_requests" />
+
                 <item android:id="@+id/nav_profile"
                     android:icon="@drawable/ic_round_profile_24"
                     android:title="@string/profile" />
-
-
             </menu>
 
         </item>
