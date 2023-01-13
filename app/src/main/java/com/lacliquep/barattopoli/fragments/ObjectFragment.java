@@ -37,6 +37,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
+/**
+ * this class handles the view of other's items, with different filters
+ * @author pares, jack, gradiente
+ */
 public class ObjectFragment extends Fragment {
 
     protected LinearLayout container;
@@ -92,7 +96,7 @@ public class ObjectFragment extends Fragment {
         return v;
     }
 
-    public void showItems() {
+    protected void showItems() {
         //TODO:add filters
         String filter = "";
         Bundle b = getArguments();
@@ -104,7 +108,7 @@ public class ObjectFragment extends Fragment {
 
     }
 
-    public void addItem(Item item) {
+    protected void addItem(Item item) {
         View view = ItemView.createAndInflate(this.getContext(), item, container);
         container.addView(view);
     }
@@ -138,7 +142,7 @@ public class ObjectFragment extends Fragment {
     /**
      * check the SDK version in order to handle the itemView in background
      */
-    void asyncShow() {
+    private void asyncShow() {
         // TODO find out which is the eldest SDK version accepting concurrent
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
             // Do something for R and above versions
@@ -157,14 +161,14 @@ public class ObjectFragment extends Fragment {
             });
 
         } else {
-            new ObjectFragment.AsyncRegister().execute();
+            new ObjectFragment.AsyncS().execute();
         }
     }
     /**
-     * class to handle registration in asynchronous way before SDK R
+     * class to handle the items show in asynchronous way before SDK R
      */
     @SuppressLint("StaticFieldLeak")
-    private class AsyncRegister extends AsyncTask<String, Integer, Void> {
+    private class AsyncS extends AsyncTask<String, Integer, Void> {
         @Override
         protected Void doInBackground(String... strings) {
             showItems();

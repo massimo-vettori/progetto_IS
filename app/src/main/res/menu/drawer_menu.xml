@@ -46,7 +46,7 @@
 
                 <item android:id="@+id/add_item"
                     android:icon="@drawable/ic_baseline_add_obect_24"
-                    android:title="@string/insert" />
+                    android:title="@string/insert_a_new_item" />
 
 
             </menu>

@@ -2,6 +2,11 @@ package com.lacliquep.barattopoli.classes;
 
 import androidx.annotation.NonNull;
 
+/**
+ * this class represents the difference between users when showing items
+ * @author pares, jack, gradiente
+ * @since 1.0
+ */
 public enum Ownership {
     PERSONAL("Personal"),
     OTHER("Other");

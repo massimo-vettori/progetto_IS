@@ -6,29 +6,37 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.*;
 import java.util.function.Consumer;
 
-//TODO: comments
-//TODO: put an annotation and make private on methods which modify the category
-
 /**
  * This class represents a Category stored in the database (categories in DB)
- *
- * @author pares
+ * @author pares, jack, gradiente
  * @since 1.0
  */
 public class Category {
-    public static final String CLASS_CATEGORY_DB = "categories";
-    public static final String ID_CATEGORY_DB = "id_category";
-    public static final String ID_ITEMS_DB = "id_items";
-    public static final int ITEM_INFO_LENGTH = 8;
+    /**
+     * the category main node name in the database
+     */
+    static final String CLASS_CATEGORY_DB = "categories";
+    /**
+     * the category id node name in the database
+     */
+    static final String ID_CATEGORY_DB = "id_category";
+    /**
+     * the items id node name in the database
+     */
+    static final String ID_ITEMS_DB = "id_items";
+
     private final String idCategory;
 
-    public static final DatabaseReference dbRefCategories = FirebaseDatabase.getInstance().getReference().child(Category.CLASS_CATEGORY_DB);
+    /**
+     * a reference to the category main node in the database
+     */
+    static final DatabaseReference dbRefCategories = FirebaseDatabase.getInstance().getReference().child(Category.CLASS_CATEGORY_DB);
 
     /**
      * a Set containing all the available categories. Each one has its correspondence in strings.xml
-     * and in the database. To add a new category, it needs to be added here, in strings.xml and in the database
+     * and in the database. To add a new category, it needs to be added both here, in strings.xml, and in the database
      */
-    public static final Set<Category> categories = new HashSet<>();
+    private static final Set<Category> categories = new HashSet<>();
     {
         categories.add(new Category("Tech"));
         categories.add(new Category("Clothes"));
@@ -56,7 +64,7 @@ public class Category {
     }
 
 
-    //da verificare se funziona
+    //TODO: to be tested
     /**
      * Retrieve from the database the main information about the items which belong to the provided category
      * by saving them in a map which be manipulated by the consumer
@@ -66,9 +74,9 @@ public class Category {
      */
     public static void getItemsByCategory(String contextTag, String category, Consumer<Map<String, ArrayList<String>>> consumer) {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(Category.CLASS_CATEGORY_DB);
-        BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRef, category, Category.ITEM_INFO_LENGTH, consumer);
+        BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRef, category, Item.INFO_LENGTH, consumer);
     }
-    //da verificare se funziona
+    //TODO: to be tested
     /**
      * add a new item with its main information to a category <p>
      * (to be called only when adding a category to an existing item
@@ -93,7 +101,7 @@ public class Category {
     }
 
     /**
-     * @return the titles of the existing categories
+     * @return a collection of the existing categories titles
      */
     public static Collection<String> getCategories() {
         Collection<String> res = new ArrayList<>();

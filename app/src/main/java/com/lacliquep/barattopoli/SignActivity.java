@@ -26,6 +26,12 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * this Activity discriminates between a logged user and not logged one when starting the app
+ * and redirecting to the correct activity
+ * @author pares, jack, gradiente
+ * @since 1.0
+ */
 public class SignActivity extends AppCompatActivity {
 
     private static final String ACTIVITY_TAG_NAME = "SignActivity";
@@ -47,49 +53,11 @@ public class SignActivity extends AppCompatActivity {
                 if (i == 1) loadFragment(new InsertNewUserFragment());
         } else {
             if (user != null) {
-
-
-                //TODO: embed this button in new activity and delete it from SignActivity.xml
-                //logout_button = findViewById(R.id.logout_button);
-                // User is signed in
-                String uid = user.getUid();
-                //called whenever the button logout is clicked
-                //leading to the Button_startActivity where the login or registration is required
-                /*logout_button.setOnClickListener(view -> {
-                    //logout
-                    // TODO wrap in asynctask??
-
-                    mAuth.signOut();
-                    Toast.makeText(SignActivity.this, getString(R.string.Logout)+getString(R.string.success), Toast.LENGTH_SHORT).show();
-                    loadFragment(new SignInUpFragment());
-                });*/
-                Toast.makeText(this, "User is signed in", Toast.LENGTH_LONG).show();
-
-                /*User.retrieveCurrentUser(SignActivity.ACTIVITY_TAG_NAME, mDatabase, new Consumer<User>() {
-                    @Override
-                    public void accept(User user) {
-                        Bundle c = new Bundle();
-                        c.putString(getString(R.string.Bundle_tag_user_basic_info), user.getUserBasicInfo());
-                        // Change activity
-                        Intent intent = new Intent(SignActivity.this, MainActivity.class);
-                        //attach the string
-                        intent.putExtras(c);
-                        startActivity(intent);
-                        finish();
-                    }
-                });*/
-
-
-
+                Toast.makeText(this, getString(R.string.welcome_back), Toast.LENGTH_LONG).show();
                 // Change activity
-                /*Intent intent = new Intent(SignActivity.this, MainActivity.class);
-                startActivity(intent);*/
                 startActivity(new Intent(SignActivity.this, MainActivity.class));
-//                loadFragment(new SignInUpFragment());
-
             } else {
                 loadFragment(new SignInUpFragment());
-                //Toast.makeText(this, "User is not signed in", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -98,7 +66,7 @@ public class SignActivity extends AppCompatActivity {
      * replace the FrameLayout in activity_sign with a different new Fragment
      * @param fragment the fragment that will replace the FrameLayout
      */
-    void loadFragment(Fragment fragment) {
+    private void loadFragment(Fragment fragment) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             androidx.fragment.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.fragmentContainerView, fragment);

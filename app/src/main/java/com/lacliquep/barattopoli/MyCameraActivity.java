@@ -16,6 +16,12 @@ import androidx.annotation.NonNull;
 import com.lacliquep.barattopoli.classes.BarattopoliUtil;
 import com.lacliquep.barattopoli.fragments.sign.InsertNewUserFragment;
 
+/**
+ * this Activity is used to take a picture with the camera when inserting an object or a user in the database
+ * @author pares, jack, gradiente
+ * @since 1.0
+ * //TODO: camera permissions!!
+ */
 public class MyCameraActivity extends Activity
 {
     //

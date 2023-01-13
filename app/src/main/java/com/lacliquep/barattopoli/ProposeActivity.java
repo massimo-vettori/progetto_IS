@@ -17,12 +17,17 @@ import com.lacliquep.barattopoli.views.ListItemView;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * this Activity handles when choosing an item displayed with the help of ObjectFragment and creating an exchange (insertion in database too)
+ * @see com.lacliquep.barattopoli.fragments.ObjectFragment
+ * @author pares, jack, gradiente
+ */
 public class ProposeActivity extends AppCompatActivity {
 
-    LinearLayout scroller;
-    LinearLayout othersItem;
-    Item proposerItem;
-    public static String TAG = "ProposeActivity";
+    private LinearLayout scroller;
+    private LinearLayout othersItem;
+    private Item proposerItem;
+    private static String TAG = "ProposeActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +44,7 @@ public class ProposeActivity extends AppCompatActivity {
         this.init(item);
     }
 
-    public void addItem(Item item) {
+    private void addItem(Item item) {
         LinearLayout container = findViewById(R.id.board_item_list);
         View view = ListItemView.createAndInflate(this, item, container);
         container.addView(view);
@@ -67,7 +72,7 @@ public class ProposeActivity extends AppCompatActivity {
         view.setClickable(true);
     }
 
-    protected void init(Item item) {
+    private void init(Item item) {
         View oth_item = ListItemView.createAndInflate(this, item, othersItem);
         oth_item.setClickable(false);
         othersItem.addView(oth_item);

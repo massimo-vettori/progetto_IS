@@ -21,10 +21,22 @@ import com.lacliquep.barattopoli.classes.Item;
 import com.lacliquep.barattopoli.classes.Ownership;
 
 /**
- * TODO: document your custom view class.
+ * this class handles a list of exchanges in the user's menu. It discriminates between the exchanges where the
+ * user is the applicant or the proposer, with the help of the class Ownership
+ * @see Ownership
+ * @author pares, jack, gradiente
+ * @since 1.0
  */
 public class ExchangeItemView extends View {
 
+    /**
+     * display a single item in the scroll-view
+     * @param ctx the context where to inflate the xml correct view
+     * @param exchange the exchange to display
+     * @param o if the exchange to display has been created by the user or not (i.e. the user is the applicant)
+     * @param container the connection with the main elemnt in the xml to inflate
+     * @return
+     */
     public static View createAndInflate(Context ctx, Exchange exchange, Ownership o, @Nullable ViewGroup container) {
         View view = LayoutInflater.from(ctx).inflate(R.layout.sample_excange_item_view, container, false);
 
@@ -107,7 +119,7 @@ public class ExchangeItemView extends View {
         return view;
     }
 
-    public ExchangeItemView(Context context) {
+    protected ExchangeItemView(Context context) {
         super(context);
         init(null, 0);
     }
