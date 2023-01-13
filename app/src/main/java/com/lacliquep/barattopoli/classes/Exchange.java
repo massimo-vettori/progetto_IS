@@ -105,7 +105,37 @@ public class Exchange implements Serializable {
         Item.retrieveItemsByIds("Exchange", FirebaseDatabase.getInstance().getReference(), new ArrayList<>(Arrays.asList(values.get(5), values.get(6))), new Consumer<ArrayList<Item>>() {
             @Override
             public void accept(ArrayList<Item> items) {
-                consumer.accept(new Exchange(values.get(0), values.get(2), Exchange.exchangeStatusValueOf(values.get(1)), User.getSampleUser(), User.getSampleUser(), new ArrayList<>(Collections.singletonList(items.get(0))), new ArrayList<>(Collections.singletonList(items.get(1)))));
+                Item proposer_item  = items.get(0);
+                Item applicant_item = items.get(1);
+
+                User proposer = new User(
+                        proposer_item.getOwnerId(),
+                        proposer_item.getOwnerUsername(),
+                        "",
+                        "",
+                        proposer_item.getLocation(),
+                        proposer_item.getOwnerRank(),
+                        BarattopoliUtil.encodeImageToBase64(proposer_item.getOwnerImage())
+                );
+
+                User applicant;
+
+                if (applicant_item == null) {
+                    applicant_item = Item.getEmptyItem();
+                    applicant = User.getEmptyUser();
+                } else {
+                    applicant = new User(
+                            applicant_item.getOwnerId(),
+                            applicant_item.getOwnerUsername(),
+                            "",
+                            "",
+                            applicant_item.getLocation(),
+                            applicant_item.getOwnerRank(),
+                            BarattopoliUtil.encodeImageToBase64(applicant_item.getOwnerImage())
+                    );
+                }
+
+                consumer.accept(new Exchange(values.get(0), values.get(2), Exchange.exchangeStatusValueOf(values.get(1)), applicant, proposer, new ArrayList<>(Collections.singletonList(applicant_item)), new ArrayList<>(Collections.singletonList(proposer_item))));
             }
         });
     }
@@ -219,6 +249,68 @@ public class Exchange implements Serializable {
         }
         return res;
     }
+
+    public static void retrieveAllExchanges(Consumer<Exchange> consumer) {
+        FirebaseDatabase.getInstance().getReference().child(Exchange.CLASS_EXCHANGE_DB).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists() && snapshot.hasChildren()) {
+                    for (DataSnapshot exch: snapshot.getChildren()) {
+                        Exchange.retrieveExchangeById("Exchange", exch.getKey(), new Consumer<Exchange>() {
+                            @Override
+                            public void accept(Exchange exchange) {
+                                consumer.accept(exchange);
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public static void deleteUnapprovedExchanges(@NonNull Exchange approved) {
+        String exchangeId         = approved.getIdExchange();
+        ArrayList<String> itemIds = new ArrayList<>();
+
+        for (Item item: approved.getApplicantItems()) {
+            itemIds.add(item.getIdItem());
+        }
+
+        for (Item item: approved.getProposerItems()) {
+            itemIds.add(item.getIdItem());
+        }
+
+        retrieveAllExchanges(new Consumer<Exchange>() {
+            @Override
+            public void accept(Exchange exchange) {
+                if (exchange.exchangeStatus == ExchangeStatus.IN_APPROVAL && !exchange.getIdExchange().equals(exchangeId)) {
+                    boolean toDelete = true;
+
+                    for (Item item: exchange.getApplicantItems()) {
+                        if (!itemIds.contains(item.getIdItem())) {
+                            toDelete = false;
+                            break;
+                        }
+                    }
+
+                    for (Item item: exchange.getProposerItems()) {
+                        if (!itemIds.contains(item.getIdItem())) {
+                            toDelete = false;
+                            break;
+                        }
+                    }
+
+                    if (toDelete) Exchange.deleteExchange(exchange);
+                }
+            }
+        });
+    }
+
     /**
      * read from the database all the values regarding the User with the provided id <p>
      * Don't try taking out data from the consumer: it is not going to work
@@ -324,7 +416,7 @@ public class Exchange implements Serializable {
             String idExchange = UUID.randomUUID().toString();
             setIdExchangeDb(idExchange);
             setDateDb(idExchange, date);
-            setExchangeStatusDb(idExchange, ExchangeStatus.IN_APPROVAL);
+            setExchangeStatusDb(idExchange, null,  ExchangeStatus.IN_APPROVAL);
             setApplicantDb(idExchange, applicant);
             setProposerDb(idExchange, proposer);
             setApplicantItemsDb(idExchange, applicantItems);
@@ -335,23 +427,126 @@ public class Exchange implements Serializable {
             User.dbRefUsers.child(proposer.getIdUser()).child(User.ID_EXCHANGES_DB).child(idExchange).setValue(Exchange.getExchangeBasicInfo(idExchange, date,ExchangeStatus.IN_APPROVAL,applicant,proposer,applicantItems,proposerItems));
         }
     }
+
+    boolean legalExchangeTransition(ExchangeStatus currExchangeStatus, ExchangeStatus nextExchangeStatus) {
+        boolean res = true;
+        String curr = Exchange.StringValueOfExchangeStatus(currExchangeStatus);
+        String next = Exchange.StringValueOfExchangeStatus(nextExchangeStatus);
+        //terminal states
+        if (curr.equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.REFUSED)) ||
+                curr.equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.ANNULLED)) ||
+                curr.equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.ILLEGAL))) {
+            res = false;
+        }
+        if (curr.equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.IN_APPROVAL))) {
+            if (!(next.equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.ACCEPTED)) ||
+                    next.equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.REFUSED)))) {
+                res = false;
+            }
+        }
+        if (curr.equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.ACCEPTED))) {
+            //confirmation of acceptance
+            if (!(next.equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.CLOSED)) ||
+                    //object has been destroyed or ruined
+                next.equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.ANNULLED)))) {
+                res = false;
+            }
+        }
+        if (curr.equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.CLOSED))) {
+            //the exchange has been made
+            if (!(next.equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.HAPPENED)))) {
+                res = false;
+            }
+        }
+        if (curr.equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.HAPPENED))) {
+            //ready for review
+            if (!(next.equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.REVIEWED_BY_APPLICANT)) ||
+                    next.equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.REVIEWED_BY_PROPOSER)))) {
+                res = false;
+            }
+        }
+        if (next.equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.REVIEWED_BY_BOTH))) {
+            if (!(curr.equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.REVIEWED_BY_APPLICANT)) ||
+                    curr.equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.REVIEWED_BY_PROPOSER)))) {
+                res = false;
+            }
+        }
+        return res;
+    }
     /**
      *
      * @param exchange the Exchange where to change the status
-     * @param newExchangeStatus the new exchange status of the specified Exchange
+     * @param nextExchangeStatus the new exchange status of the specified Exchange
      */
-    public static void changeExchangeStatusDb(Exchange exchange, ExchangeStatus newExchangeStatus) {
-        //TODO: add controls on legal statuses transitions
-        setExchangeStatusDb(exchange.getIdExchange(), newExchangeStatus);
-        //TODO:
-        //for each item involved in the exchange:
-        // set not exchangeable if transition is: in approval->accepted
-        //set exchangeable if transition is: in approval->refused, or anystatus(except for happened and all the reviewed)->annulled
-        //delete the exchange (from exchanges and from the user's list of exchanges), and all the involved items (use remove item from board)
-        //if newExchangeStatus is: reviewed by both
+    public static void changeExchangeStatusDb(Exchange exchange, ExchangeStatus nextExchangeStatus) {
+        ExchangeStatus currExchangeStatus = exchange.getExchangeStatus();
+        if (exchange.legalExchangeTransition(currExchangeStatus, nextExchangeStatus)) {
+            setExchangeStatusDb(exchange.getIdExchange(), exchange, nextExchangeStatus);
+            if (Exchange.StringValueOfExchangeStatus(nextExchangeStatus).equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.ACCEPTED))) {
+               //change from exchangeable to not exchangeable
+                for (Item item: exchange.getApplicantItems()) {
+                    Item.setExchangeable(false, FirebaseDatabase.getInstance().getReference().child(Item.CLASS_ITEM_DB).child(item.getIdItem()));
+                }
+                for (Item item: exchange.getProposerItems()) {
+                    Item.setExchangeable(false, FirebaseDatabase.getInstance().getReference().child(Item.CLASS_ITEM_DB).child(item.getIdItem()));
+                }
+            }
+            if (Exchange.StringValueOfExchangeStatus(nextExchangeStatus).equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.REFUSED)) ||
+                    Exchange.StringValueOfExchangeStatus(nextExchangeStatus).equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.ANNULLED)) ||
+                    Exchange.StringValueOfExchangeStatus(nextExchangeStatus).equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.ILLEGAL))) {
+                //delete exchange
+                Exchange.deleteExchange(exchange);
+                //change from not exchangeable to exchangeable
+                for (Item item: exchange.getApplicantItems()) {
+                    Item.setExchangeable(true, FirebaseDatabase.getInstance().getReference().child(Item.CLASS_ITEM_DB).child(item.getIdItem()));
+                }
+                for (Item item: exchange.getProposerItems()) {
+                    Item.setExchangeable(true, FirebaseDatabase.getInstance().getReference().child(Item.CLASS_ITEM_DB).child(item.getIdItem()));
+                }
+            }
+            if (Exchange.StringValueOfExchangeStatus(nextExchangeStatus).equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.REVIEWED_BY_BOTH))) {
+                //delete exchange, delete items
+                Exchange.deleteExchange(exchange);
+                for (Item item: exchange.getApplicantItems()) {
+                    User.removeItemFromBoard("Exchange", item.getOwnerId(), item.getIdItem());
+                }
+                for (Item item: exchange.getProposerItems()) {
+                    User.removeItemFromBoard("Exchange", item.getOwnerId(), item.getIdItem());
+                }
+            }
+
+
+            //for each item involved in the exchange:
+            // set not exchangeable if transition is: in approval->accepted
+            //set exchangeable if transition is: in approval->refused, or anystatus(except for happened and all the reviewed)->annulled
+            //delete the exchange (from exchanges and from the user's list of exchanges), and all the involved items (use remove item from board)
+            //if newExchangeStatus is: reviewed by both
+        }
     }
-    private static void setExchangeStatusDb(String idExchange, ExchangeStatus exchangeStatus) {
+
+    public static void deleteExchange(Exchange exchange) {
+        Exchange.retrieveExchangeById("Exchange", exchange.getIdExchange(), new Consumer<Exchange>() {
+            @Override
+            public void accept(Exchange exchange1) {
+                Log.d("Exchange",exchange1 != null? "exchange exists": "exchange does not exist");
+                if (exchange1 != null) {
+                    //remove exchange from Users' Board
+                    User.dbRefUsers.child(exchange1.getApplicant().getIdUser()).child(User.ID_EXCHANGES_DB).child(exchange1.getIdExchange()).removeValue();
+                    User.dbRefUsers.child(exchange1.getProposer().getIdUser()).child(User.ID_EXCHANGES_DB).child(exchange1.getIdExchange()).removeValue();
+                    //remove exchange from exchanges
+                    (Exchange.dbRef).child(exchange1.getIdExchange()).removeValue();
+                } else Log.d("Exchange", "Exchange " + exchange1.getIdExchange() + " does not exist anymore" );
+            }});
+    }
+    private static void setExchangeStatusDb(String idExchange, @Nullable  Exchange exchange, ExchangeStatus exchangeStatus) {
         Exchange.dbRef.child(idExchange).child(Exchange.EXCHANGE_STAUS_DB).setValue(Exchange.StringValueOfExchangeStatus(exchangeStatus));
+        if (exchange != null) Exchange.exchangeStatusInBasicInfo(exchange, exchangeStatus);
+    }
+    private static void exchangeStatusInBasicInfo(Exchange exchange, ExchangeStatus exchangeStatus) {
+        exchange.exchangeStatus = exchangeStatus;
+        String basicInfo = Exchange.getExchangeBasicInfo(exchange.getIdExchange(), exchange.getDate(), exchangeStatus, exchange.getApplicant(), exchange.getProposer(), exchange.getApplicantItems(), exchange.getProposerItems());
+        User.dbRefUsers.child(exchange.getApplicant().getIdUser()).child(Exchange.CLASS_EXCHANGE_DB).child(exchange.getIdExchange()).setValue(basicInfo);
+        User.dbRefUsers.child(exchange.getProposer().getIdUser()).child(Exchange.CLASS_EXCHANGE_DB).child(exchange.getIdExchange()).setValue(basicInfo);
     }
     private static void setDateDb(String idExchange, String date) {
         Exchange.dbRef.child(idExchange).child(Exchange.DATE_DB).setValue(date);
