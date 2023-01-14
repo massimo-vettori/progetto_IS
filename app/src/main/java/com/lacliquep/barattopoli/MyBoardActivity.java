@@ -37,15 +37,19 @@ public class MyBoardActivity extends AppCompatActivity {
         // Removes the title bar
         Objects.requireNonNull(getSupportActionBar()).hide();
 
-        retrieveItems();
-
         Button back = findViewById(R.id.back_button);
         back.setOnClickListener(view -> {
             finish();
         });
+    }
 
-        // Disables the grid view button
-        findViewById(R.id.activate_grid_view_btn).setEnabled(false);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("MyBoardActivity", "onResume");
+        LinearLayout container = findViewById(R.id.board_item_list);
+        container.removeAllViews();
+        retrieveItems();
     }
 
     protected void addItem(Item item) {

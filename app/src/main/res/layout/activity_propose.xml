@@ -35,14 +35,19 @@
         app:layout_constraintBottom_toBottomOf="@+id/back_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/other_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintTop_toBottomOf="@id/textView3"
         android:fontFamily="@font/inter_medium"
-        android:text="Oggetto/servizio dell'altra persona" />
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:text="Oggetto/servizio dell'altra persona"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView3" />
 
     <LinearLayout
         android:id="@+id/others_item"
@@ -53,36 +58,36 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:orientation="vertical">
-
     </LinearLayout>
 
     <TextView
         android:id="@+id/your_item"
-        app:layout_constraintTop_toBottomOf="@id/others_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        android:fontFamily="@font/inter_medium"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:fontFamily="@font/inter_medium"
-        android:text="Oggetto/servizio della tua bacheca" />
+        android:layout_marginBottom="20dp"
+        android:text="Oggetto/servizio della tua bacheca"
+        app:layout_constraintBottom_toTopOf="@+id/scrollView2"
+        tools:layout_editor_absoluteX="20dp" />
 
 
-        <ScrollView
-            android:layout_width="409dp"
-            android:layout_height="280dp"
-            android:layout_marginTop="?attr/paddingSm"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/others_item">
-            <LinearLayout
-                android:id="@+id/board_item_list"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:paddingHorizontal="?attr/paddingMd"
-                android:paddingVertical="?attr/paddingMd"
-                android:orientation="vertical">
-            </LinearLayout>
-        </ScrollView>
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="409dp"
+        android:layout_height="500dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:id="@+id/board_item_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="?attr/paddingMd"
+            android:paddingVertical="?attr/paddingMd" />
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -451,16 +452,32 @@ public class Exchange implements Serializable {
      */
     public static void insertExchangeInDatabase(String contextTag, String firstProposerItemId, String firstApplicantItemId) {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
-        Item.retrieveItemsByIds(contextTag, dbRef, new ArrayList<>(Arrays.asList(firstProposerItemId, firstApplicantItemId)), new Consumer<ArrayList<Item>>() {
+        ArrayList<String> itemsIds = new ArrayList<>();
+        itemsIds.add(firstProposerItemId);
+        if (firstApplicantItemId != null) itemsIds.add(firstApplicantItemId);
+
+        Item.retrieveItemsByIds(contextTag, dbRef, new ArrayList<>(itemsIds), new Consumer<ArrayList<Item>>() {
             @Override
             public void accept(ArrayList<Item> items) {
-                User proposer = User.createUserFromBasicInfo("", new ArrayList<String>(items.get(0).getOwner()));
-                User applicant = User.createUserFromBasicInfo("", new ArrayList<String>(items.get(1).getOwner()));
-                ArrayList<Item> applicantItems = new ArrayList<>();
-                ArrayList<Item> proposerItems = new ArrayList<>();
-                proposerItems.add(items.get(0));
-                applicantItems.add(items.get(1));
-                insertExchangeInDatabaseAux(applicant, proposer, applicantItems,proposerItems);
+                if (firstApplicantItemId != null) {
+                    User proposer = User.createUserFromBasicInfo("", new ArrayList<String>(items.get(0).getOwner()));
+                    User applicant = User.createUserFromBasicInfo("", new ArrayList<String>(items.get(1).getOwner()));
+                    ArrayList<Item> applicantItems = new ArrayList<>();
+                    ArrayList<Item> proposerItems = new ArrayList<>();
+                    proposerItems.add(items.get(0));
+                    applicantItems.add(items.get(1));
+                    insertExchangeInDatabaseAux(applicant, proposer, applicantItems,proposerItems);
+                } else {
+                    User proposer = User.createUserFromBasicInfo("", new ArrayList<String>(items.get(0).getOwner()));
+                    ArrayList<Item> proposerItems = new ArrayList<>();
+                    proposerItems.add(items.get(0));
+                    User.retrieveCurrentUser(contextTag, dbRef, new Consumer<User>() {
+                        @Override
+                        public void accept(User applicant) {
+                            insertExchangeInDatabaseAux(applicant, proposer, new ArrayList<>(), proposerItems);
+                        }
+                    });
+                }
             }
         });
     }

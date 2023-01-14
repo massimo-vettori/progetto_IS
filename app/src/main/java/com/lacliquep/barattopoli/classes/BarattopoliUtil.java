@@ -161,11 +161,15 @@ public class BarattopoliUtil {
      * @return a String with the encoded image
      */
     public static String encodeImageToBase64(Bitmap bitmap){
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream .toByteArray();
-        String encodedFile = new String(Base64.getEncoder().encode(byteArray));
-        return encodedFile;
+        try {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+            byte[] byteArray = byteArrayOutputStream.toByteArray();
+            return new String(Base64.getEncoder().encode(byteArray));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return BarattopoliUtil.BLANK_IMAGE;
+        }
     }
 
     /**

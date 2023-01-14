@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.lacliquep.barattopoli.classes.Exchange;
@@ -16,6 +17,7 @@ import com.lacliquep.barattopoli.views.ListItemView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * this Activity handles when choosing an item displayed with the help of ObjectFragment and creating an exchange (insertion in database too)
@@ -33,6 +35,8 @@ public class ProposeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_propose);
+
+        Objects.requireNonNull(getSupportActionBar()).hide();
 
         othersItem = findViewById(R.id.others_item);
 
@@ -59,6 +63,9 @@ public class ProposeActivity extends AppCompatActivity {
                     .setPositiveButton(getString(R.string.Yes), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             Exchange.insertExchangeInDatabase(ProposeActivity.TAG, proposerItem.getIdItem(), item.getIdItem());
+                            finish();
+                            finish();
+                            Toast.makeText(ProposeActivity.this, "Proposta di scambio aggiunta", Toast.LENGTH_LONG).show();
                         }
                     })
                     .setNegativeButton(getString(R.string.No), new DialogInterface.OnClickListener() {
@@ -78,7 +85,7 @@ public class ProposeActivity extends AppCompatActivity {
         othersItem.addView(oth_item);
         proposerItem = item;
 
-        Item.retrieveMapWithAllItems(true,true,null, true, FirebaseAuth.getInstance().getUid(), new ArrayList<String>(Arrays.asList("Italia", "Veneto", "Venezia", "Venezia")), stringMapMap -> {
+        Item.retrieveMapWithAllItems(false,true,null, true, FirebaseAuth.getInstance().getUid(), new ArrayList<String>(Arrays.asList("Italia", "Veneto", "Venezia", "Venezia")), stringMapMap -> {
             stringMapMap.forEach((key, value) -> {
                 if (value.isExchangeable())
                     addItem(value);

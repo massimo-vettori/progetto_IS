@@ -83,11 +83,10 @@ public class ExchangeItemView extends View {
 
         status.setClickable(true);
 
-        image_dx.setClickable(true);
-        image_sx.setClickable(true);
 
         // TODO: Add default charity item
         if (!exchange.getApplicantItems().isEmpty()) {
+            image_dx.setClickable(true);
             image_dx.setOnClickListener(v -> {
                 Intent intent = new Intent(ctx, ItemViewActivity.class);
                 Item item = exchange.getApplicantItems().get(0);
@@ -103,6 +102,7 @@ public class ExchangeItemView extends View {
 
         // TODO: Add default charity item
         if (!exchange.getProposerItems().isEmpty()) {
+            image_sx.setClickable(true);
             image_sx.setOnClickListener(v -> {
                 Intent intent = new Intent(ctx, ItemViewActivity.class);
                 Item item = exchange.getProposerItems().get(0);

@@ -23,10 +23,11 @@ public enum Ownership {
         return type;
     }
 
+    @NonNull
     public static Ownership from(String value) {
         for (Ownership o : Ownership.values()) {
             if (o.type.equals(value)) return o;
         }
-        return null;
+        return OTHER;
     }
 }

@@ -81,6 +81,9 @@ public class Item implements Serializable {
      * the number of the basic info elements about an Item when stored in a different node in a CSV format
      */
     static final int INFO_LENGTH = 11;
+
+    public static final String EMPTY_ITEM_ID = "EmptyItem";
+
     /**
      * the basic info elements about an Item when stored in a different node in a CSV format
      */
@@ -210,8 +213,10 @@ public class Item implements Serializable {
      * @param id the id of the Item to retrieve
      * @param consumer the way the fetched data are being used
      */
-    public static void retrieveItemById(String contextTag, DatabaseReference dbRef, String id, Consumer<Item> consumer) {
-        retrieveItemsByIds(contextTag, dbRef, new ArrayList<>(Collections.singletonList(id)), new Consumer<ArrayList<Item>>() {
+    public static void retrieveItemById(String contextTag, @Nullable DatabaseReference dbRef, String id, Consumer<Item> consumer) {
+        DatabaseReference ref = dbRef != null ? dbRef : FirebaseDatabase.getInstance().getReference();
+
+        retrieveItemsByIds(contextTag, ref, new ArrayList<>(Collections.singletonList(id)), new Consumer<ArrayList<Item>>() {
             @Override
             public void accept(ArrayList<Item> items) {
                 consumer.accept(items.get(0));
@@ -226,8 +231,10 @@ public class Item implements Serializable {
      * @param ids the ids of the items to fetch
      * @param consumer accepts and provides the list of items
      */
-    public static void retrieveItemsByIds(String contextTag, DatabaseReference dbRef, ArrayList<String> ids, Consumer<ArrayList<Item>> consumer) {
-        dbRef.child(Item.CLASS_ITEM_DB).addListenerForSingleValueEvent(new ValueEventListener() {
+    public static void retrieveItemsByIds(String contextTag, @Nullable DatabaseReference dbRef, ArrayList<String> ids, Consumer<ArrayList<Item>> consumer) {
+        DatabaseReference ref = dbRef != null ? dbRef : FirebaseDatabase.getInstance().getReference();
+
+        ref.child(Item.CLASS_ITEM_DB).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
@@ -261,6 +268,11 @@ public class Item implements Serializable {
                                 if (s.getKey().equals("province")) location.add(s.getValue().toString());
                                 if (s.getKey().equals("city")) location.add(s.getValue().toString());
                             }
+
+                            if (location.size() < 4) {
+                                for (int i = location.size(); i < 4; ++i) location.add("");
+                            }
+
                             Item newItem = new Item(id, ItemData.get(0), ItemData.get(1), ItemData.get(2), own, location, Boolean.getBoolean(ItemData.get(5)), Boolean.getBoolean(ItemData.get(6)), Boolean.getBoolean(ItemData.get(7)), cat, img);
                             arr.add(newItem);
                         }
@@ -440,13 +452,17 @@ public class Item implements Serializable {
                             ArrayList<String> categories = new ArrayList<>(Arrays.asList(itemFields.get(0)));
                             ArrayList<String> images = new ArrayList<>(Arrays.asList(itemFields.get(2)));
                             Item it = new Item(id, itemFields.get(10), "", itemFields.get(1), new ArrayList<>(), location, Boolean.parseBoolean(itemFields.get(3)), Boolean.parseBoolean(itemFields.get(4)), Boolean.parseBoolean(itemFields.get(5)), categories, images);
-                            items.put(id, it);
+
+                            if (!showCharity && !it.isCharity)
+                                items.put(id, it);
+                            else if (showCharity)
+                                items.put(id, it);
                         }
                         consumer.accept(items);
                     }
                 });
             } else {
-                Item.dbRefItems.orderByChild(Item.LOCATION_DB + "/province").equalTo(location.get(2)).limitToFirst(5).addChildEventListener(new ChildEventListener() {
+                Item.dbRefItems.orderByChild(Item.LOCATION_DB + "/province").equalTo(location.get(2)).addChildEventListener(new ChildEventListener() {
                     HashMap<String, Item> items = new HashMap<>();
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -523,7 +539,7 @@ public class Item implements Serializable {
                                                         //charity filter
                                                         if ((newItem.isCharity() && showCharity)) {
                                                             items.put(idItem, newItem);
-                                                        } else {
+                                                        } else if (!showCharity && !newItem.isCharity()) {
                                                             //service or object filter
                                                             if ((newItem.isService() && showService) || (!(newItem.isService()) && !showService))
                                                                 items.put(idItem, newItem);
@@ -535,7 +551,7 @@ public class Item implements Serializable {
                                                 if ((newItem.isCharity() && showCharity)) {
                                                     items.put(idItem, newItem);
                                                 } else {
-                                                    if (!showCharity) {
+                                                    if (!showCharity && !newItem.isCharity()) {
                                                         //service or object filter
                                                         if ((newItem.isService() && showService) || (!(newItem.isService()) && !showService))
                                                             items.put(idItem, newItem);
@@ -798,7 +814,7 @@ public class Item implements Serializable {
         location.add("");
         location.add("");
         location.add("");
-        return new Item("", "", "", "", owner, location, false, true, false, categories, images);
+        return new Item(EMPTY_ITEM_ID, "", "", "", owner, location, false, true, false, categories, images);
     }
 
     //EQUALS & HASHCODE

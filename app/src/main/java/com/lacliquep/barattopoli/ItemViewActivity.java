@@ -9,12 +9,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.lacliquep.barattopoli.classes.Exchange;
 import com.lacliquep.barattopoli.classes.Item;
 import com.lacliquep.barattopoli.classes.Ownership;
@@ -28,6 +30,7 @@ import java.util.Objects;
 public class ItemViewActivity extends AppCompatActivity {
 
     protected String caller;
+    protected Boolean isCharity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +40,7 @@ public class ItemViewActivity extends AppCompatActivity {
 
 //        disableProposeButton(); // This disables the propose button to prevent barter proposals until they are properly implemented
 
-        Button backButton = findViewById(R.id.back_button);
-        backButton.setOnClickListener(view -> {
-            ItemViewActivity.this.backToHome();
-        });
+
 
         // Get the intent that started this activity
         Intent intent = getIntent();
@@ -48,16 +48,23 @@ public class ItemViewActivity extends AppCompatActivity {
 //        (Failed attempt to serialize/deserialize the item)
 //        Item item       = Item.deserialize(intent.getCharSequenceArrayExtra("item"));
         Item item = (Item) intent.getSerializableExtra("item");
+        isCharity = item != null && item.isCharity();
+        String itemId = item.getIdItem();
 
         // Get the ownership of the item from the intent
+        final Ownership owner = Ownership.from(intent.getStringExtra("ownership"));
 
-        Ownership owner = Ownership.from(intent.getStringExtra("ownership"));
         // Get the calling activity from the intent
         caller = intent.getStringExtra("caller");
 
         // Updates the UI with the item's data
-        if (owner == null) owner = Ownership.OTHER; // If the owner is null, set it to OTHER, in order to prevent a NullPointerException
-        if (item != null) this.setup(item, owner);
+        Log.d("ItemViewActivity", "Retrieving.... " + itemId);
+
+        Item.retrieveItemById("AAAAAAA", null, itemId, i -> {
+            Log.d("ItemViewActivity", "Item retrieved: " + i.toString());
+
+            ItemViewActivity.this.setup(i, owner);
+        });
     }
 
     public static String rangeString(@NonNull Item item, Context c) {
@@ -81,6 +88,11 @@ public class ItemViewActivity extends AppCompatActivity {
         addImageToImageList(item.getFirstImage());
         //updateUserName(item.getOwner().stream().reduce("", (a, b) -> a + " " + b));
 
+        Button backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener(view -> {
+            ItemViewActivity.this.backToHome();
+        });
+
         if (owner == Ownership.PERSONAL) {
             Button delete = findViewById(R.id.propose_btn);
             delete.setText(R.string.delete_item);
@@ -94,7 +106,8 @@ public class ItemViewActivity extends AppCompatActivity {
                         .setPositiveButton(getString(R.string.Yes), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 User.removeItemFromBoard("ItemViewActivity", FirebaseAuth.getInstance().getUid(), item.getIdItem());
-                                ItemViewActivity.this.backToHome();
+//                                ItemViewActivity.this.backToHome();
+                                finish();
                             }
                         })
                         .setNegativeButton(getString(R.string.No), new DialogInterface.OnClickListener() {
@@ -108,11 +121,27 @@ public class ItemViewActivity extends AppCompatActivity {
         } else {
             Button propose = findViewById(R.id.propose_btn);
             propose.setOnClickListener(v -> {
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("item", item);
-                Intent intent = new Intent(ItemViewActivity.this, ProposeActivity.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
+                Log.d("ItemViewActivity", "Proposing barter for item " + item.getIdItem());
+                Log.d("ItemViewActivity", "Item is charity item:     " + item.isCharity());
+                Log.d("ItemViewActivity", "Item is charity item:     " + isCharity);
+                if (isCharity) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                    builder.setMessage("Sei sicuro di voler proporre un baratto per questo oggetto/servizio?")
+                            .setCancelable(false)
+                            .setPositiveButton(getString(R.string.Yes), (dialog, id) -> {
+                                Exchange.insertExchangeInDatabase("ItemViewActivity", item.getIdItem(), null);
+                            }).setNegativeButton(getString(R.string.No), (dialog, id) -> {
+                                //return to setting the item details and don't take a new picture
+                                dialog.cancel();
+                            }).show();
+                } else {
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("item", item);
+                    Intent intent = new Intent(ItemViewActivity.this, ProposeActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
             });
         }
 
