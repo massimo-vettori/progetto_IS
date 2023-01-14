@@ -230,8 +230,8 @@ public class InsertNewItemActivity extends AppCompatActivity {
                             displayDescription.setText(description);
                             displayLocation.setText(location);
                             displayCategories.setText(categories.toString());
-                            displayService.setText(isAService? "Service": "Item");
-                            displayRange.setText(isForCharity? "Charity": rangeDescription);
+                            displayService.setText(isAService? getString(R.string.Service): getString(R.string.Item));
+                            displayRange.setText(isForCharity? getString(R.string.Charity): rangeDescription);
                             displayImage.setImageBitmap(BarattopoliUtil.decodeFileFromBase64(image));
 
                             //alert pop up to confirm the insert

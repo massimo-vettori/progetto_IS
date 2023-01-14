@@ -54,14 +54,14 @@ public class ExchangeItemView extends View {
             case PERSONAL:
                 desc_sx.setText(R.string.your_object_service);
                 desc_dx.setText(R.string.others_proposal);
+
                 status.setOnClickListener(v -> {
                     // Creates a modal dialog to accept or reject the exchange
                     AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-                    builder.setMessage("Vuoi accettare o rifiutare lo scambio?")
-                           .setPositiveButton("Accetta", (dialog, id)   -> {/* TODO: Implement */})
-                           .setNegativeButton("Rifiuta", (dialog, id)   -> {/* TODO: Implement */})
-                           .setNeutralButton("Non adesso", (dialog, id) -> dialog.cancel())
-                           .show();
+                    builder.setMessage("Vuoi annullare lo scambio?")
+                            .setPositiveButton("Si, annulla", (dialog, id)   -> {/* TODO: Implement */})
+                            .setNegativeButton("No", (dialog, id) -> dialog.cancel())
+                            .show();
                 });
 
                 break;
@@ -72,9 +72,10 @@ public class ExchangeItemView extends View {
                 status.setOnClickListener(v -> {
                     // Creates a modal dialog to accept or reject the exchange
                     AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-                    builder.setMessage("Vuoi annullare lo scambio?")
-                            .setPositiveButton("Si, annulla", (dialog, id)   -> {/* TODO: Implement */})
-                            .setNegativeButton("No", (dialog, id) -> dialog.cancel())
+                    builder.setMessage("Vuoi accettare o rifiutare lo scambio?")
+                            .setPositiveButton("Accetta", (dialog, id)   -> {/* TODO: Implement */})
+                            .setNegativeButton("Rifiuta", (dialog, id)   -> {/* TODO: Implement */})
+                            .setNeutralButton("Non adesso", (dialog, id) -> dialog.cancel())
                             .show();
                 });
 

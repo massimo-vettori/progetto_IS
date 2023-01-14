@@ -63,6 +63,37 @@ public class Category {
         return this.idCategory;
     }
 
+    public static String getItalian(String category) {
+        String res ="";
+        switch (category) {
+            case "Tech": res = "Tecnologia"; break;
+            case ",Tech": res = "Tecnologia"; break;
+            case "Tech,": res = "Tecnologia"; break;
+            case "Clothes": res = "Abbigliamento"; break;
+            case ",Clothes": res = "Abbigliamento"; break;
+            case "Clothes,": res = "Abbigliamento"; break;
+            case "Handmade": res = "Artigianato"; break;
+            case ",Handmade": res = "Artigianato"; break;
+            case "Handmade,": res = "Artigianato"; break;
+            case "Games": res = "Giochi"; break;
+            case ",Games": res = "Giochi"; break;
+            case "Games,": res = "Giochi"; break;
+            case "House_and_garden": res = "Casa e giardino"; break;
+            case ",House_and_garden": res = "Casa e giardino"; break;
+            case "House_and_garden,": res = "Casa e giardino"; break;
+            case "Food": res = "Cibo"; break;
+            case ",Food": res = "Cibo"; break;
+            case "Food,": res = "Cibo"; break;
+            case "School": res = "Scuola"; break;
+            case ",School": res = "Scuola"; break;
+            case "School,": res = "Scuola"; break;
+            case "Fun": res = "Divertimento"; break;
+            case ",Fun": res = "Divertimento"; break;
+            case "Fun,": res = "Divertimento"; break;
+        }
+        return res;
+    }
+
 
     //TODO: to be tested
     /**

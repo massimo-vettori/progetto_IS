@@ -56,6 +56,7 @@ public class ObjectFragment extends Fragment {
 
 //        Exchange.insertExchangeInDatabase("ObjectFragment", "e6f61add-9142-42ce-a1e4-b8005e4117c2", "cf7970bc-56a8-4a77-998f-e8ffcf6bed84");
         //test on exchange
+
         Exchange.retrieveAllExchanges(new Consumer<Exchange>() {
             @Override
             public void accept(Exchange exchange) {

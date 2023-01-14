@@ -28,6 +28,7 @@ import com.lacliquep.barattopoli.ItemViewActivity;
 import com.lacliquep.barattopoli.MainActivity;
 import com.lacliquep.barattopoli.R;
 import com.lacliquep.barattopoli.classes.BarattopoliUtil;
+import com.lacliquep.barattopoli.classes.Category;
 import com.lacliquep.barattopoli.classes.Item;
 import com.lacliquep.barattopoli.classes.Ownership;
 import com.lacliquep.barattopoli.classes.Range;
@@ -64,8 +65,8 @@ public class ListItemView extends LinearLayout {
         //TODO: fix the view with the getString. At the moment is not possible!!!!
         range.setText(ItemViewActivity.rangeString(item, ctx));
         if (!categories.isEmpty()) {
-            listItemTag1.setText(categories.get(0));
-            if (categories.size() > 1) listItemTag2.setText(categories.get(1));
+            listItemTag1.setText(Category.getItalian(categories.get(0)));
+            if (categories.size() > 1) listItemTag2.setText(Category.getItalian(categories.get(1)));
             else listItemTag2.setVisibility(View.INVISIBLE);
         } else {
             listItemTag1.setVisibility(View.INVISIBLE);

@@ -40,8 +40,6 @@ public class ItemViewActivity extends AppCompatActivity {
 
 //        disableProposeButton(); // This disables the propose button to prevent barter proposals until they are properly implemented
 
-
-
         // Get the intent that started this activity
         Intent intent = getIntent();
         // Get the serialized item from the intent and deserialize it into an Item object
@@ -53,6 +51,11 @@ public class ItemViewActivity extends AppCompatActivity {
 
         // Get the ownership of the item from the intent
         final Ownership owner = Ownership.from(intent.getStringExtra("ownership"));
+
+        if (owner == Ownership.PERSONAL) {
+            Button delete = findViewById(R.id.propose_btn);
+            delete.setText(R.string.delete_item);
+        }
 
         // Get the calling activity from the intent
         caller = intent.getStringExtra("caller");
