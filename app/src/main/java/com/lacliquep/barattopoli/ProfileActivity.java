@@ -18,15 +18,20 @@ import com.lacliquep.barattopoli.classes.User;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
+/**
+ * this class handles a user's data display
+ * @author pares, jack, gradiente
+ * @since 1.0
+ */
 public class ProfileActivity extends AppCompatActivity {
 
     private static final String ACTIVITY_TAG_NAME = "ProfileActivity";
-    Button backButton, button;
-    TextView  country, region, province, city, email, nickname, nameAndSurname;
-    ImageView profilePic;
+    private Button backButton, logOut;
+    private TextView  country, region, province, city, email, nickname, nameAndSurname;
+    private ImageView profilePic;
 
-    FirebaseAuth auth = FirebaseAuth.getInstance();
-    DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +39,7 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         backButton = findViewById(R.id.back_button);
-        button = findViewById(R.id.button);
+        logOut = findViewById(R.id.button);
         country = findViewById(R.id.country);
         region = findViewById(R.id.region);
         province = findViewById(R.id.province);
@@ -68,6 +73,15 @@ public class ProfileActivity extends AppCompatActivity {
         backButton.setOnClickListener(v -> {
             ProfileActivity.this.backToHome();
         });
+
+        logOut.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(ProfileActivity.this, SignActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
+
     }
 
     protected void backToHome() {

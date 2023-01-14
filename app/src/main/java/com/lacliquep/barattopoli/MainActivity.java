@@ -35,7 +35,11 @@ import com.lacliquep.barattopoli.classes.User;
 import com.lacliquep.barattopoli.views.ItemView;
 
 
-
+/**
+ * this class displays the left navigation bar and it is the main activity
+ * @author pares, jack, gradiente
+ * @since 1.0
+ */
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawer;
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -54,46 +58,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_main);
-
-       /* //retrieving a previous activity value attached to the bundle
-
-        this.addItem(Item.getSampleItem());
-        this.addItem(Item.getSampleItem());
-        this.addItem(Item.getSampleItem());
-
-        //retrieving a previous activity value attached to the bundle
-
-        Bundle b = getIntent().getExtras();
-        //retrieving user's info if this Activity is started by the previous activity in its natural chain
-        userBasicInfo = (b!= null)? b.getString(getString(R.string.Bundle_tag_user_basic_info)):"";
-
-        /*
-        // TODO: To move
-        insertNewItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent;
-                //attach a string with the current logged user basic info encoding to pass it forward
-                Bundle c = new Bundle();
-                c.putString(getString(R.string.Bundle_tag_user_basic_info), userBasicInfo);
-                //create intent
-                intent = new Intent(MainActivity.this, InsertNewItemActivity.class);
-                //attach the string
-                intent.putExtras(c);
-                startActivity(intent);
-                finish();
-            }
-        });
-        // TODO: To move
-        delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                User.removeItemFromBoard(MainActivity.ACTIVITY_TAG_NAME, "mmNsy71Nf5e8ATR79b4LNk3uRSh1","217b8390-b454-45b5-ab5f-6e947a08c29e");
-            }
-        });
-        */
-
 
         Toolbar toolbar = findViewById(R.id.toolbar); // define the toolbar because we removed the default ActionBar
         setSupportActionBar(toolbar); // set our ActionBar

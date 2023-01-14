@@ -19,43 +19,80 @@ import java.util.function.Consumer;
 
 /**
  * this class represents a User of the app
- *
- * @author pares
+ * @author pares, jack, gradiente
  * @since 1.0
  */
 public class User implements Serializable {
 
     private static final String CLASS_TAG_NAME = "User";
-    public static final Integer HIGHEST_RANK = 100;
-    public static final String CLASS_USER_DB = "users";
-    public static final String ID_USER_DB = "id_user";
-    public static final String NAME_DB = "name";
-    public static final String SURNAME_DB = "surname";
-    public static final String USERNAME_DB = "username";
-    public static final String LOCATION_DB = "location";
-    public static final String IMAGE_DB = "image";
-    public static final String RANK_DB = "rank";
-    public static final String ID_REVIEWS_DB = "reviews";
+    /**
+     * a user's highest rank
+     */
+    private static final Integer HIGHEST_RANK = 100;
+    /**
+     * the user's main node name in the database
+     */
+    static final String CLASS_USER_DB = "users";
+    /**
+     * the user's id node name in the database
+     */
+    private static final String ID_USER_DB = "id_user";
+    /**
+     * the user's name node name in the database
+     */
+    private static final String NAME_DB = "name";
+    /**
+     * the user's surname node name in the database
+     */
+    private static final String SURNAME_DB = "surname";
+    /**
+     * the user's username node name in the database
+     */
+    private static final String USERNAME_DB = "username";
+    /**
+     * the user's location node name in the database
+     */
+    static final String LOCATION_DB = "location";
+    /**
+     * the user's main profile pic node name in the database
+     */
+    private static final String IMAGE_DB = "image";
+    /**
+     * the user's current rank node name in the database
+     */
+    private static final String RANK_DB = "rank";
+    /**
+     * the user's reviews node name in the database
+     */
+    private static final String ID_REVIEWS_DB = "reviews";
 
-    public static final String ID_ITEMS_ON_BOARD_DB = "items_on_board";
-    public static final String ID_OBSERVED_ITEMS_DB = "observed_items";
-    public static final String ID_EXCHANGES_DB = "exchanges";
-    public static final int REVIEWS_INFO_LENGTH = Review.REVIEW_INFO_LENGTH;
-    public static final int ITEMS_ON_BOARD_INFO_LENGTH = Item.INFO_LENGTH;
+    /**
+     * the user's items board node name in the database
+     */
+    private static final String ID_ITEMS_ON_BOARD_DB = "items_on_board";
+
+    //TODO
+    private static final String ID_OBSERVED_ITEMS_DB = "observed_items";
     //TODO: how to reflect the changes of an item on the list of the observed items for all the users?
-    public static final int OBSERVED_ITEMS_INFO_LENGTH = Item.INFO_LENGTH;
-    public static final int EXCHANGES_INFO_LENGTH = Exchange.EXCHANGE_INFO_LENGTH;
+    private static final int OBSERVED_ITEMS_INFO_LENGTH = Item.INFO_LENGTH;
+    /**
+     * the user's exchanges node name in the database
+     */
+    static final String ID_EXCHANGES_DB = "exchanges";
+
     /**
      * the number of the basic info elements about a User when stored in a different class
      */
-    public static final int INFO_LENGTH = 4;
+    static final int INFO_LENGTH = 4;
     /**
      * the basic info elements about a User when stored in a different class
      */
-    public static final String INFO_PARAM = "id,image,rank,username";
+    static final String INFO_PARAM = "id,image,rank,username";
 
+    /**
+     * a database reference to the main user's node
+     */
     public static DatabaseReference dbRefUsers = FirebaseDatabase.getInstance().getReference().child(User.CLASS_USER_DB);
-    public static FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     private final String idUser;
     private final String name;
@@ -64,11 +101,6 @@ public class User implements Serializable {
     private final ArrayList<String> location;
     private final String image;
     private final Integer rank;
-
-
-
-
-
 
 
     /**
@@ -95,10 +127,22 @@ public class User implements Serializable {
         //the basic info when a User is stored in an Item
     }
 
+    /**
+     * @see User#INFO_PARAM
+     * @see User#INFO_LENGTH
+     * @return a String representing this user's basic info
+     */
     public String getUserBasicInfo() {
         return this.idUser + "," + this.image + "," + this.rank + "," + this.username;
     }
 
+    /**
+     * @param userBasicInfo a String representing this user's basic info, to be used if the second param is null
+     * @param basicInfo an array collecting the separate values in userBasicInfo
+     * @return an instance of a User
+     * @see User#INFO_PARAM
+     * @see User#INFO_LENGTH
+     */
     public static User createUserFromBasicInfo(String userBasicInfo,@Nullable ArrayList<String> basicInfo) {
         if (basicInfo == null) basicInfo = new ArrayList<>(Arrays.asList(userBasicInfo.split(",", User.INFO_LENGTH)));
         Log.d("66", basicInfo.toString());
@@ -111,6 +155,10 @@ public class User implements Serializable {
      */
     public static User getSampleUser() { return new User("basicUser", "basicUser", "", "", new ArrayList<>(Arrays.asList("Italia", "Veneto", "Venezia", "Venezia")), User.getMediumRank(), "");}
 
+    /**
+     * a User who does not exist, to be used when in need to not display one
+     * @return an instance of an empty User
+     */
     public static User getEmptyUser() {
         return new User(
             "",
@@ -139,8 +187,6 @@ public class User implements Serializable {
     }
 
 
-
-    //FUNZIONA
     /**
      * read from the database all the values regarding the User with the provided id <p>
      * Don't try taking out data from the consumer: it is not going to work
@@ -226,6 +272,9 @@ public class User implements Serializable {
         dbRefUser.child(User.RANK_DB).setValue(user.rank);
     }
 
+    /**
+     * @return a medium value for a user's rank, considering the highest rank
+     */
     public static Integer getMediumRank() {
         return User.HIGHEST_RANK/2;
     }
@@ -300,6 +349,7 @@ public class User implements Serializable {
         dbRefUserLocation.child("city").setValue(location.get(3));
     }
 
+    //TODO: change from private when ready to use it
     /**
      * retrieve the reviews the provided user gave to another user or another user gave to the provided user
      * with their basic info (text not included) in the database
@@ -307,10 +357,11 @@ public class User implements Serializable {
      * @param idUser the id of the provided user
      * @param consumer the way the fetched data are used
      */
-    public static void  getReviews(String contextTag,String idUser, Consumer<Map<String, ArrayList<String>>> consumer) {
-        BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(idUser), User.ID_REVIEWS_DB, User.REVIEWS_INFO_LENGTH, consumer);
+    private static void  getReviews(String contextTag,String idUser, Consumer<Map<String, ArrayList<String>>> consumer) {
+        BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(idUser), User.ID_REVIEWS_DB, Review.REVIEW_INFO_LENGTH, consumer);
     }
 
+    //TODO: change from private when ready to use it
     /**
      * adds a review another User gave to the provided User or the provided User gave to another User in the database
      * it updates the provided User's Rank in the database if they are the receiver
@@ -318,15 +369,16 @@ public class User implements Serializable {
      * @param idReview the new id review
      * @param info the correspondent info of the review in CSV format
      */
-    public static void addReview(String idUser, String idReview, String info) {
+    private static void addReview(String idUser, String idReview, String info) {
         //TODO
     }
+    //TODO: change from private when ready to use it
     /**
      * removes a review id another User gave to this User or this User gave to another User in the database
      * it updates the provided User's rank in the database
      * @param idReview the new review
      */
-    public static void removeIdReview(String idUser, String idReview) {
+    private static void removeIdReview(String idUser, String idReview) {
         //TODO
     }
 
@@ -339,7 +391,7 @@ public class User implements Serializable {
      * @see Item#INFO_PARAM
      */
     public static void  getItemsOnBoard(String contextTag,String idUser, Consumer<Map<String, ArrayList<String>>> consumer) {
-        BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(idUser), User.ID_ITEMS_ON_BOARD_DB, User.ITEMS_ON_BOARD_INFO_LENGTH, consumer);
+        BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(idUser), User.ID_ITEMS_ON_BOARD_DB, Item.INFO_LENGTH, consumer);
     }
 
     /**
@@ -356,7 +408,6 @@ public class User implements Serializable {
      *                      (if the category does not exists, it will be ignored)
      * @param itemImages a collection of Strings representing the images to display
      */
-
     public static void addNewItemOnBoard(String contextTag, String itemTitle, String itemDescription, String itemIdRange, ArrayList<String> currentUserBasicInfo, ArrayList<String> itemLocation, boolean itemIsCharity, boolean itemIsService, @NonNull ArrayList<String> itemCategories ,@NonNull ArrayList<String> itemImages) {
         Item newItem = Item.createItem(itemTitle,itemDescription,itemIdRange,currentUserBasicInfo,itemLocation,itemIsCharity,itemIsService,itemCategories,itemImages);
         String userId = currentUserBasicInfo.get(0);
@@ -364,7 +415,6 @@ public class User implements Serializable {
         Item.insertItemInDataBase(contextTag, newItem);
     }
 
-    //it works
     /**
      * removes an Item from the provided user's board in the database <p>
      * @param idItem the item to remove
@@ -394,6 +444,7 @@ public class User implements Serializable {
 
 
     }
+    //TODO: change from private when ready to use it
     /**
      * retrieve the items on the provided user's observed items
      * with their basic info in the database
@@ -401,27 +452,31 @@ public class User implements Serializable {
      * @param idUser the id of the provided user
      * @param consumer the way the fetched data are used
      */
-    public static void getObservedItems(String contextTag, String idUser, Consumer<Map<String, ArrayList<String>>> consumer ) {
+    private static void getObservedItems(String contextTag, String idUser, Consumer<Map<String, ArrayList<String>>> consumer ) {
         BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(idUser), User.ID_OBSERVED_ITEMS_DB, User.OBSERVED_ITEMS_INFO_LENGTH, consumer);
     }
 
+    //TODO: change from private when ready to use it
     /**
      * adds a new Item to the provided User's observed items in the database
      * @param idItem the new item id
      * @param idUser the id of the user
      */
-    public static void addObservedItem(String idUser, String idItem) {
+    private static void addObservedItem(String idUser, String idItem) {
         //TODO
     }
+
+    //TODO: change from private when ready to use it
     /**
      * removes an Item from the provided user's observed items in the database
      * @param idItem the item to remove
      * @param idUser the id of the user
      */
-    public static void removeObservedItem(String idUser, String idItem) {
+    private static void removeObservedItem(String idUser, String idItem) {
         //TODO
     }
 
+    //TODO: change from private when ready to use it (is it useful?)
     /**
      * retrieve the exchanges the provided user's is involved into
      * with their basic info in the database
@@ -429,10 +484,11 @@ public class User implements Serializable {
      * @param idUser the id of the provided user
      * @param consumer the way the fetched data are used
      */
-    public static void getExchanges(String contextTag, String idUser, Consumer<Map<String, ArrayList<String>>> consumer ) {
-        BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(idUser), User.ID_EXCHANGES_DB, User.EXCHANGES_INFO_LENGTH, consumer);
+    private static void getExchanges(String contextTag, String idUser, Consumer<Map<String, ArrayList<String>>> consumer ) {
+        BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRefUsers.child(idUser), User.ID_EXCHANGES_DB, Exchange.EXCHANGE_INFO_LENGTH, consumer);
     }
 
+    //TODO: change from private when ready to use it
     /**
      * add a new exchange the provided user is involved into
      * (called only when creating a new exchange)
@@ -440,17 +496,18 @@ public class User implements Serializable {
      * @param idExchange the id of the exchange
      * @param info the basic info of the exchange in CSV format
      */
-    public static void addExchange(String idUser, String idExchange, String info) {
+    private static void addExchange(String idUser, String idExchange, String info) {
         //TODO
     }
 
+    //TODO: change from private when ready to use it
     /**
      * removes an exchange the provided user was involved into
      * (called only when deleting an exchange)
      * @param idExchange the item to remove
      * @param idUser the id of the user
      */
-    public static void removeExchange(String idUser, String idExchange) {
+    private static void removeExchange(String idUser, String idExchange) {
         //TODO
     }
 
@@ -477,11 +534,13 @@ public class User implements Serializable {
     public Integer getRank() {
         return this.rank;
     }
+
+    //TODO: change from private when ready to use it
     /**
      * Updates the current value of this User's rank in the database, by adding the value passed in valueToAdd
      * @param valueToAdd the value to sum to the current rank. If it is negative, it will be subtracted
      */
-    public static void updateRank(Integer valueToAdd) {
+    private static void updateRank(Integer valueToAdd) {
         //TODO: interaction with the database
         // add constraints for param valueToAdd and reflect them in the comment .. if (valueToAdd)
     }

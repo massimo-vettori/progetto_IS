@@ -35,21 +35,23 @@ import java.util.concurrent.Executors;
 
 /**
  * A {@link Fragment} subclass to handle the sign-up.
+ * @author pares, jack, gradiente
+ * @since 1.0
  */
 public class RegisterFragment extends Fragment {
 
 
-    View view;
+    private View view;
     //email text field
-    EditText sign_up_email_field;
+    private EditText sign_up_email_field;
     //password text field
-    EditText sign_up_password_field;
+    private EditText sign_up_password_field;
     //confirm password text field
-    EditText sign_up_password_confirm_field;
+    private EditText sign_up_password_confirm_field;
     //register button
-    Button sign_up_button;
+    private Button sign_up_button;
     //check box
-    CheckBox check_box;
+    private CheckBox check_box;
 
     //get an instance of the FirebaseAuth
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -125,7 +127,7 @@ public class RegisterFragment extends Fragment {
      * @param email the provided email from the user
      * @param password the provided password from the user
      */
-    void registration(String email, String password) {
+    private void registration(String email, String password) {
         // TODO find out which is the eldest SDK version accepting concurrent
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
             // Do something for R and above versions
@@ -172,7 +174,7 @@ public class RegisterFragment extends Fragment {
      * @param email the provided email
      * @param password the provided password
      */
-    void registerUser(String email, String password) {
+    private void registerUser(String email, String password) {
         //addOnCompleteListener is added to display a Toast for confirmation of the registration
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), task -> {
             if (task.isSuccessful()) {

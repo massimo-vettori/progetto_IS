@@ -25,15 +25,17 @@ import java.util.function.Consumer;
 
 /**
  * A {@link Fragment} subclass to handle the choice between sign-in and sign-up.
+ * @author pares, jack, gradiente
+ * @since 1.0
  */
 public class SignInUpFragment extends Fragment {
 
 
-    View view;
+    private View view;
     //login
-    Button choice_sign_in_button;
+    private Button choice_sign_in_button;
     //register
-    Button choice_sign_up_button;
+    private Button choice_sign_up_button;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -70,7 +72,7 @@ public class SignInUpFragment extends Fragment {
      * replace the FrameLayout in activity_sign with a different new Fragment
      * @param fragment the fragment that will replace the FrameLayout
      */
-    void loadFragment(Fragment fragment) {
+    private void loadFragment(Fragment fragment) {
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         androidx.fragment.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragmentContainerView, fragment);

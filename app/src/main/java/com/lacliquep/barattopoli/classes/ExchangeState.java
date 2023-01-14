@@ -2,6 +2,7 @@ package com.lacliquep.barattopoli.classes;
 
 import androidx.annotation.NonNull;
 
+//TODO: substitute the inner class inside exchange with this one
 public enum ExchangeState {
     IN_APPROVAL("in_approval"),
     ACCEPTED("accepted"),

@@ -46,6 +46,11 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * this activity performs the insertion of a new user in the database
+ * @author pares, jack, gradiente
+ * @since 1.0
+ */
 public class InsertNewUserFragment extends Fragment {
 
     //tag name for the logcat
@@ -144,7 +149,7 @@ public class InsertNewUserFragment extends Fragment {
         return view;
     }
 
-    void reg(boolean checkedPrivacy, boolean checkedAge, String image) {
+    private void reg(boolean checkedPrivacy, boolean checkedAge, String image) {
         String empty = getString(R.string.empty_text);
         if (BarattopoliUtil.checkMandatoryTextIsNotEmpty(getActivity(), txtEmail, getString(R.string.email) + empty)) {
             if (BarattopoliUtil.checkMandatoryTextIsNotEmpty(getActivity(), txtPassword, getString(R.string.password) + empty)) {
@@ -184,7 +189,7 @@ public class InsertNewUserFragment extends Fragment {
      * @param email the provided email from the user
      * @param password the provided password from the user
      */
-    void registration(String email, String password, ArrayList<String> location, String image) {
+    private void registration(String email, String password, ArrayList<String> location, String image) {
         // TODO find out which is the eldest SDK version accepting concurrent
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
             // Do something for R and above versions
@@ -243,7 +248,7 @@ public class InsertNewUserFragment extends Fragment {
      * @param email the provided email
      * @param password the provided password
      */
-    void registerUser(String email, String password, ArrayList<String> location, String image) {
+    private void registerUser(String email, String password, ArrayList<String> location, String image) {
         //addOnCompleteListener is added to display a Toast for confirmation of the registration
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), task -> {
             if (task.isSuccessful()) {

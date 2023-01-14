@@ -1,6 +1,5 @@
 package com.lacliquep.barattopoli.classes;
 
-import android.provider.ContactsContract;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -13,14 +12,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Consumer;
 
 /**
  * this class represents an exchange of Items between two Users.
- *
- * @author pares
+ * @author pares, jack, gradiente
  * @since 1.0
  */
 public class Exchange implements Serializable {
@@ -49,18 +46,47 @@ public class Exchange implements Serializable {
      * ILLEGAL: creation prevented, ex: same id_item, same id_user, <p>
      * REFUSED: delete exchange
      */
-    public enum ExchangeStatus {IN_APPROVAL, ACCEPTED, ANNULLED, CLOSED, HAPPENED, REVIEWED_BY_APPLICANT, REVIEWED_BY_PROPOSER, REVIEWED_BY_BOTH, ILLEGAL, REFUSED}
+    private enum ExchangeStatus {IN_APPROVAL, ACCEPTED, ANNULLED, CLOSED, HAPPENED, REVIEWED_BY_APPLICANT, REVIEWED_BY_PROPOSER, REVIEWED_BY_BOTH, ILLEGAL, REFUSED}
 
-    public static final String CLASS_EXCHANGE_DB = "exchanges";
-    public static final String APPLICANT_DB = "applicant";
-    public static final String PROPOSER_DB = "proposer";
-    public static final String ID_EXCHANGE_DB = "id_exchange";
-    public static final String PROPOSER_ITEMS_DB = "proposer_items";
-    public static final String APPLICANT_ITEMS_DB = "applicant_items";
-    public static final String EXCHANGE_STAUS_DB = "exchange_status";
-    public static final String DATE_DB = "date";
-    public static final int EXCHANGE_INFO_LENGTH = 7;
-    public static final String INFO_PARAM = "id_exchange,exchange_status,date,id_applicant,id_proposer,first_applicant_item,first_proposer_item";
+    /**
+     * the exchanges main node name in the database
+     */
+    private static final String CLASS_EXCHANGE_DB = "exchanges";
+    /**
+     * the exchange applicant node name in the database (i.e. the person who chose and requires someone else's service/object for an exchange)
+     */
+    private static final String APPLICANT_DB = "applicant";
+    /**
+     * the exchange proposer node name in the database (i.e. the person whose object/service is chosen by someone else for an exchange)
+     */
+    private static final String PROPOSER_DB = "proposer";
+    /**
+     * the exchange id node name in the database
+     */
+    private static final String ID_EXCHANGE_DB = "id_exchange";
+    /**
+     * the exchange proposer list of items node name in the database
+     */
+    private static final String PROPOSER_ITEMS_DB = "proposer_items";
+    /**
+     * the exchange applicant list of items node name in the database
+     */
+    private static final String APPLICANT_ITEMS_DB = "applicant_items";
+    /**
+     * the exchange status node name in the database
+     */
+    private static final String EXCHANGE_STATUS_DB = "exchange_status";
+    /**
+     * the exchange date node name in the database
+     */
+    private static final String DATE_DB = "date";
+
+    /**
+     * the length of the String in CSV fromat representing an exchange when saved in a nested way inside a different node in the databse
+     */
+    static final int EXCHANGE_INFO_LENGTH = 7;
+
+    private static final String INFO_PARAM = "id_exchange,exchange_status,date,id_applicant,id_proposer,first_applicant_item,first_proposer_item";
 
     private ExchangeStatus exchangeStatus;
     private final String date;
@@ -72,10 +98,10 @@ public class Exchange implements Serializable {
     private final ArrayList<Item> proposerItems = new ArrayList<>();
     private final ArrayList<Item> applicantItems = new ArrayList<>();
 
-    public static final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(Exchange.CLASS_EXCHANGE_DB);
-
-
-
+    /**
+     * a reference to the exchanges main node in the database
+     */
+    static final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(Exchange.CLASS_EXCHANGE_DB);
 
     /**
      * constructor of an exchange (to be called from other methods which check the arguments sanity)
@@ -86,7 +112,6 @@ public class Exchange implements Serializable {
      * @param proposerItems the Items which have been chosen for the exchange, from the proposer's board, by the applicant
      * @see ExchangeStatus
      */
-
     private Exchange(String idExchange, String date, ExchangeStatus exchangeStatus, User applicant, User proposer, ArrayList<Item> applicantItems, ArrayList<Item> proposerItems) {
         this.idExchange = idExchange;
         this.date = date;
@@ -99,6 +124,12 @@ public class Exchange implements Serializable {
         this.exchangeStatus = exchangeStatus;
     }
 
+    /**
+     * convert the CSV string which represents an exchange when saved in a nested way inside the database in an Exchange instance
+     * which is accepted and provided by the consumer, ready to be used.
+     * @param exchangeBasicInfo the CSV string representing the exchange
+     * @param consumer the consumer which accepts and provides the Exchange instance
+     */
     public static void getExchangeFromBasicInfo(String exchangeBasicInfo, Consumer<Exchange> consumer) {
         //StringValueOfExchangeStatus(exchangeStatus) + "," + date + "," + applicant.getIdUser() + "," + proposer.getIdUser() + "," + applicantFirstItem + "," + proposerItems.get(0).getIdItem();
         ArrayList<String> values = new ArrayList<>(Arrays.asList(exchangeBasicInfo.split(",", Exchange.EXCHANGE_INFO_LENGTH)));
@@ -140,6 +171,13 @@ public class Exchange implements Serializable {
         });
     }
 
+    /**
+     * the exchanges of a user saved and ready to be used only inside the consumer
+     * @param idUser the user whose exchanges are being fetched
+     * @param applicant if the user is the person who requested and therefore created the exchange
+     * @param both if there is no need to discriminate between the exchanges when displying them
+     * @param consumer accepts and provides the exchanges
+     */
     public static void getUserExchanges(String idUser, boolean applicant, boolean both, Consumer<Exchange> consumer) {
         FirebaseDatabase.getInstance().getReference().child(User.CLASS_USER_DB).child(idUser).child(Exchange.CLASS_EXCHANGE_DB).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -250,6 +288,10 @@ public class Exchange implements Serializable {
         return res;
     }
 
+    /**
+     * retrieve all the exchanges saved in the database at the main exchange node location
+     * @param consumer accepts and provides the exchanges
+     */
     public static void retrieveAllExchanges(Consumer<Exchange> consumer) {
         FirebaseDatabase.getInstance().getReference().child(Exchange.CLASS_EXCHANGE_DB).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -273,6 +315,11 @@ public class Exchange implements Serializable {
         });
     }
 
+    /**
+     * deletion of an exchange when it is still unapproved and contains an item which is involved in an another exchange
+     * which has been approved
+     * @param approved the approved exchange
+     */
     public static void deleteUnapprovedExchanges(@NonNull Exchange approved) {
         String exchangeId         = approved.getIdExchange();
         ArrayList<String> itemIds = new ArrayList<>();
@@ -374,7 +421,7 @@ public class Exchange implements Serializable {
                             }
                         }
                     }
-                    consumer.accept(new Exchange(map.get(Exchange.ID_EXCHANGE_DB), date, Exchange.exchangeStatusValueOf(map.get(Exchange.EXCHANGE_STAUS_DB)), applicant, proposer, applicantItems, proposerItems));
+                    consumer.accept(new Exchange(map.get(Exchange.ID_EXCHANGE_DB), date, Exchange.exchangeStatusValueOf(map.get(Exchange.EXCHANGE_STATUS_DB)), applicant, proposer, applicantItems, proposerItems));
 
                 }
             }
@@ -394,6 +441,14 @@ public class Exchange implements Serializable {
         return true;
     }
 
+    /**
+     * insert a new exchange in the database
+     * @param contextTag the string representing the activity where this method is being called from
+     * @param firstProposerItemId the first item proposed in the exchange by the proposer
+     * @param firstApplicantItemId the first item requested by the applicant in the exchange
+     * @see Exchange#PROPOSER_DB
+     * @see Exchange#APPLICANT_DB
+     */
     public static void insertExchangeInDatabase(String contextTag, String firstProposerItemId, String firstApplicantItemId) {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
         Item.retrieveItemsByIds(contextTag, dbRef, new ArrayList<>(Arrays.asList(firstProposerItemId, firstApplicantItemId)), new Consumer<ArrayList<Item>>() {
@@ -428,7 +483,7 @@ public class Exchange implements Serializable {
         }
     }
 
-    boolean legalExchangeTransition(ExchangeStatus currExchangeStatus, ExchangeStatus nextExchangeStatus) {
+    private boolean legalExchangeTransition(ExchangeStatus currExchangeStatus, ExchangeStatus nextExchangeStatus) {
         boolean res = true;
         String curr = Exchange.StringValueOfExchangeStatus(currExchangeStatus);
         String next = Exchange.StringValueOfExchangeStatus(nextExchangeStatus);
@@ -474,7 +529,7 @@ public class Exchange implements Serializable {
         return res;
     }
     /**
-     *
+     * change the status of the exchange in the database, after checking it is legal
      * @param exchange the Exchange where to change the status
      * @param nextExchangeStatus the new exchange status of the specified Exchange
      */
@@ -524,6 +579,11 @@ public class Exchange implements Serializable {
         }
     }
 
+    /**
+     * deletion from the database of an exchange
+     * delete the exchange from the involved users' boards as well
+     * @param exchange the exchange to be deleted
+     */
     public static void deleteExchange(Exchange exchange) {
         Exchange.retrieveExchangeById("Exchange", exchange.getIdExchange(), new Consumer<Exchange>() {
             @Override
@@ -539,7 +599,7 @@ public class Exchange implements Serializable {
             }});
     }
     private static void setExchangeStatusDb(String idExchange, @Nullable  Exchange exchange, ExchangeStatus exchangeStatus) {
-        Exchange.dbRef.child(idExchange).child(Exchange.EXCHANGE_STAUS_DB).setValue(Exchange.StringValueOfExchangeStatus(exchangeStatus));
+        Exchange.dbRef.child(idExchange).child(Exchange.EXCHANGE_STATUS_DB).setValue(Exchange.StringValueOfExchangeStatus(exchangeStatus));
         if (exchange != null) Exchange.exchangeStatusInBasicInfo(exchange, exchangeStatus);
     }
     private static void exchangeStatusInBasicInfo(Exchange exchange, ExchangeStatus exchangeStatus) {
@@ -665,91 +725,4 @@ public class Exchange implements Serializable {
         result = prime * result + this.proposer.hashCode();
         return result;
     }
-
-    //TODO: fetch, insert and update  to database, (with all the related side-effects)
-
-
-
-
-    /* TODO da rivedere completamente
-    /**
-     * to be called before inserting a new Exchange in the DB
-     * The proposed Item, together with the otherProposedItems,
-     * can be Null only if all the required Items(required Item and otherRequiredItems),
-     * are for charity. <p>
-     * It checks whether the applicant and the proposer are the same User and if the ItemsNonNull String idRequiredItem, @Nullable Set<String> idOtherProposedItems, @Nullable Set<String> idOtherRequiredItems)  {
-        this.idApplicant = idApplicant;
-     * involved in the exchange belong to the correct User. <p>
-     * otherProposedItems and otherRequiredItems are optional, since usually an exchange involves just one or two Items. <p>
-     * if all the conditions are guaranteed, a New Exchange will be created and its status will be set to "IN_APPROVAL"
-     * @param idApplicant the User who wants the proposed Object (they create the exchange)
-     * @param idProposer the User whose Item has been chosen for this Exchange.
-     * @param proposedItem the first or the only Item the applicant offers in exchange for the Item they choose from the proposer's board
-     * @param requiredItem the first or the only Item which has been chosen for the exchange, from the proposer's board, by the applicant
-     * @param otherProposedItems optional Set of Items the applicant offers in exchange for the Item/s they choose from the proposer's board
-     * @param otherRequiredItems optional Set of Items which have been chosen for the exchange, from the proposer's board, by the applicant
-     * @throws Exception if one of the checked conditions is not guaranteed
-     * @return a new Exchange to be inserted in the DB
-     * @see ExchangeStatus
-     * @see Item#isCharity()
-     */
-    /*
-    private Exchange createExchange(@NonNull String idApplicant, @NonNull String idProposer, @Nullable Item proposedItem, @NonNull Item requiredItem, @Nullable Set<Item> otherProposedItems, @Nullable Set<Item> otherRequiredItems) throws Exception {
-        String feedback = "this Exchange has some problems";
-        String idProposedItem = proposedItem == null? null: proposedItem.getIdItem();
-        Set<String> idOtherProposedItems = null;
-        Set<String> idOtherRequiredItems = null;
-        boolean go = true;
-        if (idApplicant.equals(idProposer)) {
-            feedback += ", the applicant is the same as the proposer";
-            go = false;
-        }
-        if (otherRequiredItems != null) {
-            idOtherRequiredItems = new HashSet<>();
-            for (Item i : otherRequiredItems) {
-                if (proposedItem == null && (otherProposedItems == null || otherProposedItems.isEmpty())) {
-                    if ((!i.isCharity()) || (!requiredItem.isCharity())) {
-                        feedback += ", the Item or the items which has been chosen from the proposer's board are not all for charity, but the applicant offered no Item in Exchange";
-                        go = false;
-                        idOtherRequiredItems = null;
-                        break;
-                    }
-                }
-                if (!(i.getOwner().equals(idProposer)) || !(requiredItem.getOwner().equals(idProposer))) {
-                    feedback += ", the owner of some of the required items is not the proposer";
-                    go = false;
-                    idOtherRequiredItems = null;
-                    break;
-                }
-                if (!(i.isExchangeable()) || !(requiredItem.isExchangeable())) {
-                    feedback += ", some of the required Items are not exchangeable";
-                    go = false;
-                    idOtherRequiredItems = null;
-                    break;
-                }
-                idOtherRequiredItems.add(i.getIdItem());
-            }
-        }
-        if (otherProposedItems != null) {
-            idOtherProposedItems = new HashSet<>();
-            for (Item i: otherProposedItems) {
-                if (!(i.getOwner().equals(applicant)) || (proposedItem != null && !(proposedItem.getOwner().equals(applicant)))) {
-                    feedback += ", the owner of some of the proposed items is not the applicant";
-                    go = false;
-                    idOtherProposedItems = null;
-                    break;
-                }
-                if (!(i.isExchangeable()) || (proposedItem != null && !(proposedItem.isExchangeable()))) {
-                    feedback += ", some of the Items the applicant is proposing are not exchangeable";
-                    go = false;
-                    idOtherProposedItems = null;
-                    break;
-                }
-                idOtherProposedItems.add(i.getIdItem());
-            }
-        }
-
-        if (go) return new Exchange(ExchangeStatus.IN_APPROVAL, applicant.getIdUser(), proposer.getIdUser(), idProposedItem, requiredItem.getIdItem(), idOtherProposedItems, idOtherRequiredItems);
-        else throw new Exception(feedback);
-    }*/
 }

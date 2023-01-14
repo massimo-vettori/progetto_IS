@@ -8,21 +8,37 @@ import java.util.function.Consumer;
 
 /**
  * this class represents a Range of values to give to an Item
- * @author pares
+ * @author pares, jack, gradiente
  * @since 1.0
  */
 public class Range {
     //macros with the name of the classes in the database
-    public static final String CLASS_RANGE_DB = "range";
-    public static final String ID_RANGE_DB = "id_range";
-    public static final String FROM_DB = "from";
-    public static final String TO_DB = "to";
-    public static final String ID_ITEMS_DB = "id_items";
+    /**
+     * the range main node name in the database
+     */
+    private static final String CLASS_RANGE_DB = "range";
+    /**
+     * the range id node name in the database
+     */
+    private static final String ID_RANGE_DB = "id_range";
+    /**
+     * the range lowe bound node name in the database
+     */
+    private static final String FROM_DB = "from";
+    /**
+     * the range upper bound node name in the database
+     */
+    private static final String TO_DB = "to";
+    /**
+     * the range id items node name in the database
+     */
+    static final String ID_ITEMS_DB = "id_items";
 
-    //database location of the class Range
-    public static final DatabaseReference dbRefRange = FirebaseDatabase.getInstance().getReference().child(Range.CLASS_RANGE_DB);
+    /**
+     * the range database main node location in the database
+     */
+    static final DatabaseReference dbRefRange = FirebaseDatabase.getInstance().getReference().child(Range.CLASS_RANGE_DB);
 
-    //private fields
     private final String idRange;
     private final Integer from;
     private final Integer to;
@@ -43,7 +59,7 @@ public class Range {
 
     /**
      * a Set containing all the available ranges. Each one has its correspondence in the database. <p>
-     * To add a new range, it needs to be added here and in the database
+     * To add a new range, it needs to be added both here, and in the database
      */
     public static final Set<Range> ranges = new HashSet<>();
     static {
@@ -53,6 +69,11 @@ public class Range {
         ranges.add(new Range("3",31,40));
         ranges.add(new Range("4",41,50));
     }
+
+    /**
+     * a set containing the available ranges at this application state of art
+     * @return
+     */
     public static Set<Range> getRanges() { return Range.ranges; }
 
     /**
@@ -67,7 +88,7 @@ public class Range {
         BarattopoliUtil.getMapWithIdAndInfo(contextTag, dbRef, idRange, Item.INFO_LENGTH, consumer);
     }
 
-    //da verificare se funziona
+    //TODO: to be tested
     /**
      * add a new item with its main information to a range in the database <p>
      * (to be called only when setting the range of an existing item
@@ -80,6 +101,9 @@ public class Range {
         dbRefRange.child(idRange).child(Range.ID_ITEMS_DB).child(idItem).setValue(itemBasicInfo);
     }
 
+    /**
+     * @return this range id
+     */
     public String getIdRange() {
         return this.idRange;
     }
@@ -87,7 +111,6 @@ public class Range {
 
 
     /**
-     *
      * @return the lower bound for the specified range
      * @throws noSuchRangeException if the idRange does not exist
      */

@@ -19,21 +19,23 @@ import java.util.*;
 /**
  * this class represents a review which a User can give to another User only as a consequence of an exchange
  * a review cannot be modified.
- *
  * @author pares
  * @since 1.0
  */
 public class Review {
 
-    public static final String CLASS_REVIEW_DB = "review";
-    public static final int REVIEW_INFO_LENGTH = 5;
+    /*public static final String CLASS_REVIEW_DB = "review";
     public static final String TAG = "Review";
     public static final String ID_REVIEW_DB = "id_review";
     public static final String ID_AUTHOR_DB = "id_author";
     public static final String ID_RECEIVER_DB = "id_receiver";
     public static final String ID_EXCHANGE_DB = "id_exchange";
     public static final String STARS_DB = "stars";
-    public static final String TEXT_DB = "text";
+    public static final String TEXT_DB = "text";*/
+    /**
+     * the length of a review when stored in CSV format in a nested way in a different database node
+     */
+    public static final int REVIEW_INFO_LENGTH = 5;
 
     /*private final String idReview = UUID.randomUUID().toString();
     private final String idAuthor;
@@ -42,7 +44,7 @@ public class Review {
     private final String text;*/
 
 
-//TODO: CLASSE DA RIVEDERE COMPLETAMENTE
+//TODO: TO REIMPLEMENT EX-NOVO
     /**
      * constructor of a Review (to examine an existing review in the DB)
      * @param author the User author of this Review

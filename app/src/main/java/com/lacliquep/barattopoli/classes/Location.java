@@ -20,36 +20,55 @@ public class Location {
     /**
      * the number of the basic elements about a location when stored in a User or Item
      */
-    public static final int INFO_LENGTH = 4;
+    static final int INFO_LENGTH = 4;
     /**
      * the basic info elements about a location when stored in a User or Item
      */
-    public static final String INFO_PARAM = "country,region,province,city";
+    static final String INFO_PARAM = "country,region,province,city";
 
 
-    public Location(){
+    private Location(){
         //only Italy for now
         countries.put("Italia", new HashMap<>());
         countries.get("Italia").put("Veneto", new HashMap<>());
         countries.get("Italia").get("Veneto").put("Venezia", new ArrayList<>(Arrays.asList("Venezia", "Mestre", "Marghera")));
     }
 
-
-    public static ArrayList<String> getAvailableCountries() {
+    /**
+     * a list of the available countries at this application state of art
+     * @return
+     */
+    private static ArrayList<String> getAvailableCountries() {
         return new ArrayList<>(countries.keySet());
     }
-
-    public static ArrayList<String> getAvailableRegionsForCountry(String country) {
+    /**
+     * a list of the available regions for a provided country at this application state of art
+     * @param country the specified country
+     * @return a void arrayList ifthe country is not available
+     */
+    private static ArrayList<String> getAvailableRegionsForCountry(String country) {
         if (countries.containsKey(country)) return new ArrayList<>(countries.get(country).keySet());
         else return new ArrayList<>();
     }
 
-    public static ArrayList<String> getAvailableProvincesForRegion(String region, String country) {
+    /**
+     * a list of the available provinces for the specified region and country, at this application state of art
+     * @param region the specified region
+     * @param country the specified country
+     * @return a void arrayList if the region or the country are not available
+     */
+    private static ArrayList<String> getAvailableProvincesForRegion(String region, String country) {
         if (countries.containsKey(country) && countries.get(country).containsKey(region)) return new ArrayList<>(countries.get(country).get(region).keySet());
         else return new ArrayList<>();
     }
 
-    public static ArrayList<String> getAvailableCitiesForProvince(String province, String region, String country) {
+    /**
+     * a list of the available cities for the specified province, region and country, at this application state of art
+     * @param region the specified region
+     * @param country the specified country
+     * @return a void arrayList if the province or the region or the country are not available
+     */
+    private static ArrayList<String> getAvailableCitiesForProvince(String province, String region, String country) {
         if (countries.containsKey(country) && countries.get(country).containsKey(region) && countries.get(country).get(region).containsKey(province))
             return new ArrayList<>(countries.get(country).get(region).get(province));
         else return new ArrayList<>();
@@ -72,7 +91,14 @@ public class Location {
                         dialog.cancel();
                     }}).show();
     }
-    public static boolean checkCountry(Context context, String country) {
+
+    /**
+     * check if the provide country is available, at the state of art of this application
+     * @param context the Activity/fragment where this method is being called from
+     * @param country the specified country
+     * @return true if the country is available
+     */
+    private static boolean checkCountry(Context context, String country) {
         boolean ok = true;
         ArrayList<String> avail = getAvailableCountries();
         for (String s: avail) Log.d("TEST", s);
@@ -82,7 +108,14 @@ public class Location {
         }
         return ok;
     }
-    public static boolean checkRegion(Context context, String country, String region) {
+    /**
+     * check if the provided region is available, at the state of art of this application
+     * @param context the Activity/fragment where this method is being called from
+     * @param country the specified country
+     * @param region the specified region
+     * @return true if the region in the specified country is available
+     */
+    private static boolean checkRegion(Context context, String country, String region) {
         boolean ok = true;
         ArrayList<String> avail = getAvailableRegionsForCountry(country);
             if (!(avail.contains(region))) {
@@ -91,8 +124,15 @@ public class Location {
             }
         return ok;
     }
-
-    public static boolean checkProvince(Context context, String country, String region, String province) {
+    /**
+     * check if the provided province is available, at the state of art of this application
+     * @param context the Activity/fragment where this method is being called from
+     * @param country the specified country
+     * @param region the specified region
+     * @param province the specified province
+     * @return true if the province in the specified region and country is available
+     */
+    private static boolean checkProvince(Context context, String country, String region, String province) {
         boolean ok = true;
         ArrayList<String> avail = getAvailableProvincesForRegion(region, country);
             if (!(avail.contains(province))) {
@@ -101,8 +141,16 @@ public class Location {
             }
         return ok;
     }
-
-    public static boolean checkCity(Context context, String country, String region, String province, String city) {
+    /**
+     * check if the provided city is available, at the state of art of this application
+     * @param context the Activity/fragment where this method is being called from
+     * @param country the specified country
+     * @param region the specified region
+     * @param province the specified province
+     * @param city the specified city
+     * @return true if the city  in the specified province, region and country is available
+     */
+    private static boolean checkCity(Context context, String country, String region, String province, String city) {
         boolean ok = true;
         ArrayList<String> avail = getAvailableCitiesForProvince(province, region, country);
             if (!(avail.contains(city))) {
@@ -111,6 +159,16 @@ public class Location {
             }
         return ok;
     }
+
+    /**
+     * check if the provided location (i.e. city, province, region and location) is available, at the state of art of this application
+     * @param context the Activity/fragment where this method is being called from
+     * @param country the specified country
+     * @param region the specified region
+     * @param province the specified province
+     * @param city the specified city
+     * @return true if the city, province, region and country are available
+     */
     public static boolean checkLocation(Context context, String country, String region, String province, String city) {
         boolean ok = true;
         Location l = new Location();

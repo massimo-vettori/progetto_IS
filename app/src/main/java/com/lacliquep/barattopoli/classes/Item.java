@@ -25,31 +25,66 @@ import java.util.stream.Collectors;
 
 /**
  * This class represents a good or service which the user is going to offer or exchange
- *
- * @author pares
+ * @author pares, jack, gradiente
  * @since 1.0
  */
 public class Item implements Serializable {
-    public final static String CLASS_ITEM_DB = "items";
-    public static final String ID_ITEM_DB = "id_item";
-    public static final String TITLE_DB = "title";
-    public static final String DESCRIPTION_DB = "description";
-    public static final String ID_RANGE_DB = "id_range";
-    public static final String OWNER_DB = "user";
-    public static final String LOCATION_DB = "location";
-    public static final String IS_CHARITY_DB = "is_charity";
-    public static final String IS_EXCHANGEABLE_DB = "is_exchangeable";
-    public static final String IS_SERVICE_DB = "is_service";
-    public static final String ID_CATEGORIES_DB = "categories";
-    public static final String IMAGES_DB = "images";
     /**
-     * the number of the basic info elements about an Item when stored in a different class
+     * the item main node name in the database
      */
-    public static final int INFO_LENGTH = 11;
+    final static String CLASS_ITEM_DB = "items";
     /**
-     * the basic info elements about an Item when stored in a different class
+     * the item id node name in the database
      */
-    public static final String INFO_PARAM = "category,range,image,is_charity,is_exchangeable,is_service,country,region,province,city,title";
+    private static final String ID_ITEM_DB = "id_item";
+    /**
+     * the item title node name in the database
+     */
+    private static final String TITLE_DB = "title";
+    /**
+     * the item description node name in the database
+     */
+    private static final String DESCRIPTION_DB = "description";
+    /**
+     * the item range node name in the database
+     */
+    private static final String ID_RANGE_DB = "id_range";
+    /**
+     * the item owner node name in the database
+     */
+    private static final String OWNER_DB = "user";
+    /**
+     * the item location node name in the database
+     */
+    private static final String LOCATION_DB = "location";
+    /**
+     * the item charity flag node name in the database
+     */
+    private static final String IS_CHARITY_DB = "is_charity";
+    /**
+     * the item exchangeable flag node name in the database
+     */
+    private static final String IS_EXCHANGEABLE_DB = "is_exchangeable";
+    /**
+     * the item service flag node name in the database
+     */
+    private static final String IS_SERVICE_DB = "is_service";
+    /**
+     * the item categories node name in the database
+     */
+    private static final String ID_CATEGORIES_DB = "categories";
+    /**
+     * the item images node name in the database
+     */
+    private static final String IMAGES_DB = "images";
+    /**
+     * the number of the basic info elements about an Item when stored in a different node in a CSV format
+     */
+    static final int INFO_LENGTH = 11;
+    /**
+     * the basic info elements about an Item when stored in a different node in a CSV format
+     */
+    static final String INFO_PARAM = "category,range,image,is_charity,is_exchangeable,is_service,country,region,province,city,title";
 
     private final String idItem;
     private String title;
@@ -65,9 +100,12 @@ public class Item implements Serializable {
     private final ArrayList<String> owner = new ArrayList<>();
     private final String itemBasicInfo;
 
-    public static DatabaseReference dbRefItems = FirebaseDatabase.getInstance().getReference().child(Item.CLASS_ITEM_DB);
-    public static FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    static DatabaseReference dbRefItems = FirebaseDatabase.getInstance().getReference().child(Item.CLASS_ITEM_DB);
+    private static FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
+    /**
+     * when an item is not exchangeable, it is not modifiable too
+     */
     static class NonModifiableException extends Exception {
         public NonModifiableException() {
             super("this Item is not exchangeable, therefore it cannot be modified");
@@ -165,7 +203,7 @@ public class Item implements Serializable {
 
 
     /**
-     * read from the database all the values regarding the User with the provided id <p>
+     * read from the database all the values regarding the Item with the provided id <p>
      * Don't try taking out data from the consumer: it is not going to work
      * @param contextTag the string representing the activity/fragment where this method is called
      * @param dbRef the database reference
@@ -181,6 +219,13 @@ public class Item implements Serializable {
         });
     }
 
+    /**
+     * retrieve the list of items corresponding to the provided ids, from the main item node in the database
+     * @param contextTag the string representing the activity/fragment where this method is being called from
+     * @param dbRef a root database reference
+     * @param ids the ids of the items to fetch
+     * @param consumer accepts and provides the list of items
+     */
     public static void retrieveItemsByIds(String contextTag, DatabaseReference dbRef, ArrayList<String> ids, Consumer<ArrayList<Item>> consumer) {
         dbRef.child(Item.CLASS_ITEM_DB).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -264,19 +309,34 @@ public class Item implements Serializable {
         return this.idRange;
     }
 
-    //"id,image,rank,username"
+    /**
+     *
+     * @return this item owner's username
+     */
     public String getOwnerUsername() {
         return (owner.size() >= 4)? owner.get(3): "";
     }
 
+    /**
+     *
+     * @return this item owner's id
+     */
     public String getOwnerId() {
         return (owner.size() >= 1)? owner.get(0): "";
     }
 
+    /**
+     *
+     * @return this item owner's rank
+     */
     public int getOwnerRank() {
         return (owner.size() >= 3)? Integer.parseInt(owner.get(2)): -1;
     }
 
+    /**
+     *
+     * @return this item owner's image
+     */
     public Bitmap getOwnerImage() {
         Bitmap b = null;
         if (owner.size() >= 2) b = BarattopoliUtil.decodeFileFromBase64(owner.get(1));
@@ -512,30 +572,6 @@ public class Item implements Serializable {
         }
     }
 
-    //EQUALS & HASHCODE
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || (!(o instanceof Item))) return false;
-        Item item = (Item) o;
-        return owner.equals(item.owner) && isCharity == item.isCharity && isExchangeable == item.isExchangeable && isService == item.isService && idItem.equals(item.idItem) && title.equals(item.title) && description.equals(item.description) && location.equals(item.location) && categories.equals(item.categories) && images.equals(item.images);
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + idItem.hashCode();
-        result = prime * result + title.hashCode();
-        result = prime * result + description.hashCode();
-        result = prime * result + owner.hashCode();
-        result = prime * result + location.hashCode();
-        result = prime * result + (!isCharity?0:1);
-        result = prime * result + (!isExchangeable?0:1);
-        result = prime * result + categories.hashCode();
-        result = prime * result + images.hashCode();
-        return result;
-    }
 
 
     /**
@@ -641,7 +677,7 @@ public class Item implements Serializable {
      * @param dbRefItem the location of the Item in the database
      * @throws NonModifiableException if this Item is not exchangeable
      */
-    //TODO:da verificare se funziona veramente
+    //TODO: to be tested
     public static void addCategory(String contextTag, String idItem, DatabaseReference dbRefItem, String ItemBasicInfo, boolean isExchangeable, String category) throws NonModifiableException {
         if (!isExchangeable) throw new NonModifiableException();
         if (Category.getCategories().contains(category)) {
@@ -677,6 +713,10 @@ public class Item implements Serializable {
         //TODO: se addcategory funziona, fare cose simili
     }
 
+    /**
+     *
+     * @return this item first image
+     */
     public Bitmap getFirstImage() {
         return (this.images.size() >= 1)? BarattopoliUtil.decodeFileFromBase64(images.get(0)): null;
     }
@@ -722,7 +762,83 @@ public class Item implements Serializable {
         //TODO;
     }
 
-    public static CharSequence[] serialize(Item item) {
+    /**
+     * a sample Item which does not exist, just to be used in case of no item is provided
+     * @return
+     */
+    public static Item getSampleItem() {
+        ArrayList<String> owner = new ArrayList<>();
+        owner.add("owner");
+        ArrayList<String> categories = new ArrayList<>();
+        categories.add("category");
+        ArrayList<String> images = new ArrayList<>();
+//        images.add(BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.surface).toString());
+
+        ArrayList<String> location = new ArrayList<>();
+        location.add("stato");
+        location.add("regione");
+        location.add("provincia");
+        location.add("comune");
+        return new Item("id", "title", "description", "idRange", owner, location, false, true, false, categories, images);
+    }
+
+    /**
+     * @return an Item which does not exist, just to be used in case of no item is provided and no item has to be shown
+     */
+    public static Item getEmptyItem() {
+        ArrayList<String> owner = new ArrayList<>();
+        ArrayList<String> categories = new ArrayList<>();
+        ArrayList<String> images = new ArrayList<>();
+        ArrayList<String> location = new ArrayList<>();
+
+        owner.add("");
+        categories.add("");
+        images.add(null);
+        location.add("");
+        location.add("");
+        location.add("");
+        location.add("");
+        return new Item("", "", "", "", owner, location, false, true, false, categories, images);
+    }
+
+    //EQUALS & HASHCODE
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || (!(o instanceof Item))) return false;
+        Item item = (Item) o;
+        return owner.equals(item.owner) && isCharity == item.isCharity && isExchangeable == item.isExchangeable && isService == item.isService && idItem.equals(item.idItem) && title.equals(item.title) && description.equals(item.description) && location.equals(item.location) && categories.equals(item.categories) && images.equals(item.images);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + idItem.hashCode();
+        result = prime * result + title.hashCode();
+        result = prime * result + description.hashCode();
+        result = prime * result + owner.hashCode();
+        result = prime * result + location.hashCode();
+        result = prime * result + (!isCharity?0:1);
+        result = prime * result + (!isExchangeable?0:1);
+        result = prime * result + categories.hashCode();
+        result = prime * result + images.hashCode();
+        return result;
+    }
+
+
+    private static void deleteItem(String itemID) {
+//        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(Item.CLASS_ITEM_DB).child(itemID);
+//        dbRef.removeValue();
+    }
+
+    private static void deleteItem(Item item) {
+//        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(Item.CLASS_ITEM_DB).child(item.idItem);
+//        dbRef.removeValue();
+    }
+
+    //failed attempts to serialize/deserialize
+   private static CharSequence[] serialize(Item item) {
         CharSequence[] serializedItem = new CharSequence[11];
         serializedItem[0] = item.getIdItem();
         serializedItem[1] = item.getTitle();
@@ -741,7 +857,7 @@ public class Item implements Serializable {
 
 
 //    String idItem, String title, String description,@NonNull String idRange, Collection<String> owner, ArrayList<String> location, boolean isCharity, boolean isExchangeable, boolean isService, @NonNull ArrayList<String> categories ,@NonNull Collection<String> images
-    public static Item deserialize(CharSequence[] serializedItem) {
+    private  static Item deserialize(CharSequence[] serializedItem) {
         String id = serializedItem[0].toString();
         String title = serializedItem[1].toString();
         String description = serializedItem[2].toString();
@@ -756,49 +872,4 @@ public class Item implements Serializable {
 
         return new Item(id, title, description, idRange, owner, location, isCharity, isExchangeable, isService, categories, images);
     }
-
-
-    // TODO: create a method to return a basic empty charity item
-    public static Item getSampleItem() {
-        ArrayList<String> owner = new ArrayList<>();
-        owner.add("owner");
-        ArrayList<String> categories = new ArrayList<>();
-        categories.add("category");
-        ArrayList<String> images = new ArrayList<>();
-//        images.add(BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.surface).toString());
-
-        ArrayList<String> location = new ArrayList<>();
-        location.add("stato");
-        location.add("regione");
-        location.add("provincia");
-        location.add("comune");
-        return new Item("id", "title", "description", "idRange", owner, location, false, true, false, categories, images);
-    }
-
-    public static Item getEmptyItem() {
-        ArrayList<String> owner = new ArrayList<>();
-        ArrayList<String> categories = new ArrayList<>();
-        ArrayList<String> images = new ArrayList<>();
-        ArrayList<String> location = new ArrayList<>();
-
-        owner.add("");
-        categories.add("");
-        images.add(null);
-        location.add("");
-        location.add("");
-        location.add("");
-        location.add("");
-        return new Item("", "", "", "", owner, location, false, true, false, categories, images);
-    }
-
-    public static void deleteItem(String itemID) {
-//        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(Item.CLASS_ITEM_DB).child(itemID);
-//        dbRef.removeValue();
-    }
-
-    public static void deleteItem(Item item) {
-//        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(Item.CLASS_ITEM_DB).child(item.idItem);
-//        dbRef.removeValue();
-    }
-
 }

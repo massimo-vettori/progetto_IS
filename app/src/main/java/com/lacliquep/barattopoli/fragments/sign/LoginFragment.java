@@ -25,17 +25,18 @@ import java.util.concurrent.Executors;
 
 /**
  * A {@link Fragment} subclass to handle the sign-in.
+ * @author pares, jack, gradiente
  */
 public class LoginFragment extends Fragment {
 
 
-    View view;
+    private View view;
     //text email field
-    EditText sign_in_email_field;
+    private EditText sign_in_email_field;
     //text password field
-    EditText sign_in_password_field;
+    private EditText sign_in_password_field;
     //login button
-    Button sign_in_button;
+    private Button sign_in_button;
 
     //connection with the firebase authorization
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -70,7 +71,7 @@ public class LoginFragment extends Fragment {
      * @param email the provided email from the user
      * @param password the provided password from the user
      */
-    void login(String email, String password) {
+    private void login(String email, String password) {
         // TODO find out which is the eldest SDK version accepting concurrent
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
             // Do something for R and above versions

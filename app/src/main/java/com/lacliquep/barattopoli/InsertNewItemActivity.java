@@ -333,26 +333,5 @@ public class InsertNewItemActivity extends AppCompatActivity {
         this.rangeDescription = res;
     }
 
-    /**
-     * class to handle insertButton in asynchronous way before SDK R
-     * TODO: why not work?
-     */
-    @SuppressLint("StaticFieldLeak")
-    private class AsyncInsertButton extends AsyncTask<String, Integer, Void> {
-        @Override
-        protected Void doInBackground(String... strings) {
-            try {
-                insertButton(strings[0]);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-        // TODO: add a progression bar or sth?
-        protected void onProgressUpdate(Integer... progress) {
-            Toast.makeText(InsertNewItemActivity.this, getString(R.string.in_progress), Toast.LENGTH_SHORT).show();
-        }
-
-    }
 
 }

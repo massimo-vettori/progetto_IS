@@ -22,6 +22,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+/**
+ * this class handles the display of a logged user's items on their board
+ * @author pares, jack, gradiente
+ * @since 1.0
+ */
 public class MyBoardActivity extends AppCompatActivity {
 
     @Override
@@ -43,7 +48,7 @@ public class MyBoardActivity extends AppCompatActivity {
         findViewById(R.id.activate_grid_view_btn).setEnabled(false);
     }
 
-    public void addItem(Item item) {
+    protected void addItem(Item item) {
         LinearLayout container = findViewById(R.id.board_item_list);
         View view = ListItemView.createAndInflate(this, item, container);
         container.addView(view);
@@ -54,14 +59,6 @@ public class MyBoardActivity extends AppCompatActivity {
             stringMapMap.forEach((key, value) -> {
                 addItem(value);
             });
-        });
-        //prova
-        Exchange.getUserExchanges(FirebaseAuth.getInstance().getUid(), true, true, new Consumer<Exchange>() {
-            @Override
-            public void accept(Exchange exchange) {
-                Log.d("36", exchange.toString());
-                //it prints all of them without the support of an arraylist
-            }
         });
     }
 }
