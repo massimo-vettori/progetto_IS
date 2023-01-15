@@ -33,6 +33,7 @@ public class ExchangeViewActivity extends AppCompatActivity {
     private LinearLayout scroller;
     private TextView     title;
     protected ProgressBar progressBar;
+    protected Ownership ownership;
 
 
     @Override
@@ -41,7 +42,7 @@ public class ExchangeViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_exchange_view);
 
         Intent intent       = getIntent();
-        Ownership ownership = Ownership.from(intent.getStringExtra("proposer"));
+        ownership = Ownership.from(intent.getStringExtra("proposer"));
 
         back     = findViewById(R.id.back_button);
         scroller = findViewById(R.id.board_item_list);
@@ -52,6 +53,12 @@ public class ExchangeViewActivity extends AppCompatActivity {
 
         // Removes the title bar
         Objects.requireNonNull(getSupportActionBar()).hide();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         init(ownership);
     }
 
@@ -71,9 +78,10 @@ public class ExchangeViewActivity extends AppCompatActivity {
     }
 
     protected void addItems(Ownership o) {
+        //if o è personal: voglio vedere scambi che ho creato io
         progressBar.setVisibility(View.INVISIBLE);
         String user = FirebaseAuth.getInstance().getUid();
-        Exchange.getUserExchanges(user, o.equals(Ownership.OTHER), false, exchange -> {
+        Exchange.getUserExchanges(user, o.equals(Ownership.PERSONAL), false, exchange -> {
             Log.d("ExchangeViewActivity", "Got an exchange: " + exchange.getIdExchange());
             scroller.addView(ExchangeItemView.createAndInflate(this, exchange, o, scroller));
         });

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -59,7 +60,11 @@ public class ExchangeItemView extends View {
                     // Creates a modal dialog to accept or reject the exchange
                     AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
                     builder.setMessage("Vuoi annullare lo scambio?")
-                            .setPositiveButton("Si, annulla", (dialog, id)   -> {/* TODO: Implement */})
+                            .setPositiveButton("Si, annulla", (dialog, id)   ->
+                                {
+                                    Exchange.deleteExchange(exchange);
+                                    Toast.makeText(ctx, "cancellazione avvenuta con successo", Toast.LENGTH_LONG).show();
+                                })
                             .setNegativeButton("No", (dialog, id) -> dialog.cancel())
                             .show();
                 });
@@ -73,8 +78,8 @@ public class ExchangeItemView extends View {
                     // Creates a modal dialog to accept or reject the exchange
                     AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
                     builder.setMessage("Vuoi accettare o rifiutare lo scambio?")
-                            .setPositiveButton("Accetta", (dialog, id)   -> {/* TODO: Implement */})
-                            .setNegativeButton("Rifiuta", (dialog, id)   -> {/* TODO: Implement */})
+                            .setPositiveButton("Accetta", (dialog, id)   -> {Exchange.changeExchangeStatusDb(exchange, Exchange.ExchangeStatus.ACCEPTED);})
+                            .setNegativeButton("Rifiuta", (dialog, id)   -> {Exchange.changeExchangeStatusDb(exchange, Exchange.ExchangeStatus.REFUSED);})
                             .setNeutralButton("Non adesso", (dialog, id) -> dialog.cancel())
                             .show();
                 });

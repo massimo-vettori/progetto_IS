@@ -136,8 +136,7 @@ public class Item implements Serializable {
         this.idRange = idRange;
         this.owner.addAll(owner);
         this.isCharity = isCharity;
-        //this.isExchangeable = isExchangeable;
-        this.isExchangeable = true;
+        this.isExchangeable = isExchangeable;
         this.isService = isService;
         this.location = location;
         //for(String cat: categories) if (Category.getCategories().contains(cat)) this
@@ -487,24 +486,25 @@ public class Item implements Serializable {
                                                 String field = fi.getKey();
                                                 if (field != null && !(field.equals(Item.LOCATION_DB))) {
                                                     String fieldValue = String.valueOf(fi.getValue());
+                                                    Log.d("IT", "key: " + field + "fieldValue: " + fieldValue);
                                                     if (field.equals(Item.DESCRIPTION_DB))
-                                                        description = fieldValue;
+                                                        description = String.valueOf(fi.getValue());
                                                     if (field.equals(Item.TITLE_DB))
-                                                        title = fieldValue;
+                                                        title = String.valueOf(fi.getValue());
                                                     if (field.equals(Item.IS_SERVICE_DB))
-                                                        is_service = Boolean.parseBoolean(fieldValue);
+                                                        is_service = Boolean.parseBoolean(String.valueOf(fi.getValue()));
                                                     if (field.equals(Item.IS_CHARITY_DB))
-                                                        is_charity = Boolean.parseBoolean(fieldValue);
+                                                        is_charity = Boolean.parseBoolean(String.valueOf(fi.getValue()));
                                                     if (field.equals(Item.IS_EXCHANGEABLE_DB))
-                                                        is_exchangeable = Boolean.parseBoolean(fieldValue);
+                                                        is_exchangeable = Boolean.parseBoolean(String.valueOf(fi.getValue()));
                                                     if (field.equals(Item.ID_RANGE_DB))
-                                                        id_range = fieldValue;
+                                                        id_range = String.valueOf(fi.getValue());
                                                     if (field.equals(Item.OWNER_DB))
-                                                        owner = fieldValue;
+                                                        owner = String.valueOf(fi.getValue());
                                                     if (field.equals(Item.ID_CATEGORIES_DB))
-                                                        categories = fieldValue;
+                                                        categories = String.valueOf(fi.getValue());
                                                     if (field.equals(Item.IMAGES_DB))
-                                                        images = fieldValue;
+                                                        images = String.valueOf(fi.getValue());
                                                 } else {
                                                     if (field != null) {
                                                         if (fi.hasChildren()) {
@@ -531,6 +531,7 @@ public class Item implements Serializable {
                                         imagesArray.addAll(Arrays.asList(images.split(",")));
                                         ownerArray.addAll(Arrays.asList(owner.split(",", User.INFO_LENGTH)));
                                         Item newItem =  new Item(idItem, title, description, id_range, ownerArray, location, is_charity, is_exchangeable, is_service, categoriesArray, imagesArray);
+                                        Log.d("ITEM", "Item name: " + newItem.getTitle() + ",is exchangeable: " + newItem.isExchangeable());
                                         //do not show to logged user their own objects/services and only the exchangeable ones
                                         if (newItem.isExchangeable() && (!(newItem.getOwnerId().equals(mAuth.getUid())))) {
                                             if (category != null) {

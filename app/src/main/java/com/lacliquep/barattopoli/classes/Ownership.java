@@ -30,4 +30,5 @@ public enum Ownership {
         }
         return OTHER;
     }
+
 }

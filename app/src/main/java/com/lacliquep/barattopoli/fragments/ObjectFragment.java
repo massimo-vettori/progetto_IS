@@ -118,18 +118,7 @@ public class ObjectFragment extends Fragment {
         Item.retrieveMapWithAllItems(charity,service, category, false, FirebaseAuth.getInstance().getUid(), new ArrayList<String>(Arrays.asList("Italia", "Veneto", "Venezia", "Venezia")), new Consumer<Map<String, Item>>() {
             @Override
             public void accept(Map<String, Item> stringMapMap) {
-                Log.d("61ObjectFragment", stringMapMap.toString());
                 for(String idItem: stringMapMap.keySet()) {
-                    Log.d("63", stringMapMap.get(idItem).getIdRange());
-                    Log.d("63", stringMapMap.get(idItem).getIdItem());
-                    Log.d("63", stringMapMap.get(idItem).getDescription());
-                    Log.d("63", stringMapMap.get(idItem).getItemBasicInfo());
-                    Log.d("63", stringMapMap.get(idItem).getTitle());
-                    Log.d("63", "charity: "+String.valueOf(stringMapMap.get(idItem).isCharity()));
-                    Log.d("63", "setvice: " + String.valueOf(stringMapMap.get(idItem).isCharity()));
-                    Log.d("63", stringMapMap.get(idItem).getCategories().toString());
-                    Log.d("63", stringMapMap.get(idItem).getImages().toString());
-                    Log.d("63", stringMapMap.get(idItem).getLocation().toString());
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

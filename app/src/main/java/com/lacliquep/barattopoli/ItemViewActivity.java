@@ -103,14 +103,13 @@ public class ItemViewActivity extends AppCompatActivity {
             delete.setTextColor(getResources().getColor(R.color.zinc_50, null));
             delete.setOnClickListener(view -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
                 builder.setMessage("Sei sicuro di voler cancellare l'oggetto/servizio dalla tua bacheca?")
                         .setCancelable(false)
                         .setPositiveButton(getString(R.string.Yes), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 User.removeItemFromBoard("ItemViewActivity", FirebaseAuth.getInstance().getUid(), item.getIdItem());
-//                                ItemViewActivity.this.backToHome();
-                                finish();
+                                ItemViewActivity.this.backToHome();
+
                             }
                         })
                         .setNegativeButton(getString(R.string.No), new DialogInterface.OnClickListener() {

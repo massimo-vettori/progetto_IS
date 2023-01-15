@@ -47,7 +47,7 @@ public class Exchange implements Serializable {
      * ILLEGAL: creation prevented, ex: same id_item, same id_user, <p>
      * REFUSED: delete exchange
      */
-    private enum ExchangeStatus {IN_APPROVAL, ACCEPTED, ANNULLED, CLOSED, HAPPENED, REVIEWED_BY_APPLICANT, REVIEWED_BY_PROPOSER, REVIEWED_BY_BOTH, ILLEGAL, REFUSED}
+    public enum ExchangeStatus {IN_APPROVAL, ACCEPTED, ANNULLED, CLOSED, HAPPENED, REVIEWED_BY_APPLICANT, REVIEWED_BY_PROPOSER, REVIEWED_BY_BOTH, ILLEGAL, REFUSED}
 
     /**
      * the exchanges main node name in the database
@@ -137,8 +137,8 @@ public class Exchange implements Serializable {
         Item.retrieveItemsByIds("Exchange", FirebaseDatabase.getInstance().getReference(), new ArrayList<>(Arrays.asList(values.get(5), values.get(6))), new Consumer<ArrayList<Item>>() {
             @Override
             public void accept(ArrayList<Item> items) {
-                Item proposer_item  = items.get(0);
-                Item applicant_item = items.get(1);
+                Item proposer_item  = items.get(1);
+                Item applicant_item = items.get(0);
 
                 User proposer = new User(
                         proposer_item.getOwnerId(),
@@ -189,12 +189,13 @@ public class Exchange implements Serializable {
                         getExchangeFromBasicInfo(exch.getValue().toString(), new Consumer<Exchange>() {
                             @Override
                             public void accept(Exchange exchange) {
-                                if (both) consumer.accept(exchange);
-                                else {
+                                if (both) {
+                                    consumer.accept(exchange);
+                                } else {
                                     if (applicant) {
-                                        if (exchange.getApplicant().getIdUser().equals(idUser)) consumer.accept(exchange);
+                                        if ((exchange.getApplicant().getIdUser()).equals(idUser)) consumer.accept(exchange);
                                     } else {
-                                        if (exchange.getProposer().getIdUser().equals(idUser)) consumer.accept(exchange);
+                                        if ((exchange.getProposer().getIdUser()).equals(idUser)) consumer.accept(exchange);
                                     }
                                 }
 
@@ -562,6 +563,7 @@ public class Exchange implements Serializable {
                 for (Item item: exchange.getProposerItems()) {
                     Item.setExchangeable(false, FirebaseDatabase.getInstance().getReference().child(Item.CLASS_ITEM_DB).child(item.getIdItem()));
                 }
+                Exchange.deleteUnapprovedExchanges(exchange);
             }
             if (Exchange.StringValueOfExchangeStatus(nextExchangeStatus).equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.REFUSED)) ||
                     Exchange.StringValueOfExchangeStatus(nextExchangeStatus).equals(Exchange.StringValueOfExchangeStatus(ExchangeStatus.ANNULLED)) ||
