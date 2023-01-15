@@ -132,25 +132,25 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/insert_city" />
-                <TextView
+                <Button
                     android:id="@+id/privacy"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?attr/colorPrimary"
                     android:fontFamily="@font/inter_medium"
                     android:paddingVertical="10dp"
-                    android:text="privacy document"
+                    android:text="leggi il documento della privacy"
                     android:textAlignment="center" />
                 <CheckBox
                     android:id="@+id/check_box"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/accept_privacy" />
+                    android:text="accetto il documento della privacy" />
                 <CheckBox
                     android:id="@+id/check_box_age"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/age_confirm" />
+                    android:text="confermo di essere maggiorenne" />
             </LinearLayout>
 
         </LinearLayout>
