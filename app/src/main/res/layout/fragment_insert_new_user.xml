@@ -146,11 +146,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="accetto il documento della privacy" />
+
                 <CheckBox
                     android:id="@+id/check_box_age"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="confermo di essere maggiorenne" />
+                    android:text="Confermo di avere almeno 16 anni" />
             </LinearLayout>
 
         </LinearLayout>
