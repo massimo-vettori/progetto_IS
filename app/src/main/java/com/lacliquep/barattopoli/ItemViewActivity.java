@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
@@ -108,8 +109,9 @@ public class ItemViewActivity extends AppCompatActivity {
                         .setPositiveButton(getString(R.string.Yes), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 User.removeItemFromBoard("ItemViewActivity", FirebaseAuth.getInstance().getUid(), item.getIdItem());
+                                Toast.makeText(ItemViewActivity.this, "cancellazione avvenuta con successo", Toast.LENGTH_LONG).show();
                                 ItemViewActivity.this.backToHome();
-
+                                dialog.cancel();
                             }
                         })
                         .setNegativeButton(getString(R.string.No), new DialogInterface.OnClickListener() {

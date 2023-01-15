@@ -244,6 +244,7 @@ public class Item implements Serializable {
                             for (DataSnapshot ch : (snapshot.child(id)).getChildren()) {
                                 map.put(ch.getKey(), ch.getValue());
                             }
+
                             ArrayList<String> ItemData = new ArrayList<>();
                             for (int i = 0; i < 10; ++i) ItemData.add("");
                             BarattopoliUtil.retrieveHelper(map, Item.TITLE_DB, ItemData, 0);
@@ -272,7 +273,7 @@ public class Item implements Serializable {
                                 for (int i = location.size(); i < 4; ++i) location.add("");
                             }
 
-                            Item newItem = new Item(id, ItemData.get(0), ItemData.get(1), ItemData.get(2), own, location, Boolean.getBoolean(ItemData.get(5)), Boolean.getBoolean(ItemData.get(6)), Boolean.getBoolean(ItemData.get(7)), cat, img);
+                            Item newItem = new Item(id, ItemData.get(0), ItemData.get(1), ItemData.get(2), own, location, Boolean.valueOf(ItemData.get(5)), Boolean.valueOf(ItemData.get(6)), Boolean.valueOf(ItemData.get(7)), cat, img);
                             arr.add(newItem);
                         }
                     }
