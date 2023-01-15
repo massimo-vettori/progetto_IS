@@ -50,6 +50,10 @@ public class ExchangeItemView extends View {
 
         ConstraintLayout status_container = view.findViewById(R.id.status_container); //TODO: set the status container color
         TextView status                   = view.findViewById(R.id.status_text);
+        status.setText(Exchange.StringValueOfExchangeStatus(exchange.getExchangeStatus()));
+        if (status.getText().equals(Exchange.ExchangeStatus.ACCEPTED)) {
+            status.setClickable(false);
+        }
 
         switch (o) {
             case PERSONAL:
@@ -78,7 +82,17 @@ public class ExchangeItemView extends View {
                     // Creates a modal dialog to accept or reject the exchange
                     AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
                     builder.setMessage("Vuoi accettare o rifiutare lo scambio?")
-                            .setPositiveButton("Accetta", (dialog, id)   -> {Exchange.changeExchangeStatusDb(exchange, Exchange.ExchangeStatus.ACCEPTED);})
+                            .setPositiveButton("Accetta", (dialog, id)   -> {
+                                Exchange.changeExchangeStatusDb(exchange, Exchange.ExchangeStatus.ACCEPTED);
+                                AlertDialog.Builder b = new AlertDialog.Builder(ctx);
+                                b.setMessage("E' stata inviata una mail a chi ti ha proposto uno scambio con i tuoi contatti, attendi la sua comunicazione").show();
+                                status.setText("accepted");
+                                status.setClickable(false);
+                                //craSHA:
+                                //status.setBackgroundColor(ctx.getResources().getColor(R.color.green_50, null));
+                                //status.setTextColor(ctx.getResources().getColor(R.color.green_800, null));
+                                dialog.cancel();
+                            })
                             .setNegativeButton("Rifiuta", (dialog, id)   -> {Exchange.changeExchangeStatusDb(exchange, Exchange.ExchangeStatus.REFUSED);})
                             .setNeutralButton("Non adesso", (dialog, id) -> dialog.cancel())
                             .show();
